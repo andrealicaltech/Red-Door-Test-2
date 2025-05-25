@@ -23,14 +23,19 @@ const double VEL_MULT_PROB = 0.2;
 
 const double OUTER_RADIUS = 15;
 const double INNER_RADIUS = 15;
-const size_t OBSTACLE_HEIGHT = 30;
-const vector_t OBS_WIDTHS = {30, 70};
-const vector_t OBS_SPACING = {120, 350};
 
-const size_t FROG_NUM_POINTS = 20;
+//obstacle = table (square 50 x 50) can spawn multiple obstacles in a row
+const size_t OBSTACLE_HW = 50;
+const vector_t OBS_SPACING = {100, 50, 150};
 
-const color_t OBS_COLOR = (color_t){0.2, 0.2, 0.3};
-const color_t FROG_COLOR = (color_t){0.1, 0.9, 0.2};
+//pts of player depending on action
+const size_t PLAYER_STANDING_PTS = 16;
+const size_t PLAYER_RUNNING = 31;
+const size_t QUESADILLA_PTS = 20;
+
+
+const color_t OBS_COLOR = (color_t){0.2, 0.2, 0.3}; // going to be tables
+const color_t QUESADILLA_COLOR = (color_t){1, 1, 0}; // coin
 
 // constants to create invaders
 const int16_t H_STEP = 20;
@@ -39,12 +44,13 @@ const size_t ROWS = 8;
 
 const size_t BODY_ASSETS = 2;
 
+//will replace with sprites
 const char *FROGGER_PATH = "assets/frogger.png";
 const char *LOG_PATH = "assets/log.png";
 const char *BACKGROUND_PATH = "assets/frogger-background.png";
 
 struct state {
-  body_t *frog;
+  body_t *player;
   scene_t *scene;
   int16_t points;
 };
@@ -71,18 +77,18 @@ body_t *make_obstacle(size_t w, size_t h, vector_t center) {
   return obstacle;
 }
 
-body_t *make_frog(double outer_radius, double inner_radius, vector_t center) {
+body_t *make_quesadilla(double outer_radius, double inner_radius, vector_t center) {
   center.y += inner_radius;
-  list_t *c = list_init(FROG_NUM_POINTS, free);
-  for (size_t i = 0; i < FROG_NUM_POINTS; i++) {
-    double angle = 2 * M_PI * i / FROG_NUM_POINTS;
+  list_t *c = list_init(QUESADILLA_PTS, free);
+  for (size_t i = 0; i < QUESADILLA_PTS; i++) {
+    double angle = 2 * M_PI * i / QUESADILLA_PTS;
     vector_t *v = malloc(sizeof(*v));
     *v = (vector_t){center.x + inner_radius * cos(angle),
                     center.y + outer_radius * sin(angle)};
     list_add(c, v);
   }
-  body_t *froggy = body_init(c, 1, FROG_COLOR);
-  return froggy;
+  body_t *quesadilla = body_init(c, 1, QUESADILLA_COLOR);
+  return quesadilla;
 }
 
 void wrap_edges(body_t *body) {
@@ -116,7 +122,7 @@ void player_wrap_edges(state_t *state) {
 }
 
 void on_key(char key, key_event_type_t type, double held_time, state_t *state) {
-  body_t *froggy = scene_get_body(state->scene, 0);
+  body_t *player = scene_get_body(state->scene, 0);
   vector_t translation = (vector_t){0, 0};
   if (type == KEY_PRESSED && type != KEY_RELEASED) {
     switch (key) {
@@ -130,13 +136,13 @@ void on_key(char key, key_event_type_t type, double held_time, state_t *state) {
       translation.y = V_STEP;
       break;
     case DOWN_ARROW:
-      if (body_get_centroid(froggy).y > START_POS.y) {
+      if (body_get_centroid(player).y > START_POS.y) {
         translation.y = -V_STEP;
       }
       break;
     }
-    vector_t new_centroid = vec_add(body_get_centroid(froggy), translation);
-    body_set_centroid(froggy, new_centroid);
+    vector_t new_centroid = vec_add(body_get_centroid(player), translation);
+    body_set_centroid(player, new_centroid);
   }
 }
 
@@ -145,10 +151,10 @@ double rand_double(double low, double high) {
 }
 
 void make_logs(state_t *state) {
-  body_t *froggy = state->frog;
+  body_t *player = state->player;
   for (size_t r = 3; r < ROWS + 3; r++) {
     double cx = 0;
-    double cy = r * V_STEP + body_get_centroid(froggy).y;
+    double cy = r * V_STEP + body_get_centroid(player).y;
     double multiplier = 0;
     if (r % 2 == 0) {
       multiplier = 1;
@@ -160,13 +166,13 @@ void make_logs(state_t *state) {
     }
     while (cx < MAX.x) {
       double w = rand_double(OBS_WIDTHS.x, OBS_WIDTHS.y);
-      body_t *obstacle = make_obstacle(w, OBSTACLE_HEIGHT, (vector_t){cx, cy});
+      body_t *obstacle = make_obstacle(w, OBSTACLE_HW, (vector_t){cx, cy});
       cx += w + rand_double(OBS_SPACING.x, OBS_SPACING.y);
 
       body_set_velocity(obstacle, vec_multiply(multiplier, BASE_OBJ_VEL));
       scene_add_body(state->scene, obstacle);
 
-      create_collision(state->scene, froggy, obstacle, reset_user_handler, NULL,
+      create_collision(state->scene, player, obstacle, reset_user_handler, NULL,
                        0, NULL);
 
       asset_make_image_with_body(LOG_PATH, obstacle);
@@ -182,10 +188,10 @@ state_t *emscripten_init() {
   srand(time(NULL));
   state->scene = scene_init();
 
-  body_t *froggy = make_frog(OUTER_RADIUS, INNER_RADIUS, VEC_ZERO);
-  body_set_centroid(froggy, RESET_POS);
-  state->frog = froggy;
-  scene_add_body(state->scene, froggy);
+  body_t *player = make_frog(OUTER_RADIUS, INNER_RADIUS, VEC_ZERO);
+  body_set_centroid(player, RESET_POS);
+  state->player = player;
+  scene_add_body(state->scene, player);
 
   SDL_Rect *rect = malloc(sizeof(SDL_Rect));
   rect->x = MIN.x;
@@ -196,7 +202,7 @@ state_t *emscripten_init() {
   asset_make_image(BACKGROUND_PATH, *rect);
 
   make_logs(state);
-  asset_make_image_with_body(FROGGER_PATH, froggy);
+  asset_make_image_with_body(FROGGER_PATH, player);
 
   sdl_on_key((key_handler_t)on_key);
   return state;
