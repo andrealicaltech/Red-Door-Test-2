@@ -16,7 +16,8 @@ const vector_t MAX = {1000, 500};
 
 const vector_t START_POS = {100, 30};
 const vector_t RESET_POS = {100, 45};
-const vector_t BASE_OBJ_VEL = {30, 0}; //starting velocity, can multiply to increase difficulty
+const vector_t BASE_OBJ_VEL = {
+    30, 0}; // starting velocity, can multiply to increase difficulty
 const double EXTRA_VEL_MULT = 10;
 const double VEL_MULT_PROB = 0.2;
 
