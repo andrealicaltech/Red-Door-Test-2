@@ -42,48 +42,19 @@ const double JUMP_ACCELERATION_CHANGE = 0;
 const color_t OBS_COLOR = (color_t){0.2, 0.2, 0.3}; // going to be tables
 const color_t QUESADILLA_COLOR = (color_t){1, 1, 0}; // coin
 
-// constants to create invaders
-const int16_t H_STEP = 20;
-const int16_t V_STEP = 40;
-const size_t ROWS = 8;
 
-const size_t BODY_ASSETS = 2;
-
-//will replace with sprites
-const char *FROGGER_PATH = "assets/frogger.png";
-const char *LOG_PATH = "assets/log.png";
-const char *BACKGROUND_PATH = "assets/frogger-background.png";
+const size_t BODY_ASSETS = 1;
+const char *PLAYER_SPRITE_PATH = "assets/frogger.png";
 
 struct state {
   body_t *player;
   bool ducking;
   bool jumping;
-  vector_t velocity;
+  vector_t player_velocity;
   scene_t *scene;
   int16_t points;
 };
 
-body_t *make_obstacle(size_t w, size_t h, vector_t center) {
-  list_t *c = list_init(4, free);
-  vector_t *v1 = malloc(sizeof(vector_t));
-  *v1 = (vector_t){0, 0};
-  list_add(c, v1);
-
-  vector_t *v2 = malloc(sizeof(vector_t));
-  *v2 = (vector_t){w, 0};
-  list_add(c, v2);
-
-  vector_t *v3 = malloc(sizeof(vector_t));
-  *v3 = (vector_t){w, h};
-  list_add(c, v3);
-
-  vector_t *v4 = malloc(sizeof(vector_t));
-  *v4 = (vector_t){0, h};
-  list_add(c, v4);
-  body_t *obstacle = body_init(c, 1, OBS_COLOR);
-  body_set_centroid(obstacle, center);
-  return obstacle;
-}
 
 body_t *make_quesadilla(double outer_radius, double inner_radius, vector_t center) {
   center.y += inner_radius;
@@ -99,53 +70,24 @@ body_t *make_quesadilla(double outer_radius, double inner_radius, vector_t cente
   return quesadilla;
 }
 
-void wrap_edges(body_t *body) {
-  vector_t centroid = body_get_centroid(body);
-  if (centroid.x > MAX.x) {
-    body_set_centroid(body, (vector_t){MIN.x, centroid.y});
-  } else if (centroid.x < MIN.x) {
-    body_set_centroid(body, (vector_t){MAX.x, centroid.y});
-  } else if (centroid.y > MAX.y) {
-    body_set_centroid(body, (vector_t){centroid.x, MIN.y});
-  } else if (centroid.y < MIN.y) {
-    body_set_centroid(body, (vector_t){centroid.x, MAX.y});
-  }
-}
-
-void reset_user(body_t *body) { body_set_centroid(body, RESET_POS); }
-
-void reset_user_handler(body_t *body1, body_t *body2, vector_t axis, void *aux,
-                        double force_const) {
-  reset_user(body1);
-}
-
-void player_wrap_edges(state_t *state) {
-  body_t *player = scene_get_body(state->scene, 0);
-  vector_t centroid = body_get_centroid(player);
-  if (centroid.y > MAX.y - V_STEP) {
-    state->points += 1;
-    reset_user(player);
-    fprintf(stdout, "You have %d points!\n", state->points);
-  }
-}
 
 void on_key(char key, key_event_type_t type, double held_time, state_t *state) {
   body_t *player = scene_get_body(state->scene, 0);
   vector_t translation = (vector_t){0, 0};
   if (state->ducking){
-    if (state->velocity.y > -DUCK_INITIAL_VELOCITY){ //TODO: Replace with if colliding with ground
+    if (state->player_velocity.y > -DUCK_INITIAL_VELOCITY){ //TODO: Replace with if colliding with ground
       state->ducking = false;
-      state->velocity.y = 0;
+      state->player_velocity.y = 0;
     } else{
-      state->velocity.y += DUCK_ACCELERATION_CHANGE;
+      state->player_velocity.y += DUCK_ACCELERATION_CHANGE;
     }
   }
   else if (state->jumping){
-    if (state->velocity.y > -JUMP_INITIAL_VELOCITY){ //TODO: Replace with if colliding with ground
+    if (state->player_velocity.y > -JUMP_INITIAL_VELOCITY){ //TODO: Replace with if colliding with ground
       state->jumping = false;
-      state->velocity.y = 0;
+      state->player_velocity.y = 0;
     } else{
-      state->velocity.y += JUMP_ACCELERATION_CHANGE;
+      state->player_velocity.y += JUMP_ACCELERATION_CHANGE;
     }
   }
   else if (type == KEY_PRESSED && type != KEY_RELEASED) {
@@ -158,7 +100,7 @@ void on_key(char key, key_event_type_t type, double held_time, state_t *state) {
       break;
     case UP_ARROW:
       state->jumping = true;
-      state->velocity.y = JUMP_INITIAL_VELOCITY
+      state->player_velocity.y = JUMP_INITIAL_VELOCITY
       //translation.y = V_STEP;
       break;
     case DOWN_ARROW:
@@ -168,47 +110,16 @@ void on_key(char key, key_event_type_t type, double held_time, state_t *state) {
         translation.y = -V_STEP;
       }
       */
-      state->velocity.y = DUCK_INITIAL_VELOCITY;
+      state->player_velocity.y = DUCK_INITIAL_VELOCITY;
       break;
     }
-    vector_t new_centroid = vec_add(body_get_centroid(player), state->velocity);
+    vector_t new_centroid = vec_add(body_get_centroid(player), state->player_velocity);
     body_set_centroid(player, new_centroid);
   }
 }
 
-double rand_double(double low, double high) {
-  return (high - low) * rand() / RAND_MAX + low;
-}
 
-void make_logs(state_t *state) {
-  body_t *player = state->player;
-  for (size_t r = 3; r < ROWS + 3; r++) {
-    double cx = 0;
-    double cy = r * V_STEP + body_get_centroid(player).y;
-    double multiplier = 0;
-    if (r % 2 == 0) {
-      multiplier = 1;
-    } else {
-      multiplier = -1;
-    }
-    if ((double)rand() / RAND_MAX < VEL_MULT_PROB) {
-      multiplier *= EXTRA_VEL_MULT;
-    }
-    while (cx < MAX.x) {
-      double w = rand_double(OBS_WIDTHS.x, OBS_WIDTHS.y);
-      body_t *obstacle = make_obstacle(w, OBSTACLE_HW, (vector_t){cx, cy});
-      cx += w + rand_double(OBS_SPACING.x, OBS_SPACING.y);
 
-      body_set_velocity(obstacle, vec_multiply(multiplier, BASE_OBJ_VEL));
-      scene_add_body(state->scene, obstacle);
-
-      create_collision(state->scene, player, obstacle, reset_user_handler, NULL,
-                       0, NULL);
-
-      asset_make_image_with_body(LOG_PATH, obstacle);
-    }
-  }
-}
 
 state_t *emscripten_init() {
   asset_cache_init();
@@ -219,7 +130,7 @@ state_t *emscripten_init() {
   state->scene = scene_init();
   state->ducking = false;
   state->jumping = false;
-  state->velocity = (vector_t){.x=0,.y=0};
+  state->player_velocity = (vector_t){.x=0,.y=0};
   body_t *player = make_frog(OUTER_RADIUS, INNER_RADIUS, VEC_ZERO);
   body_set_centroid(player, RESET_POS);
   state->player = player;
@@ -232,8 +143,6 @@ state_t *emscripten_init() {
   rect->h = MAX.y;
 
   asset_make_image(BACKGROUND_PATH, *rect);
-
-  make_logs(state);
   asset_make_image_with_body(FROGGER_PATH, player);
 
   sdl_on_key((key_handler_t)on_key);
@@ -243,11 +152,7 @@ state_t *emscripten_init() {
 bool emscripten_main(state_t *state) {
   double dt = time_since_last_tick();
   player_wrap_edges(state);
-  for (int i = 1; i < scene_bodies(state->scene); i++) {
-    wrap_edges(scene_get_body(state->scene, i));
-  }
   sdl_clear();
-  // sdl_render_scene(state->scene);
   list_t *body_assets = asset_get_asset_list();
   for (size_t i = 0; i < list_size(body_assets); i++) {
     asset_render(list_get(body_assets, i));
