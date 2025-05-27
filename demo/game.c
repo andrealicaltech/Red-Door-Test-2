@@ -16,7 +16,8 @@ const vector_t MAX = {1000, 500};
 
 const vector_t START_POS = {100, 30};
 const vector_t RESET_POS = {100, 45};
-const vector_t BASE_OBJ_VEL = {30, 0}; // starting velocity, can multiply to increase difficulty
+const vector_t BASE_OBJ_VEL = {
+    30, 0}; // starting velocity, can multiply to increase difficulty
 const double EXTRA_VEL_MULT = 10;
 const double VEL_MULT_PROB = 0.2;
 
@@ -26,9 +27,8 @@ const double INNER_RADIUS = 15;
 // obstacle = table (square 50 x 50) can spawn multiple obstacles in a row
 const size_t OBSTACLE_HW = 50;
 
-
 // TODO: Make sure x-distance covered by jump is less than 50
-const size_t[] OBS_SPACING = {0, 50, 100, 150};
+const size_t OBS_SPACING[4] = {0, 50, 100, 150};
 const size_t MAX_CONSEC_OBSTACLES = 5;
 
 // pts of player depending on action
@@ -47,12 +47,13 @@ const double INIT_BACKGROUND_1_SKY_VELOCITY = 50.0;
 const double INIT_BACKGROUND_2_TREE_VELOCITY = 100.0;
 const double INIT_BACKGROUND_3_BUILDINGS_VELOCITY = 150.0;
 
-
+const color_t SPRITE_COLOR = (color_t) {0.0, 0.0, 0.0};
 const color_t OBS_COLOR = (color_t){0.2, 0.2, 0.3};  // going to be tables
 const color_t QUESADILLA_COLOR = (color_t){1, 1, 0}; // coin
 
 const size_t BODY_ASSETS = 1;
 const char *PLAYER_SPRITE_PATH = "assets/frogger.png";
+const char *BACKGROUND_PATH = "assets/TODO.png";
 
 const double OBSTACLE_START_WAIT_TIME = 3.0;
 const double GAME_OVER_WAIT_TIME = 3.0;
@@ -73,7 +74,7 @@ struct state {
   bool jumping;
   vector_t player_velocity;
   scene_t *scene;
-  
+
   vector_t bg_1_sky_vel;
   vector_t bg_2_tree_vel;
   vector_t bg_3_building_vel;
@@ -84,11 +85,11 @@ struct state {
   bool is_magnet_activated;
 
   size_t points;
-  size_t[] all_points;
+  list_t *all_points;
 };
 
 body_t *make_obstacle(double outer_radius, double inner_radius,
-                        vector_t center) {
+                      vector_t center) {
   center.y += inner_radius;
   list_t *c = list_init(QUESADILLA_PTS, free);
   for (size_t i = 0; i < QUESADILLA_PTS; i++) {
@@ -101,7 +102,6 @@ body_t *make_obstacle(double outer_radius, double inner_radius,
   body_t *quesadilla = body_init(c, 1, QUESADILLA_COLOR);
   return quesadilla;
 }
-
 
 void wrap_edges(body_t *body) {
   vector_t centroid = body_get_centroid(body);
@@ -119,7 +119,7 @@ void wrap_edges(body_t *body) {
 // TODO - Amudhan
 void on_key(char key, key_event_type_t type, double held_time, state_t *state) {
   body_t *player = scene_get_body(state->scene, 0);
-  vector_t translation = (vector_t){0, 0};
+  // vector_t translation = (vector_t){0, 0};
   if (state->ducking) {
     if (state->player_velocity.y >
         -DUCK_INITIAL_VELOCITY) { // TODO: Replace with if colliding with ground
@@ -138,15 +138,16 @@ void on_key(char key, key_event_type_t type, double held_time, state_t *state) {
     }
   } else if (type == KEY_PRESSED && type != KEY_RELEASED) {
     switch (key) {
-    case LEFT_ARROW:
-      translation.x = -H_STEP;
-      break;
-    case RIGHT_ARROW:
-      translation.x = H_STEP;
-      break;
+      // TODO: Arjun commented this out since H_STEP undefined in new project
+    // case LEFT_ARROW:
+    //   translation.x = -H_STEP;
+    //   break;
+    // case RIGHT_ARROW:
+    //   translation.x = H_STEP;
+    //   break;
     case UP_ARROW:
       state->jumping = true;
-      state->player_velocity.y = JUMP_INITIAL_VELOCITY
+      state->player_velocity.y = JUMP_INITIAL_VELOCITY;
           // translation.y = V_STEP;
           break;
     case DOWN_ARROW:
@@ -165,46 +166,48 @@ void on_key(char key, key_event_type_t type, double held_time, state_t *state) {
   }
 }
 
-
-void start_game(state_t *state)[
+void start_game(state_t *state){
   // TODO: Week 2 - Change state of screen to game
-]
-
-void end_game(state_t *state){
-  // TODO: Week 2 - End the game, show the score, and go back to home after GAME_OVER_WAIT_TIME seconds
-
+}
+  
+    void end_game(state_t *state) {
+  // TODO: Week 2 - End the game, show the score, and go back to home after
+  // GAME_OVER_WAIT_TIME seconds
 }
 
 // Arjun
-void spawn_obstacles(state_t *state){
-  // TODO: Week 1 - Spawn obstacles at a random interval. The right end should be at the far left of the screen
+void spawn_obstacles(state_t *state) {
+  // TODO: Week 1 - Spawn obstacles at a random interval. The right end should
+  // be at the far left of the screen
 }
 
 // Arjun
-void clean_elapsed_obstacles(state_t *state){
+void clean_elapsed_obstacles(state_t *state) {
   // TODO: Week 1 - Free tables after they exit the viewport
 }
 
-
 // Andrea
-void update_bg_velocity(state_t *state){
+void update_bg_velocity(state_t *state) {
   // TODO: Week 2 - Update velocity
 }
 
 // Andrea
-void wrap_backgrounds(state_t *state){
+void wrap_backgrounds(state_t *state) {
   // TODO: Week 1 - Wrap backgrounds
 }
 
-
-void spawn_coins(state_t *state){
+void spawn_coins(state_t *state) {
   // TODO: Week 2 - spawn coins at random intervals
 }
 
-void clean_elapsed_coins(state_t *state){
-   // TODO: Week 2  - Remove coins after they hit the end of the screen
+void clean_elapsed_coins(state_t *state) {
+  // TODO: Week 2  - Remove coins after they hit the end of the screen
 }
 
+body_t *make_player_sprite(double outer_radius, double inner_radius, vector_t center) {
+  // TODO: Replace with player sprite asset
+  return NULL;
+}
 
 state_t *emscripten_init() {
 
@@ -233,17 +236,18 @@ state_t *emscripten_init() {
   rect->h = MAX.y;
   asset_make_image(BACKGROUND_PATH, *rect);
 
-  asset_make_image_with_body(FROGGER_PATH, player);
+  asset_make_image_with_body(PLAYER_SPRITE_PATH, player);
 
   sdl_on_key((key_handler_t)on_key);
 
-  // TODO: Activate 
+  // TODO: Activate
   state->is_revival_activated = false;
   state->is_magnet_activated = false;
 
   // TODO
   state->points = 0;
-  state->all_points = malloc(sizeof(size_t) * MAX_GAMES);
+  // TODO: all points list
+  state->all_points = list_init(MAX_GAMES, NULL);
   return state;
 }
 
@@ -263,7 +267,7 @@ bool emscripten_main(state_t *state) {
   scene_tick(state->scene, dt);
 
   spawn_obstacles(state);
-  clean_used_obstacles(state);
+  clean_elapsed_obstacles(state);
 
   return false;
 }
