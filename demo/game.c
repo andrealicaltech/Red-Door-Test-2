@@ -33,6 +33,11 @@ const size_t PLAYER_STANDING_PTS = 16;
 const size_t PLAYER_RUNNING = 31;
 const size_t QUESADILLA_PTS = 20;
 
+//player movements
+const double DUCK_INITIAL_VELOCITY = 0;
+const double DUCK_ACCELERATION_CHANGE = 0;
+const double JUMP_INITIAL_VELOCITY = 0;
+const double JUMP_ACCELERATION_CHANGE = 0;
 
 const color_t OBS_COLOR = (color_t){0.2, 0.2, 0.3}; // going to be tables
 const color_t QUESADILLA_COLOR = (color_t){1, 1, 0}; // coin
@@ -51,6 +56,9 @@ const char *BACKGROUND_PATH = "assets/frogger-background.png";
 
 struct state {
   body_t *player;
+  bool ducking;
+  bool jumping;
+  vector_t velocity;
   scene_t *scene;
   int16_t points;
 };
@@ -124,7 +132,23 @@ void player_wrap_edges(state_t *state) {
 void on_key(char key, key_event_type_t type, double held_time, state_t *state) {
   body_t *player = scene_get_body(state->scene, 0);
   vector_t translation = (vector_t){0, 0};
-  if (type == KEY_PRESSED && type != KEY_RELEASED) {
+  if (state->ducking){
+    if (state->velocity.y > -DUCK_INITIAL_VELOCITY){ //TODO: Replace with if colliding with ground
+      state->ducking = false;
+      state->velocity.y = 0;
+    } else{
+      state->velocity.y += DUCK_ACCELERATION_CHANGE;
+    }
+  }
+  else if (state->jumping){
+    if (state->velocity.y > -JUMP_INITIAL_VELOCITY){ //TODO: Replace with if colliding with ground
+      state->jumping = false;
+      state->velocity.y = 0;
+    } else{
+      state->velocity.y += JUMP_ACCELERATION_CHANGE;
+    }
+  }
+  else if (type == KEY_PRESSED && type != KEY_RELEASED) {
     switch (key) {
     case LEFT_ARROW:
       translation.x = -H_STEP;
@@ -133,15 +157,21 @@ void on_key(char key, key_event_type_t type, double held_time, state_t *state) {
       translation.x = H_STEP;
       break;
     case UP_ARROW:
-      translation.y = V_STEP;
+      state->jumping = true;
+      state->velocity.y = JUMP_INITIAL_VELOCITY
+      //translation.y = V_STEP;
       break;
     case DOWN_ARROW:
+      state->ducking = true;
+      /*
       if (body_get_centroid(player).y > START_POS.y) {
         translation.y = -V_STEP;
       }
+      */
+      state->velocity.y = DUCK_INITIAL_VELOCITY;
       break;
     }
-    vector_t new_centroid = vec_add(body_get_centroid(player), translation);
+    vector_t new_centroid = vec_add(body_get_centroid(player), state->velocity);
     body_set_centroid(player, new_centroid);
   }
 }
@@ -187,7 +217,9 @@ state_t *emscripten_init() {
   state->points = 0;
   srand(time(NULL));
   state->scene = scene_init();
-
+  state->ducking = false;
+  state->jumping = false;
+  state->velocity = (vector_t){.x=0,.y=0};
   body_t *player = make_frog(OUTER_RADIUS, INNER_RADIUS, VEC_ZERO);
   body_set_centroid(player, RESET_POS);
   state->player = player;
