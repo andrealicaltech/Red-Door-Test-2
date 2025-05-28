@@ -47,13 +47,14 @@ const double INIT_BACKGROUND_1_SKY_VELOCITY = 50.0;
 const double INIT_BACKGROUND_2_TREE_VELOCITY = 100.0;
 const double INIT_BACKGROUND_3_BUILDINGS_VELOCITY = 150.0;
 
-const color_t SPRITE_COLOR = (color_t) {0.0, 0.0, 0.0};
+const color_t SPRITE_COLOR = (color_t){0.0, 0.0, 0.0};
 const color_t OBS_COLOR = (color_t){0.2, 0.2, 0.3};  // going to be tables
 const color_t QUESADILLA_COLOR = (color_t){1, 1, 0}; // coin
 
+
 const size_t BODY_ASSETS = 1;
 const char *PLAYER_SPRITE_PATH = "assets/frogger.png";
-const char *BACKGROUND_PATH = "assets/TODO.png";
+const char *BACKGROUND_PATH = "assets/frogger-background.png";
 
 const double OBSTACLE_START_WAIT_TIME = 3.0;
 const double GAME_OVER_WAIT_TIME = 3.0;
@@ -148,8 +149,8 @@ void on_key(char key, key_event_type_t type, double held_time, state_t *state) {
     case UP_ARROW:
       state->jumping = true;
       state->player_velocity.y = JUMP_INITIAL_VELOCITY;
-          // translation.y = V_STEP;
-          break;
+      // translation.y = V_STEP;
+      break;
     case DOWN_ARROW:
       state->ducking = true;
       /*
@@ -166,11 +167,11 @@ void on_key(char key, key_event_type_t type, double held_time, state_t *state) {
   }
 }
 
-void start_game(state_t *state){
+void start_game(state_t *state) {
   // TODO: Week 2 - Change state of screen to game
 }
-  
-    void end_game(state_t *state) {
+
+void end_game(state_t *state) {
   // TODO: Week 2 - End the game, show the score, and go back to home after
   // GAME_OVER_WAIT_TIME seconds
 }
@@ -204,76 +205,94 @@ void clean_elapsed_coins(state_t *state) {
   // TODO: Week 2  - Remove coins after they hit the end of the screen
 }
 
-body_t *make_player_sprite(double outer_radius, double inner_radius, vector_t center) {
+body_t *make_player_sprite(double outer_radius, double inner_radius,
+                           vector_t center) {
   // TODO: Replace with player sprite asset
-  return NULL;
+  center.y += inner_radius;
+  list_t *c = list_init(20, free);
+  for (size_t i = 0; i < 20; i++) {
+    double angle = 2 * M_PI * i / 20;
+    vector_t *v = malloc(sizeof(*v));
+    *v = (vector_t){center.x + inner_radius * cos(angle),
+                    center.y + outer_radius * sin(angle)};
+    list_add(c, v);
+  }
+  body_t *froggy = body_init(c, 1, SPRITE_COLOR);
+  return froggy;
 }
+
 
 state_t *emscripten_init() {
-
   asset_cache_init();
   sdl_init(MIN, MAX);
+  SDL_Rect rect = (SDL_Rect){.x = 0, .y = 0, .w = MAX.x, .h = MAX.y};
+  asset_make_image(BACKGROUND_PATH, rect);
 
   state_t *state = malloc(sizeof(state_t));
-  state->current_game_screen = HOME;
-
-  srand(time(NULL));
   state->scene = scene_init();
-  state->ducking = false;
-  state->jumping = false;
-  state->player_velocity = (vector_t){.x = 0, .y = 0};
-
-  body_t *player = make_player_sprite(OUTER_RADIUS, INNER_RADIUS, VEC_ZERO);
-  body_set_centroid(player, RESET_POS);
-  state->player = player;
-  scene_add_body(state->scene, player);
-
-  // TODO: Initialize all 3 backgrounds
-  SDL_Rect *rect = malloc(sizeof(SDL_Rect));
-  rect->x = MIN.x;
-  rect->y = MIN.y;
-  rect->w = MAX.x;
-  rect->h = MAX.y;
-  asset_make_image(BACKGROUND_PATH, *rect);
-
-  asset_make_image_with_body(PLAYER_SPRITE_PATH, player);
-
-  sdl_on_key((key_handler_t)on_key);
-
-  // TODO: Activate
-  state->is_revival_activated = false;
-  state->is_magnet_activated = false;
-
-  // TODO
-  state->points = 0;
-  // TODO: all points list
-  state->all_points = list_init(MAX_GAMES, NULL);
   return state;
 }
+
+// state_t *emscripten_init() {
+
+//   asset_cache_init();
+//   sdl_init(MIN, MAX);
+
+//   state->current_game_screen = HOME;
+
+//   srand(time(NULL));
+//   state->scene = scene_init();
+//   state->ducking = false;
+//   state->jumping = false;
+//   state->player_velocity = (vector_t){.x = 0, .y = 0};
+
+//   body_t *player = make_player_sprite(OUTER_RADIUS, INNER_RADIUS, VEC_ZERO);
+//   body_set_centroid(player, RESET_POS);
+//   state->player = player;
+//   scene_add_body(state->scene, player);
+//   asset_make_image_with_body(PLAYER_SPRITE_PATH, player);
+
+//   // TODO: Initialize all 3 backgrounds
+//   SDL_Rect rect = (SDL_Rect){.x = 0, .y = 0, .w = MAX.x, .h = MAX.y};
+//   asset_make_image(BACKGROUND_PATH, rect);
+
+
+//   sdl_on_key((key_handler_t)on_key);
+
+//   // TODO: Activate
+//   state->is_revival_activated = false;
+//   state->is_magnet_activated = false;
+
+//   state->points = 0;
+//   state->all_points = list_init(MAX_GAMES, NULL);
+//   return state;
+// }
 
 bool emscripten_main(state_t *state) {
   double dt = time_since_last_tick();
   sdl_clear();
 
-  update_bg_velocity(state);
-  wrap_backgrounds(state);
+  // wrap_backgrounds(state);
+  // update_bg_velocity(state);
 
   list_t *body_assets = asset_get_asset_list();
   for (size_t i = 0; i < list_size(body_assets); i++) {
+    printf("i=%zu\n", i);
     asset_render(list_get(body_assets, i));
   }
 
+  // spawn_obstacles(state);
+  // clean_elapsed_obstacles(state);
+
   sdl_show();
   scene_tick(state->scene, dt);
-
-  spawn_obstacles(state);
-  clean_elapsed_obstacles(state);
 
   return false;
 }
 
 void emscripten_free(state_t *state) {
   list_free(asset_get_asset_list());
+  list_free(state->all_points);
   scene_free(state->scene);
   asset_cache_destroy();
   free(state);
