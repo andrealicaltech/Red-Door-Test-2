@@ -104,7 +104,6 @@ static collision_info_t compare_collision(list_t *shape1, list_t *shape2,
   return (collision_info_t){.collided = true, .axis = min_collision_ax};
 }
 
-
 collision_info_t find_collision(body_t *body1, body_t *body2) {
   list_t *shape1 = body_get_shape(body1);
   list_t *shape2 = body_get_shape(body2);

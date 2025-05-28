@@ -51,7 +51,6 @@ const color_t SPRITE_COLOR = (color_t){0.0, 0.0, 0.0};
 const color_t OBS_COLOR = (color_t){0.2, 0.2, 0.3};  // going to be tables
 const color_t QUESADILLA_COLOR = (color_t){1, 1, 0}; // coin
 
-
 const size_t BODY_ASSETS = 1;
 const char *PLAYER_SPRITE_PATH = "assets/frogger.png";
 const char *BACKGROUND_PATH = "assets/frogger-background.png";
@@ -223,50 +222,40 @@ body_t *make_player_sprite(double outer_radius, double inner_radius,
 
 
 state_t *emscripten_init() {
+
   asset_cache_init();
   sdl_init(MIN, MAX);
-  SDL_Rect rect = (SDL_Rect){.x = 0, .y = 0, .w = MAX.x, .h = MAX.y};
-  asset_make_image(BACKGROUND_PATH, rect);
 
   state_t *state = malloc(sizeof(state_t));
   state->scene = scene_init();
+  state->current_game_screen = HOME;
+
+  srand(time(NULL));
+  state->scene = scene_init();
+  state->ducking = false;
+  state->jumping = false;
+  state->player_velocity = (vector_t){.x = 0, .y = 0};
+
+  body_t *player = make_player_sprite(OUTER_RADIUS, INNER_RADIUS, VEC_ZERO);
+  body_set_centroid(player, RESET_POS);
+  state->player = player;
+  scene_add_body(state->scene, player);
+  asset_make_image_with_body(PLAYER_SPRITE_PATH, player);
+
+  // TODO: Initialize all 3 backgrounds
+  SDL_Rect rect = (SDL_Rect){.x = 0, .y = 0, .w = MAX.x, .h = MAX.y};
+  asset_make_image(BACKGROUND_PATH, rect);
+
+  sdl_on_key((key_handler_t)on_key);
+
+  // TODO: Activate
+  state->is_revival_activated = false;
+  state->is_magnet_activated = false;
+
+  state->points = 0;
+  state->all_points = list_init(MAX_GAMES, NULL);
   return state;
 }
-
-// state_t *emscripten_init() {
-
-//   asset_cache_init();
-//   sdl_init(MIN, MAX);
-
-//   state->current_game_screen = HOME;
-
-//   srand(time(NULL));
-//   state->scene = scene_init();
-//   state->ducking = false;
-//   state->jumping = false;
-//   state->player_velocity = (vector_t){.x = 0, .y = 0};
-
-//   body_t *player = make_player_sprite(OUTER_RADIUS, INNER_RADIUS, VEC_ZERO);
-//   body_set_centroid(player, RESET_POS);
-//   state->player = player;
-//   scene_add_body(state->scene, player);
-//   asset_make_image_with_body(PLAYER_SPRITE_PATH, player);
-
-//   // TODO: Initialize all 3 backgrounds
-//   SDL_Rect rect = (SDL_Rect){.x = 0, .y = 0, .w = MAX.x, .h = MAX.y};
-//   asset_make_image(BACKGROUND_PATH, rect);
-
-
-//   sdl_on_key((key_handler_t)on_key);
-
-//   // TODO: Activate
-//   state->is_revival_activated = false;
-//   state->is_magnet_activated = false;
-
-//   state->points = 0;
-//   state->all_points = list_init(MAX_GAMES, NULL);
-//   return state;
-// }
 
 bool emscripten_main(state_t *state) {
   double dt = time_since_last_tick();
@@ -277,7 +266,6 @@ bool emscripten_main(state_t *state) {
 
   list_t *body_assets = asset_get_asset_list();
   for (size_t i = 0; i < list_size(body_assets); i++) {
-    printf("i=%zu\n", i);
     asset_render(list_get(body_assets, i));
   }
 
