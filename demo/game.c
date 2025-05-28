@@ -47,6 +47,12 @@ const double INIT_BACKGROUND_1_SKY_VELOCITY = 50.0;
 const double INIT_BACKGROUND_2_TREE_VELOCITY = 100.0;
 const double INIT_BACKGROUND_3_BUILDINGS_VELOCITY = 150.0;
 
+// Background positions
+vector_t SKY_BACKGROUND = {4000, 500};
+vector_t TREE_BACKGROUND = {4000, 400};
+vector_t BUILD_BACKGROUND = {4000, 300};
+size_t PANEL_WIDTH = 4000;
+
 const color_t SPRITE_COLOR = (color_t){0.0, 0.0, 0.0};
 const color_t OBS_COLOR = (color_t){0.2, 0.2, 0.3};  // going to be tables
 const color_t QUESADILLA_COLOR = (color_t){1, 1, 0}; // coin
@@ -66,18 +72,23 @@ typedef enum {
   GAME = 'G'
 } GAME_SCREEN;
 
+typedef struct {
+  vector_t bg_1_sky_vel;
+  vector_t bg_2_tree_vel;
+  vector_t bg_3_building_vel;
+  vector_t sky_pos;
+  vector_t tree_pos;
+  vector_t build_pos;
+} background;
+
 struct state {
   GAME_SCREEN current_game_screen;
-
+  background bg;
   body_t *player;
   bool ducking;
   bool jumping;
   vector_t player_velocity;
   scene_t *scene;
-
-  vector_t bg_1_sky_vel;
-  vector_t bg_2_tree_vel;
-  vector_t bg_3_building_vel;
 
   bool is_game_over;
   // Powerups
@@ -191,9 +202,18 @@ void update_bg_velocity(state_t *state) {
   // TODO: Week 2 - Update velocity
 }
 
-// Andrea
+// Wrap backgrounds for scrolling effect
 void wrap_backgrounds(state_t *state) {
-  // TODO: Week 1 - Wrap backgrounds
+  ssize_t limit = -(PANEL_WIDTH - MAX.x);
+  if (state->bg.sky_pos.x <= limit) {
+    state->bg.sky_pos.x = 0.0f;
+  }
+  if (state->bg.tree_pos.x <= limit) {
+    state->bg.tree_pos.x = 0.0f;
+  }
+  if (state->bg.build_pos.x <= limit) {
+    state->bg.build_pos.x = 0.0f;
+  }
 }
 
 void spawn_coins(state_t *state) {
@@ -219,7 +239,6 @@ body_t *make_player_sprite(double outer_radius, double inner_radius,
   body_t *froggy = body_init(c, 1, SPRITE_COLOR);
   return froggy;
 }
-
 
 state_t *emscripten_init() {
 
