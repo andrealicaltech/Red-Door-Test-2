@@ -39,8 +39,8 @@ const size_t QUESADILLA_PTS = 20;
 // player movements
 const double DUCK_INITIAL_VELOCITY = 0;
 const double DUCK_ACCELERATION_CHANGE = 0;
-const double JUMP_INITIAL_VELOCITY = 0;
-const double Y_GRAVITY_ACCELERATION = 0;
+const double JUMP_INITIAL_VELOCITY = 10;
+const double Y_GRAVITY_ACCELERATION = -0.5;
 
 // Background and obstacle velocity
 const double INIT_BACKGROUND_1_SKY_VELOCITY = 50.0;
@@ -66,12 +66,17 @@ typedef enum {
   GAME = 'G'
 } GAME_SCREEN;
 
+typedef enum {
+  REGULAR = 0,
+  JUMP = 1,
+  DUCK = 2
+} PLAYER_MOTION;
+
 struct state {
   GAME_SCREEN current_game_screen;
 
   body_t *player;
-  bool ducking;
-  bool jumping;
+  PLAYER_MOTION player_motion;
   vector_t player_velocity;
   scene_t *scene;
 
@@ -117,55 +122,64 @@ void wrap_edges(body_t *body) {
 }
 
 // TODO - Amudhan
-void on_key(char key, key_event_type_t type, double held_time, state_t *state) {
-  body_t *player = scene_get_body(state->scene, 0);
-  // vector_t translation = (vector_t){0, 0};
-  if (state->ducking) {
-    if (state->player_velocity.y >
-        -DUCK_INITIAL_VELOCITY) { // TODO: Replace with if colliding with ground
-      state->ducking = false;
-      state->player_velocity.y = 0;
-    } else {
-      state->player_velocity.y += DUCK_ACCELERATION_CHANGE;
-    }
-  } else if (state->jumping) {
-    if (state->player_velocity.y >
-        -JUMP_INITIAL_VELOCITY) { // TODO: Replace with if colliding with ground
-      state->jumping = false;
-      state->player_velocity.y = 0;
-    } else {
-      state->player_velocity.y += Y_GRAVITY_ACCELERATION;
-    }
-  } else if (type == KEY_PRESSED && type != KEY_RELEASED) {
-    switch (key) {
-      // TODO: Arjun commented this out since H_STEP undefined in new project
-    // case LEFT_ARROW:
-    //   translation.x = -H_STEP;
-    //   break;
-    // case RIGHT_ARROW:
-    //   translation.x = H_STEP;
-    //   break;
-    case UP_ARROW:
-      state->jumping = true;
-      state->player_velocity.y = JUMP_INITIAL_VELOCITY;
-      // translation.y = V_STEP;
-      break;
-    case DOWN_ARROW:
-      state->ducking = true;
-      /*
-      if (body_get_centroid(player).y > START_POS.y) {
-        translation.y = -V_STEP;
-      }
-      */
-      state->player_velocity.y = DUCK_INITIAL_VELOCITY;
-      break;
-    }
-    vector_t new_centroid =
-        vec_add(body_get_centroid(player), state->player_velocity);
-    body_set_centroid(player, new_centroid);
+
+void revert_jump(state_t* state){
+  if (state->player_velocity.y <=
+      -JUMP_INITIAL_VELOCITY) { // TODO: Replace with if colliding with ground
+    state->player_velocity.y = 0;
+    state->player_motion = REGULAR;
+  } else {
+    printf("I'm here!\n");
+    state->player_velocity.y += Y_GRAVITY_ACCELERATION;
   }
 }
 
+void revert_duck(state_t* state){
+  if (state->player_velocity.y >
+      -DUCK_INITIAL_VELOCITY) { // TODO: Replace with if colliding with ground
+    state->player_velocity.y = 0;
+    state->player_motion = REGULAR;
+  } else {
+    state->player_velocity.y += DUCK_ACCELERATION_CHANGE;
+  }
+}
+
+void on_key(char key, key_event_type_t type, double held_time, state_t *state) {
+  // vector_t translation = (vector_t){0, 0};
+  if (type == KEY_PRESSED && state->player_motion == REGULAR) {
+    switch (key) {
+    case UP_ARROW:
+      printf("Uppies!\n");
+      state->player_velocity.y = JUMP_INITIAL_VELOCITY;
+      state->player_motion = JUMP;
+      break;
+    case DOWN_ARROW:
+      state->player_velocity.y = DUCK_INITIAL_VELOCITY;
+      state->player_motion = DUCK;
+      break;
+    }
+  }
+}
+void manipulate_player(state_t* state){
+  switch (state->player_motion){
+    case JUMP:
+      revert_jump(state);
+      break;
+    case DUCK:
+      revert_duck(state);
+      break;
+    case REGULAR:
+      sdl_on_key((key_handler_t)on_key);
+      break;
+    default:
+      fprintf(stderr, "Player is not moving in a valid way.");
+      exit(2);
+  }
+  body_t *player = scene_get_body(state->scene, 0);
+  vector_t new_centroid =
+        vec_add(body_get_centroid(player), state->player_velocity);
+  body_set_centroid(player, new_centroid);
+}
 void start_game(state_t *state) {
   // TODO: Week 2 - Change state of screen to game
 }
@@ -232,20 +246,18 @@ state_t *emscripten_init() {
 
   srand(time(NULL));
   state->scene = scene_init();
-  state->ducking = false;
-  state->jumping = false;
+  state->player_motion = REGULAR;
   state->player_velocity = (vector_t){.x = 0, .y = 0};
 
   body_t *player = make_player_sprite(OUTER_RADIUS, INNER_RADIUS, VEC_ZERO);
   body_set_centroid(player, RESET_POS);
   state->player = player;
   scene_add_body(state->scene, player);
-  asset_make_image_with_body(PLAYER_SPRITE_PATH, player);
 
   // TODO: Initialize all 3 backgrounds
   SDL_Rect rect = (SDL_Rect){.x = 0, .y = 0, .w = MAX.x, .h = MAX.y};
   asset_make_image(BACKGROUND_PATH, rect);
-
+  asset_make_image_with_body(PLAYER_SPRITE_PATH, player);
   sdl_on_key((key_handler_t)on_key);
 
   // TODO: Activate
@@ -263,18 +275,17 @@ bool emscripten_main(state_t *state) {
 
   // wrap_backgrounds(state);
   // update_bg_velocity(state);
-
+  
   list_t *body_assets = asset_get_asset_list();
   for (size_t i = 0; i < list_size(body_assets); i++) {
     asset_render(list_get(body_assets, i));
   }
-
   // spawn_obstacles(state);
   // clean_elapsed_obstacles(state);
 
   sdl_show();
   scene_tick(state->scene, dt);
-
+  manipulate_player(state);
   return false;
 }
 
