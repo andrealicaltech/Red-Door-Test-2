@@ -247,10 +247,10 @@ state_t *emscripten_init() {
 
   state_t *state = malloc(sizeof(state_t));
   state->scene = scene_init();
+  
   state->current_game_screen = HOME;
 
   srand(time(NULL));
-  state->scene = scene_init();
   state->ducking = false;
   state->jumping = false;
   state->player_velocity = (vector_t){.x = 0, .y = 0};
