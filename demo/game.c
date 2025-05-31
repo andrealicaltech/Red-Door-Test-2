@@ -60,7 +60,7 @@ const color_t QUESADILLA_COLOR = (color_t){1, 1, 0}; // coin
 
 const size_t BODY_ASSETS = 1;
 const char *PLAYER_SPRITE_PATH = "assets/frogger.png";
-const char *BACKGROUND_PATH = "assets/frogger-background.png";
+const char *BACKGROUND_PATH = "assets/background.jpg";
 
 const double OBSTACLE_START_WAIT_TIME = 3.0;
 const double GAME_OVER_WAIT_TIME = 3.0;
