@@ -43,7 +43,8 @@ const double DUCK_ACCELERATION_CHANGE = 0;
 const double JUMP_INITIAL_VELOCITY = 10;
 const double Y_GRAVITY_ACCELERATION = -0.5;
 
-// Background and obstacle velocity. Background 3 is the top layer (i.e. the velocity of the game)
+// Background and obstacle velocity. Background 3 is the top layer (i.e. the
+// velocity of the game)
 const double INIT_BACKGROUND_1_SKY_VELOCITY = 50.0;
 const double INIT_BACKGROUND_2_TREE_VELOCITY = 100.0;
 const double INIT_BACKGROUND_3_BUILDINGS_VELOCITY = 150.0;
@@ -89,13 +90,12 @@ struct state {
 
   GAME_SCREEN current_game_screen;
   bool is_game_over;
-  
+
   background bg;
   body_t *player;
   PLAYER_MOTION player_motion;
   vector_t player_velocity;
 
-  
   // Obstacles
   double time_till_next_obstacle;
 
@@ -106,7 +106,6 @@ struct state {
   size_t points;
   list_t *all_points;
 };
-
 
 void wrap_edges(body_t *body) {
   vector_t centroid = body_get_centroid(body);
@@ -205,16 +204,16 @@ body_t *make_obstacle(double outer_radius, double inner_radius,
   return quesadilla;
 }
 
-
 void spawn_obstacles(state_t *state) {
   /*
-  Called in the main loop. 
-  Check if the timer to spawn the next obstacle has elapsed. 
-  If so, add an obstacle to the edge of the far left of the screen and reset a random timer
+  Called in the main loop.
+  Check if the timer to spawn the next obstacle has elapsed.
+  If so, add an obstacle to the edge of the far left of the screen and reset a
+  random timer
   */
-  if (state -> time_till_next_obstacle <= 0.0){
+  if (state->time_till_next_obstacle <= 0.0) {
     // TODO: Create an obstacle
-    state->time_till_next_obstacle =  mod_d((double)rand(), AVG_TIME_BULLETS);
+    state->time_till_next_obstacle = mod_d((double)rand(), AVG_TIME_BULLETS);
   }
 }
 
@@ -303,7 +302,7 @@ state_t *emscripten_init() {
 
 bool emscripten_main(state_t *state) {
   double dt = time_since_last_tick();
-  
+
   sdl_clear();
   wrap_backgrounds(state);
   update_bg_velocity(state);
