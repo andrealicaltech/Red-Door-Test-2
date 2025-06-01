@@ -66,11 +66,7 @@ typedef enum {
   GAME = 'G'
 } GAME_SCREEN;
 
-typedef enum {
-  REGULAR = 0,
-  JUMP = 1,
-  DUCK = 2
-} PLAYER_MOTION;
+typedef enum { REGULAR = 0, JUMP = 1, DUCK = 2 } PLAYER_MOTION;
 
 struct state {
   GAME_SCREEN current_game_screen;
@@ -123,7 +119,7 @@ void wrap_edges(body_t *body) {
 
 // TODO - Amudhan
 
-void revert_jump(state_t* state){
+void revert_jump(state_t *state) {
   if (state->player_velocity.y <=
       -JUMP_INITIAL_VELOCITY) { // TODO: Replace with if colliding with ground
     state->player_velocity.y = 0;
@@ -134,7 +130,7 @@ void revert_jump(state_t* state){
   }
 }
 
-void revert_duck(state_t* state){
+void revert_duck(state_t *state) {
   if (state->player_velocity.y >
       -DUCK_INITIAL_VELOCITY) { // TODO: Replace with if colliding with ground
     state->player_velocity.y = 0;
@@ -160,24 +156,24 @@ void on_key(char key, key_event_type_t type, double held_time, state_t *state) {
     }
   }
 }
-void manipulate_player(state_t* state){
-  switch (state->player_motion){
-    case JUMP:
-      revert_jump(state);
-      break;
-    case DUCK:
-      revert_duck(state);
-      break;
-    case REGULAR:
-      sdl_on_key((key_handler_t)on_key);
-      break;
-    default:
-      fprintf(stderr, "Player is not moving in a valid way.");
-      exit(2);
+void manipulate_player(state_t *state) {
+  switch (state->player_motion) {
+  case JUMP:
+    revert_jump(state);
+    break;
+  case DUCK:
+    revert_duck(state);
+    break;
+  case REGULAR:
+    sdl_on_key((key_handler_t)on_key);
+    break;
+  default:
+    fprintf(stderr, "Player is not moving in a valid way.");
+    exit(2);
   }
   body_t *player = scene_get_body(state->scene, 0);
   vector_t new_centroid =
-        vec_add(body_get_centroid(player), state->player_velocity);
+      vec_add(body_get_centroid(player), state->player_velocity);
   body_set_centroid(player, new_centroid);
 }
 void start_game(state_t *state) {
@@ -234,7 +230,6 @@ body_t *make_player_sprite(double outer_radius, double inner_radius,
   return froggy;
 }
 
-
 state_t *emscripten_init() {
 
   asset_cache_init();
@@ -275,7 +270,7 @@ bool emscripten_main(state_t *state) {
 
   // wrap_backgrounds(state);
   // update_bg_velocity(state);
-  
+
   list_t *body_assets = asset_get_asset_list();
   for (size_t i = 0; i < list_size(body_assets); i++) {
     asset_render(list_get(body_assets, i));
