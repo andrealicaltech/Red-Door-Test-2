@@ -205,6 +205,14 @@ body_t *make_obstacle(double outer_radius, double inner_radius,
   return quesadilla;
 }
 
+double mod_d(double a, double b) {
+  /*
+  Equivalent to a % b. Cast (a/b) to an int and multiply that by b. Return
+  difference from a
+  */
+  return a - (int)(a / b) * b;
+}
+
 
 void spawn_obstacles(state_t *state) {
   /*
@@ -214,7 +222,7 @@ void spawn_obstacles(state_t *state) {
   */
   if (state -> time_till_next_obstacle <= 0.0){
     // TODO: Create an obstacle
-    state->time_till_next_obstacle =  mod_d((double)rand(), AVG_TIME_BULLETS);
+    state->time_till_next_obstacle =  mod_d((double)rand(), AVG_TIME_OBSTACLES);
   }
 }
 
