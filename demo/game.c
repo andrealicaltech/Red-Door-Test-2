@@ -29,7 +29,8 @@ const size_t OBSTACLE_HW = 50;
 
 // TODO: Make sure x-distance covered by jump is less than 50
 const size_t OBS_SPACING[4] = {0, 50, 100, 150};
-const size_t MAX_CONSEC_OBSTACLES = 5;
+const size_t MAX_STACKED_OBSTACLES = 5;
+const double AVG_TIME_OBSTACLES = 5.0;
 
 // pts of player depending on action
 const size_t PLAYER_STANDING_PTS = 16;
@@ -42,10 +43,16 @@ const double DUCK_ACCELERATION_CHANGE = 0;
 const double JUMP_INITIAL_VELOCITY = 10;
 const double Y_GRAVITY_ACCELERATION = -0.5;
 
-// Background and obstacle velocity
+// Background and obstacle velocity. Background 3 is the top layer (i.e. the velocity of the game)
 const double INIT_BACKGROUND_1_SKY_VELOCITY = 50.0;
 const double INIT_BACKGROUND_2_TREE_VELOCITY = 100.0;
 const double INIT_BACKGROUND_3_BUILDINGS_VELOCITY = 150.0;
+
+// Background positions
+vector_t SKY_BACKGROUND = {4000, 500};
+vector_t TREE_BACKGROUND = {4000, 400};
+vector_t BUILD_BACKGROUND = {4000, 300};
+size_t PANEL_WIDTH = 4000;
 
 const color_t SPRITE_COLOR = (color_t){0.0, 0.0, 0.0};
 const color_t OBS_COLOR = (color_t){0.2, 0.2, 0.3};  // going to be tables
@@ -53,7 +60,7 @@ const color_t QUESADILLA_COLOR = (color_t){1, 1, 0}; // coin
 
 const size_t BODY_ASSETS = 1;
 const char *PLAYER_SPRITE_PATH = "assets/frogger.png";
-const char *BACKGROUND_PATH = "assets/frogger-background.png";
+const char *BACKGROUND_PATH = "assets/background.jpg";
 
 const double OBSTACLE_START_WAIT_TIME = 3.0;
 const double GAME_OVER_WAIT_TIME = 3.0;
@@ -68,19 +75,30 @@ typedef enum {
 
 typedef enum { REGULAR = 0, JUMP = 1, DUCK = 2 } PLAYER_MOTION;
 
-struct state {
-  GAME_SCREEN current_game_screen;
-
-  body_t *player;
-  PLAYER_MOTION player_motion;
-  vector_t player_velocity;
-  scene_t *scene;
-
+typedef struct {
   vector_t bg_1_sky_vel;
   vector_t bg_2_tree_vel;
   vector_t bg_3_building_vel;
+  vector_t sky_pos;
+  vector_t tree_pos;
+  vector_t build_pos;
+} background;
 
+struct state {
+  scene_t *scene;
+
+  GAME_SCREEN current_game_screen;
   bool is_game_over;
+  
+  background bg;
+  body_t *player;
+  PLAYER_MOTION player_motion;
+  vector_t player_velocity;
+
+  
+  // Obstacles
+  double time_till_next_obstacle;
+
   // Powerups
   bool is_revival_activated;
   bool is_magnet_activated;
@@ -89,20 +107,6 @@ struct state {
   list_t *all_points;
 };
 
-body_t *make_obstacle(double outer_radius, double inner_radius,
-                      vector_t center) {
-  center.y += inner_radius;
-  list_t *c = list_init(QUESADILLA_PTS, free);
-  for (size_t i = 0; i < QUESADILLA_PTS; i++) {
-    double angle = 2 * M_PI * i / QUESADILLA_PTS;
-    vector_t *v = malloc(sizeof(*v));
-    *v = (vector_t){center.x + inner_radius * cos(angle),
-                    center.y + outer_radius * sin(angle)};
-    list_add(c, v);
-  }
-  body_t *quesadilla = body_init(c, 1, QUESADILLA_COLOR);
-  return quesadilla;
-}
 
 void wrap_edges(body_t *body) {
   vector_t centroid = body_get_centroid(body);
@@ -185,15 +189,38 @@ void end_game(state_t *state) {
   // GAME_OVER_WAIT_TIME seconds
 }
 
-// Arjun
+// TODO: Change appearance of quesedilla
+body_t *make_obstacle(double outer_radius, double inner_radius,
+                      vector_t center) {
+  center.y += inner_radius;
+  list_t *c = list_init(QUESADILLA_PTS, free);
+  for (size_t i = 0; i < QUESADILLA_PTS; i++) {
+    double angle = 2 * M_PI * i / QUESADILLA_PTS;
+    vector_t *v = malloc(sizeof(*v));
+    *v = (vector_t){center.x + inner_radius * cos(angle),
+                    center.y + outer_radius * sin(angle)};
+    list_add(c, v);
+  }
+  body_t *quesadilla = body_init(c, 1, QUESADILLA_COLOR);
+  return quesadilla;
+}
+
+
 void spawn_obstacles(state_t *state) {
-  // TODO: Week 1 - Spawn obstacles at a random interval. The right end should
-  // be at the far left of the screen
+  /*
+  Called in the main loop. 
+  Check if the timer to spawn the next obstacle has elapsed. 
+  If so, add an obstacle to the edge of the far left of the screen and reset a random timer
+  */
+  if (state -> time_till_next_obstacle <= 0.0){
+    // TODO: Create an obstacle
+    state->time_till_next_obstacle =  mod_d((double)rand(), AVG_TIME_BULLETS);
+  }
 }
 
 // Arjun
 void clean_elapsed_obstacles(state_t *state) {
-  // TODO: Week 1 - Free tables after they exit the viewport
+  // TODO: Week 1 - Free obstacles after they exit the viewport
 }
 
 // Andrea
@@ -201,9 +228,18 @@ void update_bg_velocity(state_t *state) {
   // TODO: Week 2 - Update velocity
 }
 
-// Andrea
+// Wrap backgrounds for scrolling effect
 void wrap_backgrounds(state_t *state) {
-  // TODO: Week 1 - Wrap backgrounds
+  ssize_t limit = -(PANEL_WIDTH - MAX.x);
+  if (state->bg.sky_pos.x <= limit) {
+    state->bg.sky_pos.x = 0.0f;
+  }
+  if (state->bg.tree_pos.x <= limit) {
+    state->bg.tree_pos.x = 0.0f;
+  }
+  if (state->bg.build_pos.x <= limit) {
+    state->bg.build_pos.x = 0.0f;
+  }
 }
 
 void spawn_coins(state_t *state) {
@@ -237,6 +273,7 @@ state_t *emscripten_init() {
 
   state_t *state = malloc(sizeof(state_t));
   state->scene = scene_init();
+
   state->current_game_screen = HOME;
 
   srand(time(NULL));
@@ -266,17 +303,19 @@ state_t *emscripten_init() {
 
 bool emscripten_main(state_t *state) {
   double dt = time_since_last_tick();
+  
   sdl_clear();
-
-  // wrap_backgrounds(state);
-  // update_bg_velocity(state);
+  wrap_backgrounds(state);
+  update_bg_velocity(state);
 
   list_t *body_assets = asset_get_asset_list();
   for (size_t i = 0; i < list_size(body_assets); i++) {
     asset_render(list_get(body_assets, i));
   }
-  // spawn_obstacles(state);
-  // clean_elapsed_obstacles(state);
+
+  state->time_till_next_obstacle -= dt;
+  spawn_obstacles(state);
+  clean_elapsed_obstacles(state);
 
   sdl_show();
   scene_tick(state->scene, dt);
