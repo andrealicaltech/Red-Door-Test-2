@@ -11,26 +11,28 @@
 #include "forces.h"
 #include "sdl_wrapper.h"
 
+/*
+MARK: Constants
+*/
 const vector_t MIN = {0, 0};
 const vector_t MAX = {1000, 500};
 
-const vector_t START_POS = {100, 30};
-const vector_t RESET_POS = {100, 45};
-const vector_t BASE_OBJ_VEL = {
-    30, 0}; // starting velocity, can multiply to increase difficulty
-const double EXTRA_VEL_MULT = 10;
-const double VEL_MULT_PROB = 0.2;
+const vector_t PLAYER_DIMS = {10, 60};
+const vector_t PLAYER_CENTER_POS = {500, 250};
+const char *PLAYER_INFO = "player";
 
 const double OUTER_RADIUS = 15;
 const double INNER_RADIUS = 15;
 
+const double MIN_REACTION_TIME_S = 1.5;
+
 // obstacle = table (square 50 x 50) can spawn multiple obstacles in a row
 const size_t OBSTACLE_HW = 50;
-
-// TODO: Make sure x-distance covered by jump is less than 50
-const size_t OBS_SPACING[4] = {0, 50, 100, 150};
 const size_t MAX_STACKED_OBSTACLES = 5;
+const double FIRST_OBSTACLE_WAIT_TIME = 3.0;
+const size_t OBSTACLE_CAPACITY = 1024;
 const double AVG_TIME_OBSTACLES = 5.0;
+const char *OBSTACLE_INFO = "obstacle";
 
 // pts of player depending on action
 const size_t PLAYER_STANDING_PTS = 16;
@@ -38,12 +40,13 @@ const size_t PLAYER_RUNNING = 31;
 const size_t QUESADILLA_PTS = 20;
 
 // player movements
-const double DUCK_INITIAL_VELOCITY = 0;
+const vector_t DUCK_INITIAL_VELOCITY = (vector_t) {.x=0, .y=0};
+const vector_t JUMP_INITIAL_VELOCITY = (vector_t) {.x=0, .y=10};
+const double Y_GRAV_ACCELERATION_MAG = 50.0;
 const double DUCK_ACCELERATION_CHANGE = 0;
-const double JUMP_INITIAL_VELOCITY = 10;
-const double Y_GRAVITY_ACCELERATION = -0.5;
 
-// Background and obstacle velocity. Background 3 is the top layer (i.e. the velocity of the game)
+// Background and obstacle velocity. Background 3 is the top layer (i.e. the
+// velocity of the game)
 const double INIT_BACKGROUND_1_SKY_VELOCITY = 50.0;
 const double INIT_BACKGROUND_2_TREE_VELOCITY = 100.0;
 const double INIT_BACKGROUND_3_BUILDINGS_VELOCITY = 150.0;
@@ -82,22 +85,21 @@ typedef struct {
   vector_t sky_pos;
   vector_t tree_pos;
   vector_t build_pos;
-} background;
+} background_t;
 
 struct state {
   scene_t *scene;
 
   GAME_SCREEN current_game_screen;
   bool is_game_over;
-  
-  background bg;
+
+  background_t bg;
   body_t *player;
   PLAYER_MOTION player_motion;
-  vector_t player_velocity;
 
-  
   // Obstacles
   double time_till_next_obstacle;
+  size_t n_queued_obstacles;
 
   // Powerups
   bool is_revival_activated;
@@ -107,63 +109,81 @@ struct state {
   list_t *all_points;
 };
 
-
-void wrap_edges(body_t *body) {
-  vector_t centroid = body_get_centroid(body);
-  if (centroid.x > MAX.x) {
-    body_set_centroid(body, (vector_t){MIN.x, centroid.y});
-  } else if (centroid.x < MIN.x) {
-    body_set_centroid(body, (vector_t){MAX.x, centroid.y});
-  } else if (centroid.y > MAX.y) {
-    body_set_centroid(body, (vector_t){centroid.x, MIN.y});
-  } else if (centroid.y < MIN.y) {
-    body_set_centroid(body, (vector_t){centroid.x, MAX.y});
+/*
+MARK: Player control and kinematics
+*/
+body_t *make_player_sprite(double outer_radius, double inner_radius,
+                           vector_t center) {
+  // TODO: Replace with player sprite asset
+  center.y += inner_radius;
+  list_t *c = list_init(20, free);
+  for (size_t i = 0; i < 20; i++) {
+    double angle = 2 * M_PI * i / 20;
+    vector_t *v = malloc(sizeof(*v));
+    *v = (vector_t){center.x + inner_radius * cos(angle),
+                    center.y + outer_radius * sin(angle)};
+    list_add(c, v);
   }
-}
-
-// TODO - Amudhan
-
-void revert_jump(state_t *state) {
-  if (state->player_velocity.y <=
-      -JUMP_INITIAL_VELOCITY) { // TODO: Replace with if colliding with ground
-    state->player_velocity.y = 0;
-    state->player_motion = REGULAR;
-  } else {
-    printf("I'm here!\n");
-    state->player_velocity.y += Y_GRAVITY_ACCELERATION;
-  }
+  body_t *froggy = body_init_with_info(c, 1, SPRITE_COLOR, (void *) PLAYER_INFO, NULL);
+  return froggy;
 }
 
 void revert_duck(state_t *state) {
-  if (state->player_velocity.y >
-      -DUCK_INITIAL_VELOCITY) { // TODO: Replace with if colliding with ground
-    state->player_velocity.y = 0;
-    state->player_motion = REGULAR;
-  } else {
-    state->player_velocity.y += DUCK_ACCELERATION_CHANGE;
-  }
+  body_t *player_body = scene_get_body(state->scene, 0);
+  vector_t velocity = body_get_velocity(player_body);
+  
+  // if (velocity.y >
+  //     -DUCK_INITIAL_VELOCITY) { // TODO: Replace with if colliding with ground
+  //   state->player_velocity.y = 0;
+  //   state->player_motion = REGULAR;
+  // } else {
+  //   state->player_velocity.y += DUCK_ACCELERATION_CHANGE;
+  // }
+}
+
+vector_t get_curr_jump_vel(state_t *state){
+  // TODO: Calculate correct value required to guarantee can clear jump
+  return (vector_t) {.x=0, .y=JUMP_INITIAL_VELOCITY.y};
 }
 
 void on_key(char key, key_event_type_t type, double held_time, state_t *state) {
-  // vector_t translation = (vector_t){0, 0};
+  body_t *player_body = scene_get_body(state->scene, 0);
+  assert(strcmp(body_get_info(player_body), PLAYER_INFO) == 0);
+
   if (type == KEY_PRESSED && state->player_motion == REGULAR) {
     switch (key) {
     case UP_ARROW:
-      printf("Uppies!\n");
-      state->player_velocity.y = JUMP_INITIAL_VELOCITY;
+      printf("Up key pressed in regular motion!\n");
+      body_set_velocity(player_body, get_curr_jump_vel(state));
       state->player_motion = JUMP;
       break;
     case DOWN_ARROW:
-      state->player_velocity.y = DUCK_INITIAL_VELOCITY;
+    printf("Down key pressed in regular motion");
+    body_set_velocity(player_body, DUCK_INITIAL_VELOCITY);
       state->player_motion = DUCK;
       break;
     }
   }
 }
-void manipulate_player(state_t *state) {
+
+void manipulate_player(state_t *state, double dt) {
+  body_t *player_body = scene_get_body(state->scene, 0);
+  vector_t player_centroid = body_get_centroid(player_body);
+
   switch (state->player_motion) {
   case JUMP:
-    revert_jump(state);
+    // Applies a force over the current tick
+    if (player_centroid.y <= PLAYER_CENTER_POS.y){
+      printf("Changing to regular state\n");
+      state->player_motion = REGULAR;
+      body_set_velocity(player_body, (vector_t) {.x=0, .y=0});
+    } else {
+      vector_t current_player_vel = body_get_velocity(player_body);
+      printf("dely=%f\n", Y_GRAV_ACCELERATION_MAG*dt);
+      body_set_velocity(player_body, vec_subtract(
+        current_player_vel, (vector_t) {.x=0, .y=dt*Y_GRAV_ACCELERATION_MAG}
+      ));
+    }
     break;
   case DUCK:
     revert_duck(state);
@@ -175,11 +195,8 @@ void manipulate_player(state_t *state) {
     fprintf(stderr, "Player is not moving in a valid way.");
     exit(2);
   }
-  body_t *player = scene_get_body(state->scene, 0);
-  vector_t new_centroid =
-      vec_add(body_get_centroid(player), state->player_velocity);
-  body_set_centroid(player, new_centroid);
 }
+
 void start_game(state_t *state) {
   // TODO: Week 2 - Change state of screen to game
 }
@@ -189,20 +206,31 @@ void end_game(state_t *state) {
   // GAME_OVER_WAIT_TIME seconds
 }
 
-// TODO: Change appearance of quesedilla
-body_t *make_obstacle(double outer_radius, double inner_radius,
-                      vector_t center) {
-  center.y += inner_radius;
-  list_t *c = list_init(QUESADILLA_PTS, free);
-  for (size_t i = 0; i < QUESADILLA_PTS; i++) {
-    double angle = 2 * M_PI * i / QUESADILLA_PTS;
-    vector_t *v = malloc(sizeof(*v));
-    *v = (vector_t){center.x + inner_radius * cos(angle),
-                    center.y + outer_radius * sin(angle)};
-    list_add(c, v);
-  }
-  body_t *quesadilla = body_init(c, 1, QUESADILLA_COLOR);
-  return quesadilla;
+
+/*
+MARK: Obstacle code
+TODO: Move all of these to obstacles.h file in the future
+*/
+body_t *make_obstacle(size_t w, size_t h, vector_t center) {
+  list_t *c = list_init(4, free);
+  vector_t *v1 = malloc(sizeof(vector_t));
+  *v1 = (vector_t){0, 0};
+  list_add(c, v1);
+
+  vector_t *v2 = malloc(sizeof(vector_t));
+  *v2 = (vector_t){w, 0};
+  list_add(c, v2);
+
+  vector_t *v3 = malloc(sizeof(vector_t));
+  *v3 = (vector_t){w, h};
+  list_add(c, v3);
+
+  vector_t *v4 = malloc(sizeof(vector_t));
+  *v4 = (vector_t){0, h};
+  list_add(c, v4);
+  body_t *obstacle = body_init(c, 1, OBS_COLOR);
+  body_set_centroid(obstacle, center);
+  return obstacle;
 }
 
 double mod_d(double a, double b) {
@@ -213,23 +241,105 @@ double mod_d(double a, double b) {
   return a - (int)(a / b) * b;
 }
 
+double max_d(double a, double d){
+  return a > b ? a : b;
+}
 
-void spawn_obstacles(state_t *state) {
+vector_t get_obstacle_dims(body_t *obstacle){
+  assert(strcmp(body_get_info(obstacle), OBSTACLE_INFO) == 0);
+  return *((vector_t * ) list_get(body_get_shape(obstacle), 3));
+}
+
+/*
+  Kinematics-based calculation of the smallest distance before an obstacle 
+  at which the player can currently jump without colliding with the obstacle's vertical edge
+
+  `h_player`: distance between ground and player centroid
+  `h_obstacle`: distance between ground and top of obstacle
+*/
+double get_smallest_obst_clearing_dist(state_t *state, double h_player, double h_obstacle){
+  double u = get_curr_jump_vel(state).y;
+ 
+  double min_del_h = h_obstacle - h_player;
   /*
-  Called in the main loop. 
-  Check if the timer to spawn the next obstacle has elapsed. 
-  If so, add an obstacle to the edge of the far left of the screen and reset a random timer
+  Solve for t in the y-axis
+  h_o - h_p = ut - 0.5gt^2
+  which gives (u + sqrt(u^2 - 2g(h_o-h_p)))/g
   */
-  if (state -> time_till_next_obstacle <= 0.0){
-    // TODO: Create an obstacle
-    state->time_till_next_obstacle =  mod_d((double)rand(), AVG_TIME_OBSTACLES);
+  double time = (u + sqrt(u*u - 2*Y_GRAV_ACCELERATION_MAG*min_del_h))/Y_GRAV_ACCELERATION_MAG;
+  double vx = state->bg.bg_3_building_vel.x;
+  return vx / time;
+}
+
+double next_obst_x(state_t *state, body_t *last_obstacle){
+  /*
+  Guarrantee that if the player jumps from the latest possible point to clear the last obstacle in the queue, 
+  there is sufficient space before the next obstacle for them to jump at the earliest possible point 
+  and clear the obstacle.
+  */
+
+  vector_t last_obstacle_dims = get_obstacle_dims(last_obstacle);
+  vector_t curr_obst_speed = state->bg.bg_3_building_vel;
+
+  double expected_x_dist_with_jump = (2 * get_curr_jump_vel(state).y / Y_GRAV_ACCELERATION_MAG) * curr_obst_speed.x;
+  double furthest_poss_x = (body_get_centroid(last_obstacle).x - last_obstacle_dims.x - get_smallest_obst_clearing_dist(state, PLAYER_DIMS.y, last_obstacle.y)) + expected_x_dist_with_jump;
+
+  // Additional random spacing between obstacles
+  double running_space = rand() % ((int) MAX.x);
+  // if running space is low, need to guarantee that we give the player enough distance to jump such that they clear the height of the obstacle
+  double clearing_space = get_smallest_obst_clearing_dist(state, PLAYER_DIMS.y, OBSTACLE_HW);
+
+  // It is possible that this sum is small enough that it doesn't given reasonable reaction time for a player
+  return max_d(furthest_poss_x + running_space + clearing_space, MIN_REACTION_TIME_S*curr_obst_speed.x);
+}
+
+void update_obstacles(state_t *state) {
+  /*
+  Called in the main loop.
+  Check if the timer to spawn the next obstacle has elapsed.
+  If so, add an obstacle to the edge of the far left of the screen and reset a
+  random timer
+  */
+  if (state->time_till_next_obstacle <= 0.0) {
+    double width = (rand() % MAX_STACKED_OBSTACLES) * OBSTACLE_HW;
+    double height = OBSTACLE_HW;
+
+    body_t *last_obstacle = scene_get_body(state->scene, 1 + state->n_queued_obstacles);
+    vector_t new_centroid = (vector_t) {
+      .x=(body_get_centroid(last_obstacle)).x + next_obst_x(state, last_obstacle),
+      .y=(PLAYER_CENTER_POS.y - PLAYER_DIMS.y/2) + OBSTACLE_HW // TODO
+    };
+    body_t *new_obstacle = make_obstacle(width, height, new_centroid);
+    body_set_velocity(new_obstacle, state->bg.bg_3_building_vel);
+    
+    state->n_queued_obstacles += 1;
+    state->time_till_next_obstacle = mod_d((double)rand(), AVG_TIME_OBSTACLES);
   }
 }
 
 // Arjun
-void clean_elapsed_obstacles(state_t *state) {
-  // TODO: Week 1 - Free obstacles after they exit the viewport
+void clean_obstacles(state_t *state) {
+  /*
+  Removes obstacles after they exit the viewport
+  */
+
+  // First obstacle is always 
+ for (size_t i = 1; i < scene_bodies(state->scene); i++){
+  body_t *body = scene_get_body(scene, i);
+  if (strcmp(body_get_info(body), OBSTACLE_INFO) == 0){
+    vector_t obst_pos = body_get_centroid(body);
+    if (obst_pos.x > MAX.x){
+      body_free(body);
+      state->n_queued_obstacles -= 1;
+    }
+  }
+ }
+
 }
+
+/*
+MARK: Backgrounds
+*/
 
 // Andrea
 void update_bg_velocity(state_t *state) {
@@ -250,6 +360,10 @@ void wrap_backgrounds(state_t *state) {
   }
 }
 
+/*
+MARK: Coins
+*/
+
 void spawn_coins(state_t *state) {
   // TODO: Week 2 - spawn coins at random intervals
 }
@@ -258,22 +372,9 @@ void clean_elapsed_coins(state_t *state) {
   // TODO: Week 2  - Remove coins after they hit the end of the screen
 }
 
-body_t *make_player_sprite(double outer_radius, double inner_radius,
-                           vector_t center) {
-  // TODO: Replace with player sprite asset
-  center.y += inner_radius;
-  list_t *c = list_init(20, free);
-  for (size_t i = 0; i < 20; i++) {
-    double angle = 2 * M_PI * i / 20;
-    vector_t *v = malloc(sizeof(*v));
-    *v = (vector_t){center.x + inner_radius * cos(angle),
-                    center.y + outer_radius * sin(angle)};
-    list_add(c, v);
-  }
-  body_t *froggy = body_init(c, 1, SPRITE_COLOR);
-  return froggy;
-}
-
+/*
+MARK: Emscripten
+*/
 state_t *emscripten_init() {
 
   asset_cache_init();
@@ -287,18 +388,23 @@ state_t *emscripten_init() {
   srand(time(NULL));
   state->scene = scene_init();
   state->player_motion = REGULAR;
-  state->player_velocity = (vector_t){.x = 0, .y = 0};
 
+  // Needs to be the first one
   body_t *player = make_player_sprite(OUTER_RADIUS, INNER_RADIUS, VEC_ZERO);
-  body_set_centroid(player, RESET_POS);
+  body_set_centroid(player, PLAYER_CENTER_POS);
   state->player = player;
   scene_add_body(state->scene, player);
 
   // TODO: Initialize all 3 backgrounds
+  // TODO: Initialize state-bg here?
   SDL_Rect rect = (SDL_Rect){.x = 0, .y = 0, .w = MAX.x, .h = MAX.y};
   asset_make_image(BACKGROUND_PATH, rect);
   asset_make_image_with_body(PLAYER_SPRITE_PATH, player);
   sdl_on_key((key_handler_t)on_key);
+
+  // Obstacles
+  state->time_till_next_obstacle = FIRST_OBSTACLE_WAIT_TIME;
+  state->n_queued_obstacles = 0;
 
   // TODO: Activate
   state->is_revival_activated = false;
@@ -311,7 +417,7 @@ state_t *emscripten_init() {
 
 bool emscripten_main(state_t *state) {
   double dt = time_since_last_tick();
-  
+
   sdl_clear();
   wrap_backgrounds(state);
   update_bg_velocity(state);
@@ -322,12 +428,12 @@ bool emscripten_main(state_t *state) {
   }
 
   state->time_till_next_obstacle -= dt;
-  spawn_obstacles(state);
-  clean_elapsed_obstacles(state);
+  update_obstacles(state);
+  clean_obstacles(state);
 
   sdl_show();
   scene_tick(state->scene, dt);
-  manipulate_player(state);
+  manipulate_player(state, dt);
   return false;
 }
 
