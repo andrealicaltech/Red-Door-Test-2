@@ -40,8 +40,8 @@ const size_t PLAYER_RUNNING = 31;
 const size_t QUESADILLA_PTS = 20;
 
 // player movements
-const vector_t DUCK_INITIAL_VELOCITY = (vector_t) {.x=0, .y=0};
-const vector_t JUMP_INITIAL_VELOCITY = (vector_t) {.x=0, .y=10};
+const vector_t DUCK_INITIAL_VELOCITY = (vector_t){.x = 0, .y = 0};
+const vector_t JUMP_INITIAL_VELOCITY = (vector_t){.x = 0, .y = 10};
 const double Y_GRAV_ACCELERATION_MAG = 50.0;
 const double DUCK_ACCELERATION_CHANGE = 0;
 
@@ -124,16 +124,18 @@ body_t *make_player_sprite(double outer_radius, double inner_radius,
                     center.y + outer_radius * sin(angle)};
     list_add(c, v);
   }
-  body_t *froggy = body_init_with_info(c, 1, SPRITE_COLOR, (void *) PLAYER_INFO, NULL);
+  body_t *froggy =
+      body_init_with_info(c, 1, SPRITE_COLOR, (void *)PLAYER_INFO, NULL);
   return froggy;
 }
 
 void revert_duck(state_t *state) {
   body_t *player_body = scene_get_body(state->scene, 0);
   vector_t velocity = body_get_velocity(player_body);
-  
+
   // if (velocity.y >
-  //     -DUCK_INITIAL_VELOCITY) { // TODO: Replace with if colliding with ground
+  //     -DUCK_INITIAL_VELOCITY) { // TODO: Replace with if colliding with
+  //     ground
   //   state->player_velocity.y = 0;
   //   state->player_motion = REGULAR;
   // } else {
@@ -141,9 +143,9 @@ void revert_duck(state_t *state) {
   // }
 }
 
-vector_t get_curr_jump_vel(state_t *state){
+vector_t get_curr_jump_vel(state_t *state) {
   // TODO: Calculate correct value required to guarantee can clear jump
-  return (vector_t) {.x=0, .y=JUMP_INITIAL_VELOCITY.y};
+  return (vector_t){.x = 0, .y = JUMP_INITIAL_VELOCITY.y};
 }
 
 void on_key(char key, key_event_type_t type, double held_time, state_t *state) {
@@ -158,8 +160,8 @@ void on_key(char key, key_event_type_t type, double held_time, state_t *state) {
       state->player_motion = JUMP;
       break;
     case DOWN_ARROW:
-    printf("Down key pressed in regular motion");
-    body_set_velocity(player_body, DUCK_INITIAL_VELOCITY);
+      printf("Down key pressed in regular motion");
+      body_set_velocity(player_body, DUCK_INITIAL_VELOCITY);
       state->player_motion = DUCK;
       break;
     }
@@ -173,16 +175,17 @@ void manipulate_player(state_t *state, double dt) {
   switch (state->player_motion) {
   case JUMP:
     // Applies a force over the current tick
-    if (player_centroid.y <= PLAYER_CENTER_POS.y){
+    if (player_centroid.y <= PLAYER_CENTER_POS.y) {
       printf("Changing to regular state\n");
       state->player_motion = REGULAR;
-      body_set_velocity(player_body, (vector_t) {.x=0, .y=0});
+      body_set_velocity(player_body, (vector_t){.x = 0, .y = 0});
     } else {
       vector_t current_player_vel = body_get_velocity(player_body);
-      printf("dely=%f\n", Y_GRAV_ACCELERATION_MAG*dt);
-      body_set_velocity(player_body, vec_subtract(
-        current_player_vel, (vector_t) {.x=0, .y=dt*Y_GRAV_ACCELERATION_MAG}
-      ));
+      printf("dely=%f\n", Y_GRAV_ACCELERATION_MAG * dt);
+      body_set_velocity(
+          player_body,
+          vec_subtract(current_player_vel,
+                       (vector_t){.x = 0, .y = dt * Y_GRAV_ACCELERATION_MAG}));
     }
     break;
   case DUCK:
@@ -205,7 +208,6 @@ void end_game(state_t *state) {
   // TODO: Week 2 - End the game, show the score, and go back to home after
   // GAME_OVER_WAIT_TIME seconds
 }
-
 
 /*
 MARK: Obstacle code
@@ -241,56 +243,67 @@ double mod_d(double a, double b) {
   return a - (int)(a / b) * b;
 }
 
-double max_d(double a, double d){
-  return a > b ? a : b;
-}
+double max_d(double a, double d) { return a > b ? a : b; }
 
-vector_t get_obstacle_dims(body_t *obstacle){
+vector_t get_obstacle_dims(body_t *obstacle) {
   assert(strcmp(body_get_info(obstacle), OBSTACLE_INFO) == 0);
-  return *((vector_t * ) list_get(body_get_shape(obstacle), 3));
+  return *((vector_t *)list_get(body_get_shape(obstacle), 3));
 }
 
 /*
-  Kinematics-based calculation of the smallest distance before an obstacle 
-  at which the player can currently jump without colliding with the obstacle's vertical edge
+  Kinematics-based calculation of the smallest distance before an obstacle
+  at which the player can currently jump without colliding with the obstacle's
+  vertical edge
 
   `h_player`: distance between ground and player centroid
   `h_obstacle`: distance between ground and top of obstacle
 */
-double get_smallest_obst_clearing_dist(state_t *state, double h_player, double h_obstacle){
+double get_smallest_obst_clearing_dist(state_t *state, double h_player,
+                                       double h_obstacle) {
   double u = get_curr_jump_vel(state).y;
- 
+
   double min_del_h = h_obstacle - h_player;
   /*
   Solve for t in the y-axis
   h_o - h_p = ut - 0.5gt^2
   which gives (u + sqrt(u^2 - 2g(h_o-h_p)))/g
   */
-  double time = (u + sqrt(u*u - 2*Y_GRAV_ACCELERATION_MAG*min_del_h))/Y_GRAV_ACCELERATION_MAG;
+  double time = (u + sqrt(u * u - 2 * Y_GRAV_ACCELERATION_MAG * min_del_h)) /
+                Y_GRAV_ACCELERATION_MAG;
   double vx = state->bg.bg_3_building_vel.x;
   return vx / time;
 }
 
-double next_obst_x(state_t *state, body_t *last_obstacle){
+double next_obst_x(state_t *state, body_t *last_obstacle) {
   /*
-  Guarrantee that if the player jumps from the latest possible point to clear the last obstacle in the queue, 
-  there is sufficient space before the next obstacle for them to jump at the earliest possible point 
-  and clear the obstacle.
+  Guarrantee that if the player jumps from the latest possible point to clear
+  the last obstacle in the queue, there is sufficient space before the next
+  obstacle for them to jump at the earliest possible point and clear the
+  obstacle.
   */
 
   vector_t last_obstacle_dims = get_obstacle_dims(last_obstacle);
   vector_t curr_obst_speed = state->bg.bg_3_building_vel;
 
-  double expected_x_dist_with_jump = (2 * get_curr_jump_vel(state).y / Y_GRAV_ACCELERATION_MAG) * curr_obst_speed.x;
-  double furthest_poss_x = (body_get_centroid(last_obstacle).x - last_obstacle_dims.x - get_smallest_obst_clearing_dist(state, PLAYER_DIMS.y, last_obstacle.y)) + expected_x_dist_with_jump;
+  double expected_x_dist_with_jump =
+      (2 * get_curr_jump_vel(state).y / Y_GRAV_ACCELERATION_MAG) *
+      curr_obst_speed.x;
+  double furthest_poss_x =
+      (body_get_centroid(last_obstacle).x - last_obstacle_dims.x -
+       get_smallest_obst_clearing_dist(state, PLAYER_DIMS.y, last_obstacle.y)) +
+      expected_x_dist_with_jump;
 
   // Additional random spacing between obstacles
-  double running_space = rand() % ((int) MAX.x);
-  // if running space is low, need to guarantee that we give the player enough distance to jump such that they clear the height of the obstacle
-  double clearing_space = get_smallest_obst_clearing_dist(state, PLAYER_DIMS.y, OBSTACLE_HW);
+  double running_space = rand() % ((int)MAX.x);
+  // if running space is low, need to guarantee that we give the player enough
+  // distance to jump such that they clear the height of the obstacle
+  double clearing_space =
+      get_smallest_obst_clearing_dist(state, PLAYER_DIMS.y, OBSTACLE_HW);
 
-  // It is possible that this sum is small enough that it doesn't given reasonable reaction time for a player
-  return max_d(furthest_poss_x + running_space + clearing_space, MIN_REACTION_TIME_S*curr_obst_speed.x);
+  // It is possible that this sum is small enough that it doesn't given
+  // reasonable reaction time for a player
+  return max_d(furthest_poss_x + running_space + clearing_space,
+               MIN_REACTION_TIME_S * curr_obst_speed.x);
 }
 
 void update_obstacles(state_t *state) {
@@ -304,14 +317,16 @@ void update_obstacles(state_t *state) {
     double width = (rand() % MAX_STACKED_OBSTACLES) * OBSTACLE_HW;
     double height = OBSTACLE_HW;
 
-    body_t *last_obstacle = scene_get_body(state->scene, 1 + state->n_queued_obstacles);
-    vector_t new_centroid = (vector_t) {
-      .x=(body_get_centroid(last_obstacle)).x + next_obst_x(state, last_obstacle),
-      .y=(PLAYER_CENTER_POS.y - PLAYER_DIMS.y/2) + OBSTACLE_HW // TODO
+    body_t *last_obstacle =
+        scene_get_body(state->scene, 1 + state->n_queued_obstacles);
+    vector_t new_centroid = (vector_t){
+        .x = (body_get_centroid(last_obstacle)).x +
+             next_obst_x(state, last_obstacle),
+        .y = (PLAYER_CENTER_POS.y - PLAYER_DIMS.y / 2) + OBSTACLE_HW // TODO
     };
     body_t *new_obstacle = make_obstacle(width, height, new_centroid);
     body_set_velocity(new_obstacle, state->bg.bg_3_building_vel);
-    
+
     state->n_queued_obstacles += 1;
     state->time_till_next_obstacle = mod_d((double)rand(), AVG_TIME_OBSTACLES);
   }
@@ -323,18 +338,17 @@ void clean_obstacles(state_t *state) {
   Removes obstacles after they exit the viewport
   */
 
-  // First obstacle is always 
- for (size_t i = 1; i < scene_bodies(state->scene); i++){
-  body_t *body = scene_get_body(scene, i);
-  if (strcmp(body_get_info(body), OBSTACLE_INFO) == 0){
-    vector_t obst_pos = body_get_centroid(body);
-    if (obst_pos.x > MAX.x){
-      body_free(body);
-      state->n_queued_obstacles -= 1;
+  // First obstacle is always
+  for (size_t i = 1; i < scene_bodies(state->scene); i++) {
+    body_t *body = scene_get_body(scene, i);
+    if (strcmp(body_get_info(body), OBSTACLE_INFO) == 0) {
+      vector_t obst_pos = body_get_centroid(body);
+      if (obst_pos.x > MAX.x) {
+        body_free(body);
+        state->n_queued_obstacles -= 1;
+      }
     }
   }
- }
-
 }
 
 /*
