@@ -44,22 +44,18 @@ void on_key(char key, key_event_type_t type, double held_time, state_t *state) {
 
 void manipulate_player(state_t *state, double dt) {
   body_t *player_body = scene_get_body(state->scene, 0);
+  assert(strcmp(body_get_info(player_body), PLAYER_INFO) == 0);
+
   vector_t player_centroid = body_get_centroid(player_body);
+  vector_t player_velocity = body_get_velocity(player_body);
 
   switch (state->player_motion) {
   case JUMP:
-    // Applies a force over the current tick
-    if (player_centroid.y <= PLAYER_CENTER_POS.y) {
-      printf("Changing to regular state\n");
-      state->player_motion = REGULAR;
-      body_set_velocity(player_body, (vector_t){.x = 0, .y = 0});
+    if (player_velocity.y <= -JUMP_INITIAL_VELOCITY.y) { // TODO: Replace with if colliding with ground
+    body_set_velocity(player_body, VEC_ZERO);
+    state->player_motion = REGULAR;
     } else {
-      vector_t current_player_vel = body_get_velocity(player_body);
-      printf("dely=%f\n", Y_GRAV_ACCELERATION_MAG * dt);
-      body_set_velocity(
-          player_body,
-          vec_subtract(current_player_vel,
-                       (vector_t){.x = 0, .y = dt * Y_GRAV_ACCELERATION_MAG}));
+      body_set_velocity(player_body, vec_add(player_velocity, (vector_t) {.x=0, .y=-1.0*Y_GRAV_ACCELERATION_MAG_PER_S*dt}));
     }
     break;
   case DUCK:

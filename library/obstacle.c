@@ -45,8 +45,8 @@ double get_smallest_obst_clearing_dist(state_t *state, double h_player,
   top edge of the obstacle Solve for t in the y-axis h_o - h_p = ut - 0.5gt^2
   which gives (u + sqrt(u^2 - 2g(h_o-h_p)))/g
   */
-  double time = (u + sqrt(u * u - 2 * Y_GRAV_ACCELERATION_MAG * min_del_h)) /
-                Y_GRAV_ACCELERATION_MAG;
+  double time = (u + sqrt(u * u - 2 * Y_GRAV_ACCELERATION_MAG_PER_S * min_del_h)) /
+                Y_GRAV_ACCELERATION_MAG_PER_S;
   double vx = state->bg.bg_3_building_vel.x;
 
   // Return the x-distance that will be covered in that time
@@ -59,7 +59,7 @@ double next_obst_x(state_t *state, body_t *last_obstacle) {
   vector_t curr_obst_speed = state->bg.bg_3_building_vel;
 
   double expected_x_dist_with_jump =
-      (2 * get_curr_jump_vel(state).y / Y_GRAV_ACCELERATION_MAG) *
+      (2 * get_curr_jump_vel(state).y / Y_GRAV_ACCELERATION_MAG_PER_S) *
       curr_obst_speed.x;
   double furthest_poss_x =
       (last_obstacle_centroid.x - last_obstacle_dims.x -
@@ -85,6 +85,10 @@ void update_obstacles(state_t *state) {
     double width = (rand() % MAX_STACKED_OBSTACLES) * OBSTACLE_HW;
     double height = OBSTACLE_HW;
 
+    if (scene_bodies(state->scene) == 1){
+      return;
+    }
+
     body_t *last_obstacle =
         scene_get_body(state->scene, 1 + state->n_queued_obstacles);
     vector_t new_centroid = (vector_t){
@@ -102,6 +106,9 @@ void update_obstacles(state_t *state) {
 
 // Arjun
 void clean_obstacles(state_t *state) {
+  if (scene_bodies(state->scene) == 1){
+    return;
+  }
   // First obstacle is always the player
   for (size_t i = 1; i < scene_bodies(state->scene); i++) {
     body_t *body = scene_get_body(state->scene, i);
