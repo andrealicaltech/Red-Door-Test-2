@@ -8,19 +8,18 @@
 #include "asset.h"
 #include "asset_cache.h"
 #include "collision.h"
-#include "forces.h"
-#include "sdl_wrapper.h"
-#include "math_utils.h"
 #include "constants.h"
+#include "forces.h"
 #include "game_state.h"
 #include "kinematics.h"
+#include "math_utils.h"
 #include "obstacle.h"
-
+#include "sdl_wrapper.h"
 
 // Background positions
-const vector_t SKY_BACKGROUND = (vector_t) {.x = 4000, .y = 500};
-const vector_t TREE_BACKGROUND = (vector_t) {.x = 4000, .y = 400};
-const vector_t BUILD_BACKGROUND = (vector_t) {.x = 4000, .y = 300};
+const vector_t SKY_BACKGROUND = (vector_t){.x = 4000, .y = 500};
+const vector_t TREE_BACKGROUND = (vector_t){.x = 4000, .y = 400};
+const vector_t BUILD_BACKGROUND = (vector_t){.x = 4000, .y = 300};
 const size_t PANEL_WIDTH = 4000;
 
 /*
@@ -43,7 +42,6 @@ body_t *make_player_sprite(double outer_radius, double inner_radius,
   return froggy;
 }
 
-
 void start_game(state_t *state) {
   // TODO: Week 2 - Change state of screen to game
 }
@@ -52,7 +50,6 @@ void end_game(state_t *state) {
   // TODO: Week 2 - End the game, show the score, and go back to home after
   // GAME_OVER_WAIT_TIME seconds
 }
-
 
 /*
 MARK: Backgrounds

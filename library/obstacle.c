@@ -2,10 +2,10 @@
 #include <math.h>
 #include <stdlib.h>
 
-#include "constants.h"
 #include "collision.h"
-#include "kinematics.h"
+#include "constants.h"
 #include "game_state.h"
+#include "kinematics.h"
 #include "obstacle.h"
 
 body_t *make_obstacle(size_t w, size_t h, vector_t center) {
@@ -30,12 +30,10 @@ body_t *make_obstacle(size_t w, size_t h, vector_t center) {
   return obstacle;
 }
 
-
 vector_t get_obstacle_dims(body_t *obstacle) {
   assert(strcmp(body_get_info(obstacle), OBSTACLE_INFO) == 0);
   return *((vector_t *)list_get(body_get_shape(obstacle), 3));
 }
-
 
 double get_smallest_obst_clearing_dist(state_t *state, double h_player,
                                        double h_obstacle) {
@@ -43,9 +41,8 @@ double get_smallest_obst_clearing_dist(state_t *state, double h_player,
   double min_del_h = h_obstacle - h_player;
   /*
 
-  Find the time which results in the bottom of the player exactly hitting the top edge of the obstacle
-  Solve for t in the y-axis
-  h_o - h_p = ut - 0.5gt^2
+  Find the time which results in the bottom of the player exactly hitting the
+  top edge of the obstacle Solve for t in the y-axis h_o - h_p = ut - 0.5gt^2
   which gives (u + sqrt(u^2 - 2g(h_o-h_p)))/g
   */
   double time = (u + sqrt(u * u - 2 * Y_GRAV_ACCELERATION_MAG * min_del_h)) /
@@ -57,7 +54,7 @@ double get_smallest_obst_clearing_dist(state_t *state, double h_player,
 }
 
 double next_obst_x(state_t *state, body_t *last_obstacle) {
-vector_t last_obstacle_dims = get_obstacle_dims(last_obstacle);
+  vector_t last_obstacle_dims = get_obstacle_dims(last_obstacle);
   vector_t last_obstacle_centroid = body_get_centroid(last_obstacle);
   vector_t curr_obst_speed = state->bg.bg_3_building_vel;
 
@@ -66,7 +63,8 @@ vector_t last_obstacle_dims = get_obstacle_dims(last_obstacle);
       curr_obst_speed.x;
   double furthest_poss_x =
       (last_obstacle_centroid.x - last_obstacle_dims.x -
-       get_smallest_obst_clearing_dist(state, PLAYER_DIMS.y, last_obstacle_centroid.y)) +
+       get_smallest_obst_clearing_dist(state, PLAYER_DIMS.y,
+                                       last_obstacle_centroid.y)) +
       expected_x_dist_with_jump;
 
   // Additional random spacing between obstacles

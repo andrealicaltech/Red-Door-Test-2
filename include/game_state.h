@@ -1,13 +1,11 @@
 #ifndef __GAME_STATE_H__
 #define __GAME_STATE_H__
 
-
 #include <stdlib.h>
 
+#include "constants.h"
 #include "scene.h"
 #include "state.h"
-#include "constants.h"
-
 
 typedef enum {
   // Home includes leaderboard, store, start button
@@ -47,6 +45,5 @@ struct state {
   size_t points;
   list_t *all_points;
 };
-
 
 #endif

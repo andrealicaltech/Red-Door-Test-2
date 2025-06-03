@@ -1,17 +1,15 @@
 #ifndef __OBSTACLE_H__
 #define __OBSTACLE_H__
 
-
 #include "body.h"
-#include "vector.h"
-#include "state.h"
 #include "math_utils.h"
+#include "state.h"
+#include "vector.h"
 
 /*
 Makes a rectangular-shaped obstacle of the specified height and width
 */
 body_t *make_obstacle(size_t w, size_t h, vector_t center);
-
 
 /*
 Returns the width and height of an obstacle.
@@ -36,7 +34,8 @@ the last obstacle in the queue, there is sufficient space before the next
 obstacle for them to jump at the earliest possible point and clear the
 obstacle.
 
-`last_obstacle`: pointer to the most recently added obstacle, which should currently be the last scheduled obstacle to appear
+`last_obstacle`: pointer to the most recently added obstacle, which should
+currently be the last scheduled obstacle to appear
 */
 
 double next_obst_x(state_t *state, body_t *last_obstacle);
@@ -50,8 +49,9 @@ random timer
 void update_obstacles(state_t *state);
 
 /*
-Called in the main loop. Loops through all obstacles and removes those which have passed the right edge of the screen.
-Assumes that the first object in the state is the player
+Called in the main loop. Loops through all obstacles and removes those which
+have passed the right edge of the screen. Assumes that the first object in the
+state is the player
 */
 void clean_obstacles(state_t *state);
 

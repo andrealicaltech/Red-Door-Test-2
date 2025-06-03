@@ -1,11 +1,10 @@
 #ifndef __CONSTANTS_H__
 #define __CONSTANTS_H__
 
-
 #include <stdlib.h>
 
-#include "vector.h"
 #include "color.h"
+#include "vector.h"
 
 /*
 MARK: Constants
@@ -46,7 +45,6 @@ extern const double DUCK_ACCELERATION_CHANGE;
 extern const double INIT_BACKGROUND_1_SKY_VELOCITY;
 extern const double INIT_BACKGROUND_2_TREE_VELOCITY;
 extern const double INIT_BACKGROUND_3_BUILDINGS_VELOCITY;
-
 
 extern const color_t SPRITE_COLOR;
 extern const color_t OBS_COLOR;

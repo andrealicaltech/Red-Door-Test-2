@@ -1,9 +1,8 @@
 #include "body.h"
 #include "state.h"
 
-
-#include "game_state.h"
 #include "constants.h"
+#include "game_state.h"
 #include "kinematics.h"
 
 void revert_duck(state_t *state) {

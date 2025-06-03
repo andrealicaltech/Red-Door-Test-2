@@ -38,7 +38,6 @@ const double INIT_BACKGROUND_1_SKY_VELOCITY = 50.0;
 const double INIT_BACKGROUND_2_TREE_VELOCITY = 100.0;
 const double INIT_BACKGROUND_3_BUILDINGS_VELOCITY = 150.0;
 
-
 const color_t SPRITE_COLOR = (color_t){0.0, 0.0, 0.0};
 const color_t OBS_COLOR = (color_t){0.2, 0.2, 0.3};  // going to be tables
 const color_t QUESADILLA_COLOR = (color_t){1, 1, 0}; // coin
