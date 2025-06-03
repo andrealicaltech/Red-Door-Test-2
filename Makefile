@@ -1,7 +1,7 @@
 # List of demo programs
 # List of C files in "libraries" that you will write.
 # This also defines the order in which the tests are run.
-STUDENT_LIBS = asset asset_cache collision sdl_wrapper
+STUDENT_LIBS = asset asset_cache collision sdl_wrapper math_utils constants kinematics obstacle
 
 # find <dir> is the command to find files in a directory
 # ! -name .gitignore tells find to ignore the .gitignore
