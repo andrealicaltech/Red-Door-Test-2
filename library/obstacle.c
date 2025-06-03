@@ -45,8 +45,9 @@ double get_smallest_obst_clearing_dist(state_t *state, double h_player,
   top edge of the obstacle Solve for t in the y-axis h_o - h_p = ut - 0.5gt^2
   which gives (u + sqrt(u^2 - 2g(h_o-h_p)))/g
   */
-  double time = (u + sqrt(u * u - 2 * Y_GRAV_ACCELERATION_MAG_PER_S * min_del_h)) /
-                Y_GRAV_ACCELERATION_MAG_PER_S;
+  double time =
+      (u + sqrt(u * u - 2 * Y_GRAV_ACCELERATION_MAG_PER_S * min_del_h)) /
+      Y_GRAV_ACCELERATION_MAG_PER_S;
   double vx = state->bg.bg_3_building_vel.x;
 
   // Return the x-distance that will be covered in that time
@@ -85,7 +86,7 @@ void update_obstacles(state_t *state) {
     double width = (rand() % MAX_STACKED_OBSTACLES) * OBSTACLE_HW;
     double height = OBSTACLE_HW;
 
-    if (scene_bodies(state->scene) == 1){
+    if (scene_bodies(state->scene) == 1) {
       return;
     }
 
@@ -106,7 +107,7 @@ void update_obstacles(state_t *state) {
 
 // Arjun
 void clean_obstacles(state_t *state) {
-  if (scene_bodies(state->scene) == 1){
+  if (scene_bodies(state->scene) == 1) {
     return;
   }
   // First obstacle is always the player

@@ -28,8 +28,8 @@ const size_t QUESADILLA_PTS = 20;
 
 // player movements
 const vector_t DUCK_INITIAL_VELOCITY = (vector_t){.x = 0, .y = 0};
-const vector_t JUMP_INITIAL_VELOCITY = (vector_t){.x = 0, .y = 200.0};
-const double Y_GRAV_ACCELERATION_MAG_PER_S = 200.0;
+const vector_t JUMP_INITIAL_VELOCITY = (vector_t){.x = 0, .y = 250.0};
+const double Y_GRAV_ACCELERATION_MAG_PER_S = 300.0;
 const double DUCK_ACCELERATION_CHANGE = 0;
 
 // Background and obstacle velocity. Background 3 is the top layer (i.e. the

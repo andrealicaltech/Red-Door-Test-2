@@ -51,11 +51,17 @@ void manipulate_player(state_t *state, double dt) {
 
   switch (state->player_motion) {
   case JUMP:
-    if (player_velocity.y <= -JUMP_INITIAL_VELOCITY.y) { // TODO: Replace with if colliding with ground
-    body_set_velocity(player_body, VEC_ZERO);
-    state->player_motion = REGULAR;
+    if (player_velocity.y <=
+        -JUMP_INITIAL_VELOCITY
+             .y) { // TODO: Replace with if colliding with ground
+      body_set_velocity(player_body, VEC_ZERO);
+      state->player_motion = REGULAR;
     } else {
-      body_set_velocity(player_body, vec_add(player_velocity, (vector_t) {.x=0, .y=-1.0*Y_GRAV_ACCELERATION_MAG_PER_S*dt}));
+      body_set_velocity(
+          player_body,
+          vec_add(player_velocity,
+                  (vector_t){.x = 0,
+                             .y = -1.0 * Y_GRAV_ACCELERATION_MAG_PER_S * dt}));
     }
     break;
   case DUCK:
