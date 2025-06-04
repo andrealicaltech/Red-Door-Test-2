@@ -42,9 +42,9 @@ extern const double DUCK_ACCELERATION_CHANGE;
 
 // Background and obstacle velocity. Background 3 is the top layer (i.e. the
 // velocity of the game)
-extern const double INIT_BACKGROUND_1_SKY_VELOCITY;
-extern const double INIT_BACKGROUND_2_TREE_VELOCITY;
-extern const double INIT_BACKGROUND_3_BUILDINGS_VELOCITY;
+extern const vector_t INIT_BACKGROUND_1_SKY_VELOCITY;
+extern const vector_t INIT_BACKGROUND_2_TREE_VELOCITY;
+extern const vector_t INIT_BACKGROUND_3_BUILDINGS_VELOCITY;
 
 extern const color_t SPRITE_COLOR;
 extern const color_t OBS_COLOR;
@@ -53,6 +53,7 @@ extern const color_t QUESADILLA_COLOR;
 extern const size_t BODY_ASSETS;
 extern const char *PLAYER_SPRITE_PATH;
 extern const char *BACKGROUND_PATH;
+extern const char *OBSTACLE_SPRITE_PATH;
 
 extern const double OBSTACLE_START_WAIT_TIME;
 extern const double GAME_OVER_WAIT_TIME;

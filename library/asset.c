@@ -52,8 +52,8 @@ static asset_t *asset_init(asset_type_t ty, SDL_Rect bounding_box) {
 
 void asset_make_image_with_body(const char *filepath, body_t *body) {
   SDL_Texture *text = asset_cache_obj_get_or_create(ASSET_IMAGE, filepath);
-  SDL_Rect *rect = malloc(sizeof(SDL_Rect));
-  asset_t *asset = asset_init(ASSET_IMAGE, *rect);
+  SDL_Rect bounding_box = sdl_get_body_bounding_box(body);
+  asset_t *asset = asset_init(ASSET_IMAGE, bounding_box);
 
   image_asset_t *new = (image_asset_t *)asset;
   new->texture = text;
@@ -96,19 +96,15 @@ void asset_reset_asset_list() {
 list_t *asset_get_asset_list() { return ASSET_LIST; }
 
 void asset_remove_body(body_t *body) {
-  // Iterate in reverse to prevent indexing issues when removing from the list
-  for (size_t i = list_size(ASSET_LIST) - 1; i >= 0; i--) {
-    asset_t *asset = list_get(ASSET_LIST, i);
-    if (asset->type == ASSET_IMAGE) {
-      image_asset_t *img_asset = (image_asset_t *)asset;
-      // compare pointers - should be the same
-      if (img_asset->body == body) {
-        list_remove(ASSET_LIST, i);
-        asset_destroy(asset);
-      }
+  for (ssize_t i = list_size(ASSET_LIST) - 1; i >= 0; i--) {
+    image_asset_t *asset = list_get(ASSET_LIST, i);
+    if (asset->base.type == ASSET_IMAGE && asset->body == body) {
+      list_remove(ASSET_LIST, i);
+      asset_destroy(&asset->base);
     }
   }
 }
+
 void asset_render(asset_t *asset) {
   if (asset->type == ASSET_IMAGE) {
     image_asset_t *img_asset = (image_asset_t *)asset;

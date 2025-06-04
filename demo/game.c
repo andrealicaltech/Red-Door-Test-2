@@ -26,11 +26,13 @@ const size_t PANEL_WIDTH = 4000;
 MARK: Player control and kinematics
 */
 body_t *make_player_sprite(double outer_radius, double inner_radius,
-                           vector_t center) {
+                           vector_t center)
+{
   // TODO: Replace with player sprite asset
   center.y += inner_radius;
   list_t *c = list_init(20, free);
-  for (size_t i = 0; i < 20; i++) {
+  for (size_t i = 0; i < 20; i++)
+  {
     double angle = 2 * M_PI * i / 20;
     vector_t *v = malloc(sizeof(*v));
     *v = (vector_t){center.x + inner_radius * cos(angle),
@@ -42,11 +44,13 @@ body_t *make_player_sprite(double outer_radius, double inner_radius,
   return froggy;
 }
 
-void start_game(state_t *state) {
+void start_game(state_t *state)
+{
   // TODO: Week 2 - Change state of screen to game
 }
 
-void end_game(state_t *state) {
+void end_game(state_t *state)
+{
   // TODO: Week 2 - End the game, show the score, and go back to home after
   // GAME_OVER_WAIT_TIME seconds
 }
@@ -56,20 +60,25 @@ MARK: Backgrounds
 */
 
 // Andrea
-void update_bg_velocity(state_t *state) {
+void update_bg_velocity(state_t *state)
+{
   // TODO: Week 2 - Update velocity
 }
 
 // Wrap backgrounds for scrolling effect
-void wrap_backgrounds(state_t *state) {
+void wrap_backgrounds(state_t *state)
+{
   ssize_t limit = -(PANEL_WIDTH - MAX.x);
-  if (state->bg.sky_pos.x <= limit) {
+  if (state->bg.sky_pos.x <= limit)
+  {
     state->bg.sky_pos.x = 0.0f;
   }
-  if (state->bg.tree_pos.x <= limit) {
+  if (state->bg.tree_pos.x <= limit)
+  {
     state->bg.tree_pos.x = 0.0f;
   }
-  if (state->bg.build_pos.x <= limit) {
+  if (state->bg.build_pos.x <= limit)
+  {
     state->bg.build_pos.x = 0.0f;
   }
 }
@@ -78,18 +87,21 @@ void wrap_backgrounds(state_t *state) {
 MARK: Coins
 */
 
-void spawn_coins(state_t *state) {
+void spawn_coins(state_t *state)
+{
   // TODO: Week 2 - spawn coins at random intervals
 }
 
-void clean_elapsed_coins(state_t *state) {
+void clean_elapsed_coins(state_t *state)
+{
   // TODO: Week 2  - Remove coins after they hit the end of the screen
 }
 
 /*
 MARK: Emscripten
 */
-state_t *emscripten_init() {
+state_t *emscripten_init()
+{
 
   asset_cache_init();
   sdl_init(MIN, MAX);
@@ -110,7 +122,13 @@ state_t *emscripten_init() {
   scene_add_body(state->scene, player);
 
   // TODO: Initialize all 3 backgrounds
-  // TODO: Initialize state-bg here?
+  state->bg =
+      (background_t){.bg_1_sky_vel = INIT_BACKGROUND_1_SKY_VELOCITY,
+                     .bg_2_tree_vel = INIT_BACKGROUND_2_TREE_VELOCITY,
+                     .bg_3_building_vel = INIT_BACKGROUND_3_BUILDINGS_VELOCITY,
+                     .sky_pos = SKY_BACKGROUND,
+                     .tree_pos = TREE_BACKGROUND,
+                     .build_pos = BUILD_BACKGROUND};
   SDL_Rect rect = (SDL_Rect){.x = 0, .y = 0, .w = MAX.x, .h = MAX.y};
   asset_make_image(BACKGROUND_PATH, rect);
   asset_make_image_with_body(PLAYER_SPRITE_PATH, player);
@@ -129,7 +147,8 @@ state_t *emscripten_init() {
   return state;
 }
 
-bool emscripten_main(state_t *state) {
+bool emscripten_main(state_t *state)
+{
   double dt = time_since_last_tick();
 
   sdl_clear();
@@ -137,7 +156,8 @@ bool emscripten_main(state_t *state) {
   update_bg_velocity(state);
 
   list_t *body_assets = asset_get_asset_list();
-  for (size_t i = 0; i < list_size(body_assets); i++) {
+  for (size_t i = 0; i < list_size(body_assets); i++)
+  {
     asset_render(list_get(body_assets, i));
   }
 
@@ -151,7 +171,8 @@ bool emscripten_main(state_t *state) {
   return false;
 }
 
-void emscripten_free(state_t *state) {
+void emscripten_free(state_t *state)
+{
   list_free(asset_get_asset_list());
   list_free(state->all_points);
   scene_free(state->scene);

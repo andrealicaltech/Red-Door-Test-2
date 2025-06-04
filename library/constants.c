@@ -34,9 +34,9 @@ const double DUCK_ACCELERATION_CHANGE = 0;
 
 // Background and obstacle velocity. Background 3 is the top layer (i.e. the
 // velocity of the game)
-const double INIT_BACKGROUND_1_SKY_VELOCITY = 50.0;
-const double INIT_BACKGROUND_2_TREE_VELOCITY = 100.0;
-const double INIT_BACKGROUND_3_BUILDINGS_VELOCITY = 150.0;
+const vector_t INIT_BACKGROUND_1_SKY_VELOCITY = (vector_t) {.x = 50.0, .y=0};
+const vector_t INIT_BACKGROUND_2_TREE_VELOCITY = (vector_t) {.x=100.0, .y=0.0};
+const vector_t INIT_BACKGROUND_3_BUILDINGS_VELOCITY = (vector_t) {.x=150.0, .y=0};
 
 const color_t SPRITE_COLOR = (color_t){0.0, 0.0, 0.0};
 const color_t OBS_COLOR = (color_t){0.2, 0.2, 0.3};  // going to be tables
@@ -45,6 +45,8 @@ const color_t QUESADILLA_COLOR = (color_t){1, 1, 0}; // coin
 const size_t BODY_ASSETS = 1;
 const char *PLAYER_SPRITE_PATH = "assets/frogger.png";
 const char *BACKGROUND_PATH = "assets/background.jpg";
+// TODO: Update this
+const char *OBSTACLE_SPRITE_PATH = "assets/log.png";
 
 const double OBSTACLE_START_WAIT_TIME = 3.0;
 const double GAME_OVER_WAIT_TIME = 3.0;
