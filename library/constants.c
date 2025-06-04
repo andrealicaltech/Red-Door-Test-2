@@ -34,9 +34,11 @@ const double DUCK_ACCELERATION_CHANGE = 0;
 
 // Background and obstacle velocity. Background 3 is the top layer (i.e. the
 // velocity of the game)
-const vector_t INIT_BACKGROUND_1_SKY_VELOCITY = (vector_t) {.x = 50.0, .y=0};
-const vector_t INIT_BACKGROUND_2_TREE_VELOCITY = (vector_t) {.x=100.0, .y=0.0};
-const vector_t INIT_BACKGROUND_3_BUILDINGS_VELOCITY = (vector_t) {.x=150.0, .y=0};
+const vector_t INIT_BACKGROUND_1_SKY_VELOCITY = (vector_t){.x = 50.0, .y = 0};
+const vector_t INIT_BACKGROUND_2_TREE_VELOCITY =
+    (vector_t){.x = 100.0, .y = 0.0};
+const vector_t INIT_BACKGROUND_3_BUILDINGS_VELOCITY =
+    (vector_t){.x = 150.0, .y = 0};
 
 const color_t SPRITE_COLOR = (color_t){0.0, 0.0, 0.0};
 const color_t OBS_COLOR = (color_t){0.2, 0.2, 0.3};  // going to be tables
