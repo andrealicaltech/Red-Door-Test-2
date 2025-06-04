@@ -96,15 +96,19 @@ void asset_reset_asset_list() {
 list_t *asset_get_asset_list() { return ASSET_LIST; }
 
 void asset_remove_body(body_t *body) {
-  for (size_t i = 0; i < list_size(ASSET_LIST); i++) {
-    image_asset_t *asset = list_get(ASSET_LIST, i);
-    if (asset->base.type == ASSET_IMAGE && asset->body == body) {
-      list_remove(ASSET_LIST, i);
-      asset_destroy(&asset->base);
+  // Iterate in reverse to prevent indexing issues when removing from the list
+  for (size_t i = list_size(ASSET_LIST) - 1; i >= 0; i--) {
+    asset_t *asset = list_get(ASSET_LIST, i);
+    if (asset->type == ASSET_IMAGE) {
+      image_asset_t *img_asset = (image_asset_t *)asset;
+      // compare pointers - should be the same
+      if (img_asset->body == body) {
+        list_remove(ASSET_LIST, i);
+        asset_destroy(asset);
+      }
     }
   }
 }
-
 void asset_render(asset_t *asset) {
   if (asset->type == ASSET_IMAGE) {
     image_asset_t *img_asset = (image_asset_t *)asset;
