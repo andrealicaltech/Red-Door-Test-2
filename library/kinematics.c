@@ -2,6 +2,7 @@
 #include "state.h"
 
 #include "constants.h"
+#include "math_utils.h"
 #include "game_state.h"
 #include "kinematics.h"
 
@@ -55,13 +56,15 @@ void manipulate_player(state_t *state, double dt) {
         -JUMP_INITIAL_VELOCITY
              .y) { // TODO: Replace with if colliding with ground
       body_set_velocity(player_body, VEC_ZERO);
+      printf("Stopping jump\n");
       state->player_motion = REGULAR;
     } else {
-      body_set_velocity(
-          player_body,
-          vec_add(player_velocity,
-                  (vector_t){.x = 0,
-                             .y = -1.0 * Y_GRAV_ACCELERATION_MAG_PER_S * dt}));
+      double new_y_vel = player_velocity.y - (Y_GRAV_ACCELERATION_MAG_PER_S * dt);
+      if (player_velocity.y <= 0){
+        new_y_vel = max_d(new_y_vel, -1.0 * JUMP_INITIAL_VELOCITY.y);
+      }
+      printf("Setting new_y_vel=%f\n", new_y_vel);
+      body_set_velocity(player_body, (vector_t) {.x = 0, .y = 1.0 * new_y_vel});
     }
     break;
   case DUCK:
