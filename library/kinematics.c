@@ -6,7 +6,6 @@
 #include "kinematics.h"
 #include "math_utils.h"
 
-
 const double JUMP_RESTORE_TOLERANCE = 2.0;
 
 void revert_duck(state_t *state) {
@@ -57,9 +56,12 @@ void manipulate_player(state_t *state, double dt) {
   switch (state->player_motion) {
   case JUMP:
   case FALLING:
-  if (player_velocity.y <= 0.0 && abs_d(body_get_centroid(player_body).y - state->jump_start_y) < JUMP_RESTORE_TOLERANCE){
+    if (player_velocity.y <= 0.0 &&
+        abs_d(body_get_centroid(player_body).y - state->jump_start_y) <
+            JUMP_RESTORE_TOLERANCE) {
       body_set_velocity(player_body, VEC_ZERO);
-      body_set_centroid(player_body, (vector_t) {.x=PLAYER_CENTER_POS.x, .y=state->jump_start_y});
+      body_set_centroid(player_body, (vector_t){.x = PLAYER_CENTER_POS.x,
+                                                .y = state->jump_start_y});
       printf("Stopping jump\n");
       state->player_motion = REGULAR;
     } else {

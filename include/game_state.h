@@ -33,7 +33,6 @@ struct state {
   background_t bg;
   body_t *player;
 
-
   PLAYER_MOTION player_motion;
   double jump_start_y;
 
