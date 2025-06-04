@@ -122,9 +122,13 @@ state_t *emscripten_init() {
   asset_make_image_with_body(PLAYER_SPRITE_PATH, player);
   sdl_on_key((key_handler_t)on_key);
 
+
+  state->jump_start_y = 0.0;
+  
   // Obstacles
   state->time_till_next_obstacle = FIRST_OBSTACLE_WAIT_TIME;
   state->n_queued_obstacles = 0;
+  state->player_running_on_obst = false;
 
   // TODO: Activate
   state->is_revival_activated = false;

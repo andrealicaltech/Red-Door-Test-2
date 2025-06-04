@@ -8,8 +8,8 @@ const vector_t PLAYER_DIMS = {10, 60};
 const vector_t PLAYER_CENTER_POS = {500, 50};
 const char *PLAYER_INFO = "player";
 
-const double OUTER_RADIUS = 15;
-const double INNER_RADIUS = 15;
+const double OUTER_RADIUS = 30;
+const double INNER_RADIUS = 30;
 
 const double MIN_REACTION_TIME_S = 1.5;
 

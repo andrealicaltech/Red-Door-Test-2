@@ -2,9 +2,12 @@
 #include "state.h"
 
 #include "constants.h"
-#include "math_utils.h"
 #include "game_state.h"
 #include "kinematics.h"
+#include "math_utils.h"
+
+
+const double JUMP_RESTORE_TOLERANCE = 2.0;
 
 void revert_duck(state_t *state) {
   body_t *player_body = scene_get_body(state->scene, 0);
@@ -33,6 +36,7 @@ void on_key(char key, key_event_type_t type, double held_time, state_t *state) {
       printf("Up key pressed in regular motion!\n");
       body_set_velocity(player_body, get_curr_jump_vel(state));
       state->player_motion = JUMP;
+      state->jump_start_y = body_get_centroid(player_body).y;
       break;
     case DOWN_ARROW:
       printf("Down key pressed in regular motion");
@@ -52,19 +56,19 @@ void manipulate_player(state_t *state, double dt) {
 
   switch (state->player_motion) {
   case JUMP:
-    if (player_velocity.y <=
-        -JUMP_INITIAL_VELOCITY
-             .y) { // TODO: Replace with if colliding with ground
+  case FALLING:
+  if (player_velocity.y <= 0.0 && abs_d(body_get_centroid(player_body).y - state->jump_start_y) < JUMP_RESTORE_TOLERANCE){
       body_set_velocity(player_body, VEC_ZERO);
+      body_set_centroid(player_body, (vector_t) {.x=PLAYER_CENTER_POS.x, .y=state->jump_start_y});
       printf("Stopping jump\n");
       state->player_motion = REGULAR;
     } else {
-      double new_y_vel = player_velocity.y - (Y_GRAV_ACCELERATION_MAG_PER_S * dt);
-      if (player_velocity.y <= 0){
+      double new_y_vel =
+          player_velocity.y - (Y_GRAV_ACCELERATION_MAG_PER_S * dt);
+      if (player_velocity.y <= 0) {
         new_y_vel = max_d(new_y_vel, -1.0 * JUMP_INITIAL_VELOCITY.y);
       }
-      printf("Setting new_y_vel=%f\n", new_y_vel);
-      body_set_velocity(player_body, (vector_t) {.x = 0, .y = 1.0 * new_y_vel});
+      body_set_velocity(player_body, (vector_t){.x = 0, .y = 1.0 * new_y_vel});
     }
     break;
   case DUCK:

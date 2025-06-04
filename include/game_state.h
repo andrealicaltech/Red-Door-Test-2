@@ -13,7 +13,7 @@ typedef enum {
   GAME = 'G'
 } GAME_SCREEN;
 
-typedef enum { REGULAR = 0, JUMP = 1, DUCK = 2 } PLAYER_MOTION;
+typedef enum { REGULAR = 0, JUMP = 1, FALLING = 2, DUCK = 3 } PLAYER_MOTION;
 
 typedef struct {
   vector_t bg_1_sky_vel;
@@ -32,11 +32,15 @@ struct state {
 
   background_t bg;
   body_t *player;
+
+
   PLAYER_MOTION player_motion;
+  double jump_start_y;
 
   // Obstacles
   double time_till_next_obstacle;
   size_t n_queued_obstacles;
+  bool player_running_on_obst;
 
   // Powerups
   bool is_revival_activated;
