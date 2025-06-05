@@ -65,6 +65,9 @@ MARK: Backgrounds
 // Andrea
 void update_bg_velocity(state_t *state) {
   // TODO: Week 2 - Update velocity
+  state->bg.bg_1_sky_vel = {20, 0};
+  state->bg.bg_2_tree_vel = {30, 0};
+  state->bg.bg_3_building_vel = {50, 0};
 }
 
 // Wrap backgrounds for scrolling effect
