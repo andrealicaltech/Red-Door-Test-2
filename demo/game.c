@@ -17,7 +17,7 @@
 #include "obstacle.h"
 #include "sdl_wrapper.h"
 
-//moved background positions to background.c
+// moved background positions to background.c
 
 /*
 MARK: Player control and kinematics
@@ -41,11 +41,11 @@ body_t *make_player_sprite(double outer_radius, double inner_radius,
 
 void start_game(state_t *state) {
   if (state->is_game_over) {
-      state->current_game_screen = HOME;
+    state->current_game_screen = HOME;
   } else {
-      state->current_game_screen = GAME;
+    state->current_game_screen = GAME;
   }
-  
+
   // TODO: Week 2 - Change state of screen to game
 }
 
