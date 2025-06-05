@@ -24,8 +24,8 @@ Here are all of the individual features we will have in our game:
 
 1. Basic Mechanics (Priority 1): Moving our character on screen by adding a forward velocity to the particle and having the character jump (increasing the y-velocity) whenever the spacebar key is ptwressed and duck (decreasing the height of the player)  
 2. Obstacle spawning (Priority 1): Randomly spawning obstacles within the screen, each of an arbitrary size. We will need to incorporate kinematics-based estimations to guarantee adequate spacing between consecutive obstacles, augmented with some additional random spacing. This will depend on the current velocity / difficulty of the game.
-3. Obstacle collision handling (Priority 1): Head-on collisions with obstacles should result in the player losing; but landing on top of the obstacle should affect the kinematic state of the player by allowing them to 'run' on top of the obstacle and fall off once they hit the edge. This will require nontrivial modifications to typical collision handling logic due to the requirement to continuously check the state of the collision.
-4. Camera tracking logic (Priority 2): The player sprite must be centred at the middle of the screen, so an internal camera state must be managed which centres the viewport on the player, taking into account their current position.  
+3. Obstacle collision handling (Priority 2): Head-on collisions with obstacles should result in the player losing; but landing on top of the obstacle should affect the kinematic state of the player by allowing them to 'run' on top of the obstacle and fall off once they hit the edge. This will require nontrivial modifications to typical collision handling logic due to the requirement to continuously check the state of the collision.
+4. Camera tracking logic (Priority 1): The player sprite must be centred at the middle of the screen, so an internal camera state must be managed which centres the viewport on the player, taking into account their current position.  
 5. Continuously rendering the location (Priority 2): Given the camera state, we will need to render the correct main scene and background, with each layer moving at the appropriate speed with 2-D parallax.   
 6. Leaderboard (Priority 2): The time the player survived in each round will be tracked and displayed at the top of the screen, along with their lifetime record.  
 7. Custom Sprites (Priority 3): We will turn our obstacles and character into custom sprites that will add to the flashiness of the program  
@@ -49,12 +49,12 @@ Here are all of the individual features we will have in our game:
 1. (Amudhan) Leaderboard  
 2. (Andrea) Custom sprites  
 3. (Amudhan) Custom music and custom sound effects   
-4. (Amudhan) Difficulty scaler  
 
 **Week 3:**
 1. (Arjun) Generation and tracking of cheese quesadillas in game
 2. (Andrea) Shop  
-3. (Amudhan) Revival powerup  
+3. (Amudhan) Difficulty scaler  
+4. (Arjun) Magnet powerup  
 
 ## Section 4: Disaster Recovery
 Amudhan: If I fall behind, I will set a stronger priority for this CS game over my other classes, fully focusing my effort on making sure I am caught up and taking any extensions that I am able to in other classes. I will also communicate with my teammates about any problems I have or whether I am falling behind, so everyone will be on the same page. Then, if I feel like I am really falling behind on one particular problem, and my teammates do not know how to fix it, I will go to office hours and ask for any help that I need. This will help me continue my flow of work and start working on the next steps of my project.
