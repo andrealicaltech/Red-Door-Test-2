@@ -71,7 +71,7 @@ void obstacle_collision_handler(body_t *body1, body_t *body2, vector_t axis,
            obstacle_centroid.x, obstacle_dims.x);
   } else if (player_centroid.x > obstacle_centroid.x &&
              (abs_d((player_centroid.x - 0.5 * PLAYER_DIMS.x) -
-                  (obstacle_centroid.x + 0.5 * obstacle_dims.x)) <
+                    (obstacle_centroid.x + 0.5 * obstacle_dims.x)) <
               EDGE_TOLERANCE)) {
     printf("head-on collision-you lose!\n");
     state->is_game_over = true;
@@ -127,9 +127,14 @@ double next_obst_x(state_t *state, body_t *last_obstacle) {
   double expected_x_dist_with_jump =
       (2 * get_curr_jump_vel(state).y / Y_GRAV_ACCELERATION_MAG_PER_S) *
       curr_obst_speed.x;
-  double smallest_clearing_dist = get_smallest_obst_clearing_dist(state, PLAYER_DIMS.y, last_obstacle_centroid.y);
-  double furthest_poss_x = last_obst_end + smallest_clearing_dist - expected_x_dist_with_jump;
-  printf("last_obst_end=%f, smallest_clearing_dist=%f, expected_x_dist_with_jump=%f, furthest_poss_x=%f\n", last_obst_end, smallest_clearing_dist, expected_x_dist_with_jump, furthest_poss_x);
+  double smallest_clearing_dist = get_smallest_obst_clearing_dist(
+      state, PLAYER_DIMS.y, last_obstacle_centroid.y);
+  double furthest_poss_x =
+      last_obst_end + smallest_clearing_dist - expected_x_dist_with_jump;
+  printf("last_obst_end=%f, smallest_clearing_dist=%f, "
+         "expected_x_dist_with_jump=%f, furthest_poss_x=%f\n",
+         last_obst_end, smallest_clearing_dist, expected_x_dist_with_jump,
+         furthest_poss_x);
 
   // Additional random spacing between obstacles
   double running_space = (rand() % ((int)MAX.x)) / 2.0;
@@ -137,13 +142,12 @@ double next_obst_x(state_t *state, body_t *last_obstacle) {
   // distance to jump such that they clear the height of the obstacle
   double clearing_space =
       get_smallest_obst_clearing_dist(state, PLAYER_DIMS.y, OBSTACLE_HW);
-  printf("running_space=%f,clearing_space=%f\n",
-         running_space,
-         clearing_space);
+  printf("running_space=%f,clearing_space=%f\n", running_space, clearing_space);
 
   // It is possible that the spacing is small enough that it doesn't given
   // reasonable reaction time for a player
-  double final_x_disp = max_d(running_space + clearing_space, MIN_REACTION_TIME_S * curr_obst_speed.x);
+  double final_x_disp = max_d(running_space + clearing_space,
+                              MIN_REACTION_TIME_S * curr_obst_speed.x);
   printf("final_x_disp=%f\n", final_x_disp);
   return furthest_poss_x - max_d(running_space + clearing_space,
                                  MIN_REACTION_TIME_S * curr_obst_speed.x);
@@ -153,8 +157,8 @@ void update_obstacles(state_t *state) {
   if (state->time_till_next_obstacle > 0.0) {
     return;
   }
-  // Force avoid a double overflow - obstacle 
-  if (state->n_queued_obstacles == MAX_N_QUEUED_OBST){
+  // Force avoid a double overflow - obstacle
+  if (state->n_queued_obstacles == MAX_N_QUEUED_OBST) {
     // printf("Would return here\n");
     return;
   }
