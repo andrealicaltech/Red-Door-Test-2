@@ -15,6 +15,7 @@
 #include "math_utils.h"
 #include "obstacle.h"
 #include "sdl_wrapper.h"
+#include "background.h"
 
 // Background positions
 const vector_t SKY_BACKGROUND = (vector_t){.x = 4000, .y = 500};
@@ -110,13 +111,7 @@ state_t *emscripten_init() {
   scene_add_body(state->scene, player);
 
   // TODO: Initialize all 3 backgrounds
-  state->bg =
-      (background_t){.bg_1_sky_vel = INIT_BACKGROUND_1_SKY_VELOCITY,
-                     .bg_2_tree_vel = INIT_BACKGROUND_2_TREE_VELOCITY,
-                     .bg_3_building_vel = INIT_BACKGROUND_3_BUILDINGS_VELOCITY,
-                     .sky_pos = SKY_BACKGROUND,
-                     .tree_pos = TREE_BACKGROUND,
-                     .build_pos = BUILD_BACKGROUND};
+  background_init(state);
   SDL_Rect rect = (SDL_Rect){.x = 0, .y = 0, .w = MAX.x, .h = MAX.y};
   asset_make_image(BACKGROUND_PATH, rect);
   asset_make_image_with_body(PLAYER_SPRITE_PATH, player);
