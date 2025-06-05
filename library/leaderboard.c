@@ -29,11 +29,11 @@ body_t *make_scoreboard() {
   *v4 = (vector_t){MAX.x - LEADERBOARD_SIZE.x, MAX.y};
   list_add(c, v4);
 
-  vector_t *center = malloc(sizeof(vector_t));
-  *center = (vector_t){MAX.x - LEADERBOARD_SIZE.x / 2,
+  vector_t center = (vector_t){MAX.x - LEADERBOARD_SIZE.x / 2,
                        MAX.y - LEADERBOARD_SIZE.y / 2};
   body_t *scoreboard =
       body_init_with_info(c, 1, LEADERBOARD_COLOR, (void *)OBSTACLE_INFO, NULL);
   body_set_centroid(scoreboard, center);
   return scoreboard;
 }
+

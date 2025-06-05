@@ -33,9 +33,6 @@ struct state {
   background_t bg;
   body_t *player;
 
-  size_t score;
-  size_t[] high_scores;
-
   PLAYER_MOTION player_motion;
   double jump_start_y;
 
