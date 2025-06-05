@@ -22,7 +22,6 @@ const vector_t TREE_BACKGROUND = (vector_t){.x = 4000, .y = 400};
 const vector_t BUILD_BACKGROUND = (vector_t){.x = 4000, .y = 300};
 const size_t PANEL_WIDTH = 4000;
 
-
 void wrap_edges(body_t *body) {
   vector_t centroid = body_get_centroid(body);
   if (centroid.x > MAX.x) {
