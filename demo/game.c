@@ -22,31 +22,24 @@ const vector_t TREE_BACKGROUND = (vector_t){.x = 4000, .y = 400};
 const vector_t BUILD_BACKGROUND = (vector_t){.x = 4000, .y = 300};
 const size_t PANEL_WIDTH = 4000;
 
-
-void wrap_edges(body_t *body) {
-  vector_t centroid = body_get_centroid(body);
-  if (centroid.x > MAX.x) {
-    body_set_centroid(body, (vector_t){MIN.x, centroid.y});
-  } else if (centroid.x < MIN.x) {
-    body_set_centroid(body, (vector_t){MAX.x, centroid.y});
-  } else if (centroid.y > MAX.y) {
-    body_set_centroid(body, (vector_t){centroid.x, MIN.y});
-  } else if (centroid.y < MIN.y) {
-    body_set_centroid(body, (vector_t){centroid.x, MAX.y});
+/*
+MARK: Player control and kinematics
+*/
+body_t *make_player_sprite(double outer_radius, double inner_radius,
+                           vector_t center) {
+  // TODO: Replace with player sprite asset
+  center.y += inner_radius;
+  list_t *c = list_init(20, free);
+  for (size_t i = 0; i < 20; i++) {
+    double angle = 2 * M_PI * i / 20;
+    vector_t *v = malloc(sizeof(*v));
+    *v = (vector_t){center.x + inner_radius * cos(angle),
+                    center.y + outer_radius * sin(angle)};
+    list_add(c, v);
   }
-}
-
-// TODO - Amudhan
-
-void revert_jump(state_t *state) {
-  if (state->player_velocity.y <=
-      -JUMP_INITIAL_VELOCITY) { // TODO: Replace with if colliding with ground
-    state->player_velocity.y = 0;
-    state->player_motion = REGULAR;
-  } else {
-    printf("I'm here!\n");
-    state->player_velocity.y += Y_GRAVITY_ACCELERATION;
-  }
+  body_t *froggy =
+      body_init_with_info(c, 1, SPRITE_COLOR, (void *)PLAYER_INFO, NULL);
+  return froggy;
 }
 
 void start_game(state_t *state) {
