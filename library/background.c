@@ -22,6 +22,7 @@ const vector_t TREE_BACKGROUND = (vector_t){.x = 4000, .y = 400};
 const vector_t BUILD_BACKGROUND = (vector_t){.x = 4000, .y = 300};
 const size_t PANEL_WIDTH = 4000;
 
+
 // initialize background
 void background_init(state_t *state) {
   state->bg =
@@ -33,10 +34,11 @@ void background_init(state_t *state) {
                      .build_pos = BUILD_BACKGROUND};
 }
 
+//increase speed of player + backgrounds
 void update_bg_velocity(state_t *state) {
-  state->bg.bg_1_sky_vel = {20, 0};
-  state->bg.bg_2_tree_vel = {30, 0};
-  state->bg.bg_3_building_vel = {50, 0};
+  state->bg.bg_1_sky_vel = vec_multiply(2.0, state->bg.bg_1_sky_vel);
+  state->bg.bg_2_tree_vel = vec_multiply(2.0, state->bg.bg_2_tree_vel);
+  state->bg.bg_3_building_vel = vec_multiply(2.0, state->bg.bg_3_building_vel);
 }
 
 // Wrap backgrounds for scrolling effect
