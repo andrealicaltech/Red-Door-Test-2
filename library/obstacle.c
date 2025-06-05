@@ -59,6 +59,13 @@ void obstacle_collision_handler(body_t *body1, body_t *body2, vector_t axis,
   vector_t player_centroid = body_get_centroid(player);
   vector_t obstacle_centroid = body_get_centroid(obstacle);
   vector_t obstacle_dims = get_obstacle_dims(obstacle);
+  
+  printf("Obstacle: centroid.x=%f, centroid.y=%f. w=%f, h=%f\n", obstacle_centroid.x, obstacle_centroid.y, obstacle_dims.x, obstacle_dims.y);
+
+  double player_left_edge = player_centroid.x - 0.5 * PLAYER_DIMS.x;
+  double obstacle_right_edge = obstacle_centroid.x + 0.5 * obstacle_dims.x;
+  double delta = abs_d(player_left_edge-obstacle_right_edge);
+  printf("player_left_edge=%f, obstacle_right_edge=%f, delta=%f\n", player_left_edge, obstacle_right_edge, delta);
 
   if (player_centroid.y > obstacle_centroid.y &&
       ((player_centroid.y - 0.5 * PLAYER_DIMS.y) -
@@ -69,12 +76,10 @@ void obstacle_collision_handler(body_t *body1, body_t *body2, vector_t axis,
     state->curr_player_obstacle = obstacle;
     printf("Stuck to the top of obstacle_centroid.x=%f, obstacle_dims.x=%f\n",
            obstacle_centroid.x, obstacle_dims.x);
-  } else if (player_centroid.x > obstacle_centroid.x &&
-             (abs_d((player_centroid.x - 0.5 * PLAYER_DIMS.x) -
-                    (obstacle_centroid.x + 0.5 * obstacle_dims.x)) <
-              EDGE_TOLERANCE)) {
+  } else if (obstacle_right_edge > player_left_edge || delta < EDGE_TOLERANCE) {
     printf("head-on collision-you lose!\n");
     state->is_game_over = true;
+    // exit();
   } else {
     printf("Can't handle collision\n");
   }
@@ -131,10 +136,10 @@ double next_obst_x(state_t *state, body_t *last_obstacle) {
       state, PLAYER_DIMS.y, last_obstacle_centroid.y);
   double furthest_poss_x =
       last_obst_end + smallest_clearing_dist - expected_x_dist_with_jump;
-  printf("last_obst_end=%f, smallest_clearing_dist=%f, "
-         "expected_x_dist_with_jump=%f, furthest_poss_x=%f\n",
-         last_obst_end, smallest_clearing_dist, expected_x_dist_with_jump,
-         furthest_poss_x);
+  // printf("last_obst_end=%f, smallest_clearing_dist=%f, "
+        //  "expected_x_dist_with_jump=%f, furthest_poss_x=%f\n",
+        //  last_obst_end, smallest_clearing_dist, expected_x_dist_with_jump,
+        //  furthest_poss_x);
 
   // Additional random spacing between obstacles
   double running_space = (rand() % ((int)MAX.x)) / 2.0;
@@ -142,13 +147,13 @@ double next_obst_x(state_t *state, body_t *last_obstacle) {
   // distance to jump such that they clear the height of the obstacle
   double clearing_space =
       get_smallest_obst_clearing_dist(state, PLAYER_DIMS.y, OBSTACLE_HW);
-  printf("running_space=%f,clearing_space=%f\n", running_space, clearing_space);
+  // printf("running_space=%f,clearing_space=%f\n", running_space, clearing_space);
 
   // It is possible that the spacing is small enough that it doesn't given
   // reasonable reaction time for a player
   double final_x_disp = max_d(running_space + clearing_space,
                               MIN_REACTION_TIME_S * curr_obst_speed.x);
-  printf("final_x_disp=%f\n", final_x_disp);
+  // printf("final_x_disp=%f\n", final_x_disp);
   return furthest_poss_x - max_d(running_space + clearing_space,
                                  MIN_REACTION_TIME_S * curr_obst_speed.x);
 }
@@ -180,7 +185,7 @@ void update_obstacles(state_t *state) {
         scene_get_body(state->scene, (1 + state->n_queued_obstacles) - 1);
     double next_obst_x_val = next_obst_x(state, last_obstacle);
     x = next_obst_x_val;
-    printf("new x=%f\n", x);
+    // printf("new x=%f\n", x);
   }
 
   vector_t new_centroid = (vector_t){.x = x, .y = y};

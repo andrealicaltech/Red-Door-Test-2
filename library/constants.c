@@ -4,7 +4,8 @@
 const vector_t MIN = {0, 0};
 const vector_t MAX = {1000, 500};
 
-const vector_t PLAYER_DIMS = {10, 60};
+// TODO: Change
+const vector_t PLAYER_DIMS = {60, 60};
 const vector_t PLAYER_CENTER_POS = {500, 50};
 const char *PLAYER_INFO = "player";
 
