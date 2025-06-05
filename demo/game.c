@@ -7,6 +7,7 @@
 
 #include "asset.h"
 #include "asset_cache.h"
+#include "background.h"
 #include "collision.h"
 #include "constants.h"
 #include "forces.h"
@@ -15,7 +16,6 @@
 #include "math_utils.h"
 #include "obstacle.h"
 #include "sdl_wrapper.h"
-#include "background.h"
 
 // Background positions
 const vector_t SKY_BACKGROUND = (vector_t){.x = 4000, .y = 500};

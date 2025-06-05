@@ -23,7 +23,7 @@ const vector_t BUILD_BACKGROUND = (vector_t){.x = 4000, .y = 300};
 const size_t PANEL_WIDTH = 4000;
 
 void background_init(state_t *state) {
-    state->bg =
+  state->bg =
       (background_t){.bg_1_sky_vel = INIT_BACKGROUND_1_SKY_VELOCITY,
                      .bg_2_tree_vel = INIT_BACKGROUND_2_TREE_VELOCITY,
                      .bg_3_building_vel = INIT_BACKGROUND_3_BUILDINGS_VELOCITY,
@@ -31,5 +31,3 @@ void background_init(state_t *state) {
                      .tree_pos = TREE_BACKGROUND,
                      .build_pos = BUILD_BACKGROUND};
 }
-
-
