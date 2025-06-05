@@ -39,7 +39,7 @@ struct state {
   // Obstacles
   double time_till_next_obstacle;
   size_t n_queued_obstacles;
-  bool player_running_on_obst;
+  body_t *curr_player_obstacle;
 
   // Powerups
   bool is_revival_activated;

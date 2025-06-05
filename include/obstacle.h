@@ -18,6 +18,13 @@ Depends on make_obstacle adding the bottom right corner third.
 vector_t get_obstacle_dims(body_t *obstacle);
 
 /*
+Checks if there is currently an obstacle attached to the player
+If so, calculates distance to edge and wheather the player should fall off the obstacle.
+Must be called at every time step.
+*/
+void check_player_falling_off_edge(state_t *state);
+
+/*
 Calculation of the smallest distance before an obstacle
   at which the player can currently jump without colliding with the obstacle's
   vertical edge

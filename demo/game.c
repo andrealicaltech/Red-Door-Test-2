@@ -127,7 +127,7 @@ state_t *emscripten_init() {
   // Obstacles
   state->time_till_next_obstacle = FIRST_OBSTACLE_WAIT_TIME;
   state->n_queued_obstacles = 0;
-  state->player_running_on_obst = false;
+  state->curr_player_obstacle = NULL;
 
   // TODO: Activate
   state->is_revival_activated = false;
@@ -149,10 +149,13 @@ bool emscripten_main(state_t *state) {
   for (size_t i = 0; i < list_size(body_assets); i++) {
     asset_render(list_get(body_assets, i));
   }
+  sdl_render_scene(state->scene);
 
   state->time_till_next_obstacle -= dt;
   update_obstacles(state);
+
   clean_obstacles(state);
+  check_player_falling_off_edge(state);
 
   sdl_show();
   scene_tick(state->scene, dt);
