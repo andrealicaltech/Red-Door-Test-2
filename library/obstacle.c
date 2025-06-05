@@ -155,9 +155,6 @@ double next_obst_x(state_t *state, body_t *last_obstacle) {
 
   // It is possible that the spacing is small enough that it doesn't given
   // reasonable reaction time for a player
-  double final_x_disp = max_d(running_space + clearing_space,
-                              MIN_REACTION_TIME_S * curr_obst_speed.x);
-  // printf("final_x_disp=%f\n", final_x_disp);
   return furthest_poss_x - max_d(running_space + clearing_space,
                                  MIN_REACTION_TIME_S * curr_obst_speed.x);
 }
