@@ -19,8 +19,8 @@ vector_t get_obstacle_dims(body_t *obstacle);
 
 /*
 Checks if there is currently an obstacle attached to the player
-If so, calculates distance to edge and wheather the player should fall off the obstacle.
-Must be called at every time step.
+If so, calculates distance to edge and wheather the player should fall off the
+obstacle. Must be called at every time step.
 */
 void check_player_falling_off_edge(state_t *state);
 
