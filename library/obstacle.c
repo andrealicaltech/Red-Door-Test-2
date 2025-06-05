@@ -59,13 +59,16 @@ void obstacle_collision_handler(body_t *body1, body_t *body2, vector_t axis,
   vector_t player_centroid = body_get_centroid(player);
   vector_t obstacle_centroid = body_get_centroid(obstacle);
   vector_t obstacle_dims = get_obstacle_dims(obstacle);
-  
-  printf("Obstacle: centroid.x=%f, centroid.y=%f. w=%f, h=%f\n", obstacle_centroid.x, obstacle_centroid.y, obstacle_dims.x, obstacle_dims.y);
+
+  printf("Obstacle: centroid.x=%f, centroid.y=%f. w=%f, h=%f\n",
+         obstacle_centroid.x, obstacle_centroid.y, obstacle_dims.x,
+         obstacle_dims.y);
 
   double player_left_edge = player_centroid.x - 0.5 * PLAYER_DIMS.x;
   double obstacle_right_edge = obstacle_centroid.x + 0.5 * obstacle_dims.x;
-  double delta = abs_d(player_left_edge-obstacle_right_edge);
-  printf("player_left_edge=%f, obstacle_right_edge=%f, delta=%f\n", player_left_edge, obstacle_right_edge, delta);
+  double delta = abs_d(player_left_edge - obstacle_right_edge);
+  printf("player_left_edge=%f, obstacle_right_edge=%f, delta=%f\n",
+         player_left_edge, obstacle_right_edge, delta);
 
   if (player_centroid.y > obstacle_centroid.y &&
       ((player_centroid.y - 0.5 * PLAYER_DIMS.y) -
@@ -137,9 +140,9 @@ double next_obst_x(state_t *state, body_t *last_obstacle) {
   double furthest_poss_x =
       last_obst_end + smallest_clearing_dist - expected_x_dist_with_jump;
   // printf("last_obst_end=%f, smallest_clearing_dist=%f, "
-        //  "expected_x_dist_with_jump=%f, furthest_poss_x=%f\n",
-        //  last_obst_end, smallest_clearing_dist, expected_x_dist_with_jump,
-        //  furthest_poss_x);
+  //  "expected_x_dist_with_jump=%f, furthest_poss_x=%f\n",
+  //  last_obst_end, smallest_clearing_dist, expected_x_dist_with_jump,
+  //  furthest_poss_x);
 
   // Additional random spacing between obstacles
   double running_space = (rand() % ((int)MAX.x)) / 2.0;
@@ -147,7 +150,8 @@ double next_obst_x(state_t *state, body_t *last_obstacle) {
   // distance to jump such that they clear the height of the obstacle
   double clearing_space =
       get_smallest_obst_clearing_dist(state, PLAYER_DIMS.y, OBSTACLE_HW);
-  // printf("running_space=%f,clearing_space=%f\n", running_space, clearing_space);
+  // printf("running_space=%f,clearing_space=%f\n", running_space,
+  // clearing_space);
 
   // It is possible that the spacing is small enough that it doesn't given
   // reasonable reaction time for a player
