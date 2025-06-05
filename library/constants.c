@@ -46,10 +46,10 @@ const color_t OBS_COLOR = (color_t){0.2, 0.2, 0.3};  // going to be tables
 const color_t QUESADILLA_COLOR = (color_t){1, 1, 0}; // coin
 
 const size_t BODY_ASSETS = 1;
-const char *PLAYER_SPRITE_PATH = "assets/frogger.png";
+const char *PLAYER_SPRITE_PATH = "assets/Amudhan.png";
+const char *PLAYER_SPRITE_ANDREA_PATH = "assets/Andrea.png";
 const char *BACKGROUND_PATH = "assets/background.jpg";
-// TODO: Update this
-const char *OBSTACLE_SPRITE_PATH = "assets/log.png";
+const char *OBSTACLE_SPRITE_PATH = "assets/obstacle.png";
 
 const double OBSTACLE_START_WAIT_TIME = 3.0;
 const double GAME_OVER_WAIT_TIME = 3.0;

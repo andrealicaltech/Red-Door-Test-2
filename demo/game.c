@@ -17,11 +17,7 @@
 #include "obstacle.h"
 #include "sdl_wrapper.h"
 
-// Background positions
-const vector_t SKY_BACKGROUND = (vector_t){.x = 4000, .y = 500};
-const vector_t TREE_BACKGROUND = (vector_t){.x = 4000, .y = 400};
-const vector_t BUILD_BACKGROUND = (vector_t){.x = 4000, .y = 300};
-const size_t PANEL_WIDTH = 4000;
+//moved background positions to background.c
 
 /*
 MARK: Player control and kinematics
@@ -38,41 +34,24 @@ body_t *make_player_sprite(double outer_radius, double inner_radius,
                     center.y + outer_radius * sin(angle)};
     list_add(c, v);
   }
-  body_t *froggy =
+  body_t *player =
       body_init_with_info(c, 1, SPRITE_COLOR, (void *)PLAYER_INFO, NULL);
-  return froggy;
+  return player;
 }
 
 void start_game(state_t *state) {
+  if (state->is_game_over) {
+      state->current_game_screen = HOME;
+  } else {
+      state->current_game_screen = GAME;
+  }
+  
   // TODO: Week 2 - Change state of screen to game
 }
 
 void end_game(state_t *state) {
   // TODO: Week 2 - End the game, show the score, and go back to home after
   // GAME_OVER_WAIT_TIME seconds
-}
-
-/*
-MARK: Backgrounds
-*/
-
-// Andrea
-void update_bg_velocity(state_t *state) {
-  // TODO: Week 2 - Update velocity
-}
-
-// Wrap backgrounds for scrolling effect
-void wrap_backgrounds(state_t *state) {
-  ssize_t limit = -(PANEL_WIDTH - MAX.x);
-  if (state->bg.sky_pos.x <= limit) {
-    state->bg.sky_pos.x = 0.0f;
-  }
-  if (state->bg.tree_pos.x <= limit) {
-    state->bg.tree_pos.x = 0.0f;
-  }
-  if (state->bg.build_pos.x <= limit) {
-    state->bg.build_pos.x = 0.0f;
-  }
 }
 
 /*
