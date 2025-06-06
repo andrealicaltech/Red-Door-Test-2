@@ -11,7 +11,12 @@
 #include "kinematics.h"
 #include "obstacle.h"
 
-body_t *make_scoreboard() {
+body_t *render_scoreboard(state_t *state) {
+  body_t* scoreboard_bg = make_scoreboard_background();
+
+}
+
+body_t* make_scoreboard_background(){
   list_t *c = list_init(4, free);
   vector_t *v1 = malloc(sizeof(vector_t));
   *v1 = (vector_t){MAX.x, MAX.y};
@@ -36,3 +41,6 @@ body_t *make_scoreboard() {
   body_set_centroid(scoreboard, center);
   return scoreboard;
 }
+
+
+
