@@ -110,11 +110,9 @@ state_t *emscripten_init() {
                                      MIN, false);
   body_t *building = make_rectangle_body(state->bg.building_pos.x,
                                          state->bg.building_pos.x, MIN, false);
-  
 
   // // TODO: Initialize all 3 backgrounds
 
-  
   // asset_make_image_with_body(SKY_PATH, sky);
   // asset_make_image_with_body(TREE_PATH, tree);
   // asset_make_image_with_body(BUILDING_PATH, building);
