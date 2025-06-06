@@ -103,7 +103,6 @@ state_t *emscripten_init() {
   state->player = player;
   scene_add_body(state->scene, player);
 
-  // TODO: Initialize all 3 backgrounds
   background_init(state);
   body_t *sky =
       make_rectangle_body(state->bg.sky_pos.x, state->bg.sky_pos.y, MIN, false);
@@ -111,21 +110,26 @@ state_t *emscripten_init() {
                                      MIN, false);
   body_t *building = make_rectangle_body(state->bg.building_pos.x,
                                          state->bg.building_pos.x, MIN, false);
-  asset_make_image_with_body(SKY_PATH, sky);
-  asset_make_image_with_body(TREE_PATH, tree);
-  asset_make_image_with_body(BUILDING_PATH, building);
+  
 
-  state->bg.sky_body = sky;
-  state->bg.tree_body = tree;
-  state->bg.building_body = building;
+  // // TODO: Initialize all 3 backgrounds
 
-  body_set_velocity(state->bg.sky_body, state->bg.bg_1_sky_vel);
-  body_set_velocity(state->bg.tree_body, state->bg.bg_2_tree_vel);
-  body_set_velocity(state->bg.building_body, state->bg.bg_3_building_vel);
+  
+  // asset_make_image_with_body(SKY_PATH, sky);
+  // asset_make_image_with_body(TREE_PATH, tree);
+  // asset_make_image_with_body(BUILDING_PATH, building);
 
-  scene_add_body(state->scene, state->bg.sky_body);
-  scene_add_body(state->scene, state->bg.tree_body);
-  scene_add_body(state->scene, state->bg.building_body);
+  // state->bg.sky_body = sky;
+  // state->bg.tree_body = tree;
+  // state->bg.building_body = building;
+
+  // body_set_velocity(state->bg.sky_body, state->bg.bg_1_sky_vel);
+  // body_set_velocity(state->bg.tree_body, state->bg.bg_2_tree_vel);
+  // body_set_velocity(state->bg.building_body, state->bg.bg_3_building_vel);
+
+  // scene_add_body(state->scene, state->bg.sky_body);
+  // scene_add_body(state->scene, state->bg.tree_body);
+  // scene_add_body(state->scene, state->bg.building_body);
 
   asset_make_image_with_body(PLAYER_SPRITE_PATH, player);
   sdl_on_key((key_handler_t)on_key);
