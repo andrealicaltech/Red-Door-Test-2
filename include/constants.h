@@ -64,4 +64,13 @@ extern const double GAME_OVER_WAIT_TIME;
 
 extern const size_t MAX_GAMES;
 
+//background 
+extern const vector_t SKY_BACKGROUND;
+extern const vector_t SKY_CENTER;
+extern const vector_t TREE_BACKGROUND;
+extern const vector_t TREE_CENTER;
+extern const vector_t BUILD_BACKGROUND;
+extern const vector_t BUILD_CENTER;
+extern const size_t PANEL_WIDTH;
+
 #endif

@@ -6,7 +6,7 @@ const vector_t MAX = {1000, 500};
 const vector_t LEADERBOARD_SIZE = {100, 50};
 
 // TODO: Change
-const vector_t PLAYER_DIMS = {10, 40};
+const vector_t PLAYER_DIMS = {20, 40};
 const vector_t PLAYER_CENTER_POS = {500, 50};
 const char *PLAYER_INFO = "player";
 
@@ -59,3 +59,11 @@ const double OBSTACLE_START_WAIT_TIME = 3.0;
 const double GAME_OVER_WAIT_TIME = 3.0;
 
 const size_t MAX_GAMES = 1024;
+
+const vector_t SKY_BACKGROUND = (vector_t){.x = 1000, .y = 500};
+const vector_t SKY_CENTER = (vector_t) {.x = 500, .y = 250};
+const vector_t TREE_BACKGROUND = (vector_t){.x = 1000, .y = 400};
+const vector_t TREE_CENTER = (vector_t) {.x = 500, .y = 200};
+const vector_t BUILD_BACKGROUND = (vector_t) {.x = 1000, .y = 300};
+const vector_t BUILD_CENTER = (vector_t){.x =500, .y =150};
+const size_t PANEL_WIDTH = 4000;
