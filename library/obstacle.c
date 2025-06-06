@@ -183,7 +183,7 @@ void update_obstacles(state_t *state) {
     // Use 1 + n_q - 1 for clarity: first body is player, next 3 are
     // backgrounds. Subtract 1 for zero-indexing
     body_t *last_obstacle =
-        scene_get_body(state->scene, (4 + state->n_queued_obstacles) - 1);
+        scene_get_body(state->scene, (1 + state->n_queued_obstacles) - 1);
     double next_obst_x_val = next_obst_x(state, last_obstacle);
     x = next_obst_x_val;
     // printf("new x=%f\n", x);

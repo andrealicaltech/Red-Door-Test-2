@@ -7,6 +7,7 @@
 #include "sdl_wrapper.h"
 
 static list_t *ASSET_CACHE;
+static list_t *TEMP_CACHE;
 
 const size_t FONT_SIZE = 18;
 const size_t INITIAL_CAPACITY = 5;
@@ -29,9 +30,14 @@ static void asset_cache_free_entry(entry_t *entry) {
 void asset_cache_init() {
   ASSET_CACHE =
       list_init(INITIAL_CAPACITY, (free_func_t)asset_cache_free_entry);
+  TEMP_CACHE =
+      list_init(INITIAL_CAPACITY, (free_func_t)asset_cache_free_entry);
 }
 
-void asset_cache_destroy() { list_free(ASSET_CACHE); }
+void asset_cache_destroy() { 
+  list_free(ASSET_CACHE);
+  list_free(TEMP_CACHE); 
+}
 
 entry_t *helper_asset_cache(asset_type_t ty, const char *filepath) {
   for (size_t i = 0; i < list_size(ASSET_CACHE); i++) {
@@ -62,4 +68,23 @@ void *asset_cache_obj_get_or_create(asset_type_t ty, const char *filepath) {
     return new_entry->obj;
   }
   return content->obj;
+}
+
+//ADDED
+void asset_cache_store_temp(const char *key, SDL_Texture *tex) {
+  entry_t *new_entry = malloc(sizeof(entry_t));
+  new_entry->type = ASSET_IMAGE;
+  new_entry->filepath = key;  // Using the key as identifier
+  new_entry->obj = tex;
+  list_add(TEMP_CACHE, new_entry);
+}
+
+SDL_Texture *asset_cache_lookup(const char *key) {
+  for (size_t i = 0; i < list_size(TEMP_CACHE); i++) {
+    entry_t *entry = list_get(TEMP_CACHE, i);
+    if (entry && strcmp(entry->filepath, key) == 0) {
+      return entry->obj;
+    }
+  }
+  return NULL;
 }

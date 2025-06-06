@@ -22,34 +22,77 @@
 /*
 MARK: Player control and kinematics
 */
-body_t *make_rectangle_body(double width, double height, vector_t center,
-                            bool player) {
-  list_t *rect = list_init(4, free);
-
-  vector_t *vec_1 = malloc(sizeof(vector_t));
-  *vec_1 = (vector_t){0, 0};
-  list_add(rect, vec_1);
-
-  vector_t *vec_2 = malloc(sizeof(vector_t));
-  *vec_2 = (vector_t){width, 0};
-  list_add(rect, vec_2);
-
-  vector_t *vec_3 = malloc(sizeof(vector_t));
-  *vec_3 = (vector_t){width, height};
-  list_add(rect, vec_3);
-
-  vector_t *vec_4 = malloc(sizeof(vector_t));
-  *vec_4 = (vector_t){0, height};
-  list_add(rect, vec_4);
-
-  if (player) {
-    body_t *rectangle =
-        body_init_with_info(rect, 1, SPRITE_COLOR, (void *)PLAYER_INFO, NULL);
-    return rectangle;
-  } else {
-    body_t *obstacle = body_init(rect, 1, SPRITE_COLOR);
-    return obstacle;
+void render_layers(SDL_Texture *texture, double *x, SDL_Rect *viewport) {
+  if (*x <= -viewport->w) {
+    *x += viewport->w;
   }
+
+  SDL_Rect dest1 = *viewport;
+  dest1.x = (int)(*x);
+  sdl_render_image(texture, &dest1);
+
+  SDL_Rect dest2 = *viewport;
+  dest2.x = (int)(*x) + viewport->w;
+  sdl_render_image(texture, &dest2);
+}
+
+
+body_t *make_background(double w, double h, vector_t center) {
+  list_t *c = list_init(4, free);
+  vector_t *v1 = malloc(sizeof(vector_t));
+  *v1 = (vector_t){-w/2, -h/2};
+  list_add(c, v1);
+
+  vector_t *v2 = malloc(sizeof(vector_t));
+  *v2 = (vector_t){w/2, -h/2};
+  list_add(c, v2);
+
+  vector_t *v3 = malloc(sizeof(vector_t));
+  *v3 = (vector_t){w/2, h/2};
+  list_add(c, v3);
+
+  vector_t *v4 = malloc(sizeof(vector_t));
+  *v4 = (vector_t){-w/2, h/2};
+  list_add(c, v4);
+  body_t *obstacle = body_init(c, 1, OBS_COLOR);
+  body_set_centroid(obstacle, center);
+  return obstacle;
+}
+
+body_t *make_frog(double outer_radius, double inner_radius, vector_t center) {
+  center.y += inner_radius;
+  list_t *c = list_init(4, free);
+  for (size_t i = 0; i < 4; i++) {
+    double angle = 2 * M_PI * i / 4;
+    vector_t *v = malloc(sizeof(*v));
+    *v = (vector_t){center.x + inner_radius * cos(angle),
+                    center.y + outer_radius * sin(angle)};
+    list_add(c, v);
+  }
+  body_t *froggy = body_init(c, 1, SPRITE_COLOR);
+  return froggy;
+}
+
+body_t *make_player(double w, double h, vector_t center) {
+  list_t *c = list_init(4, free);
+  vector_t *v1 = malloc(sizeof(vector_t));
+  *v1 = (vector_t){0, 0};
+  list_add(c, v1);
+
+  vector_t *v2 = malloc(sizeof(vector_t));
+  *v2 = (vector_t){w, 0};
+  list_add(c, v2);
+
+  vector_t *v3 = malloc(sizeof(vector_t));
+  *v3 = (vector_t){w, h};
+  list_add(c, v3);
+
+  vector_t *v4 = malloc(sizeof(vector_t));
+  *v4 = (vector_t){0, h};
+  list_add(c, v4);
+  body_t *player = body_init(c, 1, SPRITE_COLOR);
+  body_set_centroid(player, center);
+  return player;
 }
 
 void start_game(state_t *state) {
@@ -90,42 +133,39 @@ state_t *emscripten_init() {
   state_t *state = malloc(sizeof(state_t));
   state->scene = scene_init();
 
+  state->bg.building_pos.x = 0;
+  state->bg.tree_pos.x = 0;
+  state->bg.sky_pos.x = 0;
+
+
   state->current_game_screen = HOME;
 
   srand(time(NULL));
-  state->scene = scene_init();
+  //state->scene = scene_init();
   state->player_motion = REGULAR;
 
   // Needs to be the first one
-  body_t *player =
-      make_rectangle_body(PLAYER_DIMS.x, PLAYER_DIMS.y, VEC_ZERO, true);
+  body_t *player = make_player(PLAYER_DIMS.x, PLAYER_DIMS.y, PLAYER_CENTER_POS);
   body_set_centroid(player, PLAYER_CENTER_POS);
   state->player = player;
   scene_add_body(state->scene, player);
 
+  SDL_Rect *rect = malloc(sizeof(SDL_Rect));
+  rect->x = MIN.x;
+  rect->y = MIN.y;
+  rect->w = MAX.x;
+  rect->h = MAX.y;
+
+  SDL_Texture *sky = asset_cache_obj_get_or_create(ASSET_IMAGE, SKY_PATH);
+  SDL_Texture *tree = asset_cache_obj_get_or_create(ASSET_IMAGE, TREE_PATH);
+  SDL_Texture *building = asset_cache_obj_get_or_create(ASSET_IMAGE, BUILDING_PATH);
+
   background_init(state);
-  body_t *sky =
-      make_rectangle_body(SKY_BACKGROUND.x, SKY_BACKGROUND.y, MIN, false);
-  body_t *tree =
-      make_rectangle_body(TREE_BACKGROUND.x, TREE_BACKGROUND.y, MIN, false);
-  body_t *building =
-      make_rectangle_body(BUILD_BACKGROUND.x, BUILD_BACKGROUND.y, MIN, false);
-  asset_make_image_with_body(SKY_PATH, sky);
-  asset_make_image_with_body(TREE_PATH, tree);
-  asset_make_image_with_body(BUILDING_PATH, building);
 
-  // state->bg.sky_body = sky;
-  // state->bg.tree_body = tree;
-  // state->bg.building_body = building;
-
-  // body_set_velocity(state->bg.sky_body, state->bg.bg_1_sky_vel);
-  // body_set_velocity(state->bg.tree_body, state->bg.bg_2_tree_vel);
-  // body_set_velocity(state->bg.building_body, state->bg.bg_3_building_vel);
-
-  // scene_add_body(state->scene, state->bg.sky_body);
-  // scene_add_body(state->scene, state->bg.tree_body);
-  // scene_add_body(state->scene, state->bg.building_body);
-
+  asset_cache_store_temp("sky", sky);
+  asset_cache_store_temp("tree", tree);
+  asset_cache_store_temp("building", building);
+  
   asset_make_image_with_body(PLAYER_SPRITE_PATH, player);
   sdl_on_key((key_handler_t)on_key);
 
@@ -151,8 +191,14 @@ bool emscripten_main(state_t *state) {
   update_bg_pos(state, dt);
 
   sdl_clear();
-  wrap_backgrounds(state);
-  update_bg_velocity(state);
+
+  SDL_Rect viewport = {.x = 0, .y = 0, .w = MAX.x, .h = MAX.y};
+
+  render_layers(asset_cache_lookup("sky"), &state->bg.sky_pos.x, &viewport);
+  render_layers(asset_cache_lookup("tree"), &state->bg.tree_pos.x, &viewport);
+  render_layers(asset_cache_lookup("building"), &state->bg.building_pos.x, &viewport);
+
+  //update_bg_velocity(state);
 
   list_t *body_assets = asset_get_asset_list();
   for (size_t i = 0; i < list_size(body_assets); i++) {
