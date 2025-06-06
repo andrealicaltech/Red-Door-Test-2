@@ -114,6 +114,10 @@ state_t *emscripten_init() {
   state->bg.tree_body = tree;
   state->bg.building_body = building;
 
+  body_set_velocity(state->bg.sky_body, state->bg.bg_1_sky_vel);
+  body_set_velocity(state->bg.tree_body, state->bg.bg_2_tree_vel);
+  body_set_velocity(state->bg.building_body, state->bg.bg_3_building_vel);
+
   scene_add_body(state->scene, state->bg.sky_body);
   scene_add_body(state->scene, state->bg.tree_body);
   scene_add_body(state->scene, state->bg.building_body);
