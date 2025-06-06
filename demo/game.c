@@ -22,21 +22,30 @@
 /*
 MARK: Player control and kinematics
 */
-body_t *make_player_sprite(double outer_radius, double inner_radius,
+body_t *make_player_sprite(double width, double height,
                            vector_t center) {
-  // TODO: Replace with player sprite asset
-  center.y += inner_radius;
-  list_t *c = list_init(20, free);
-  for (size_t i = 0; i < 20; i++) {
-    double angle = 2 * M_PI * i / 20;
-    vector_t *v = malloc(sizeof(*v));
-    *v = (vector_t){center.x + inner_radius * cos(angle),
-                    center.y + outer_radius * sin(angle)};
-    list_add(c, v);
-  }
-  body_t *player =
-      body_init_with_info(c, 1, SPRITE_COLOR, (void *)PLAYER_INFO, NULL);
+  list_t *rect = list_init(4, free);
+
+  vector_t *vec_1 = malloc(sizeof(vector_t));
+  *vec_1 = (vector_t) {center.x - (width / 2), center.y - (height / 2)};
+  list_add(rect, vec_1);
+
+  vector_t *vec_2 = malloc(sizeof(vector_t));
+  *vec_2 = (vector_t) {center.x + (width / 2), center.y - (height / 2)};
+  list_add(rect, vec_2);
+
+  vector_t *vec_3 = malloc(sizeof(vector_t));
+  *vec_3 = (vector_t) {center.x + (width / 2), center.y + (height / 2)};
+  list_add(rect, vec_3);
+
+  vector_t *vec_4 = malloc(sizeof(vector_t));
+  *vec_3 = (vector_t) {center.x - (width / 2), center.y + (height / 2)};
+  list_add(rect, vec_4);
+
+  body_t *player = body_init_with_info(rect, 1, SPRITE_COLOR, (void *)PLAYER_INFO, NULL);
+  
   return player;
+
 }
 
 void start_game(state_t *state) {
@@ -92,9 +101,9 @@ state_t *emscripten_init() {
   // TODO: Initialize all 3 backgrounds
   background_init(state);
   SDL_Rect rect = (SDL_Rect){.x = 0, .y = 0, .w = MAX.x, .h = MAX.y};
-  asset_make_image(SKY_PATH, rect);
-  asset_make_image(TREE_PATH, rect);
-  asset_make_image(BUILDING_PATH, rect);
+  body_t *sky_body = make_f ;
+  body_t *sky = asset_make_image_with_body(SKY_PATH, sky_body);
+
   asset_make_image_with_body(PLAYER_SPRITE_PATH, player);
   sdl_on_key((key_handler_t)on_key);
 
