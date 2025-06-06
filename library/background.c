@@ -35,9 +35,10 @@ void background_init(state_t *state) {
 
 // increase speed of player + backgrounds
 void update_bg_velocity(state_t *state) {
-  state->bg.bg_1_sky_vel = vec_multiply(2.0, state->bg.bg_1_sky_vel);
-  state->bg.bg_2_tree_vel = vec_multiply(2.0, state->bg.bg_2_tree_vel);
-  state->bg.bg_3_building_vel = vec_multiply(2.0, state->bg.bg_3_building_vel);
+  vector_t add = (vector_t) {.x = 0.01, .y = 0};
+  state->bg.bg_1_sky_vel = vec_add(add, state->bg.bg_1_sky_vel);
+  state->bg.bg_2_tree_vel = vec_add(add, state->bg.bg_2_tree_vel);
+  state->bg.bg_3_building_vel = vec_add(add, state->bg.bg_3_building_vel);
 }
 
 // Wrap backgrounds for scrolling effect
