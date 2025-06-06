@@ -22,7 +22,7 @@
 /*
 MARK: Player control and kinematics
 */
-body_t *make_player_sprite(double width, double height, vector_t center) {
+body_t *make_rectangle_body(double width, double height, vector_t center) {
   list_t *rect = list_init(4, free);
 
   vector_t *vec_1 = malloc(sizeof(vector_t));
@@ -44,7 +44,7 @@ body_t *make_player_sprite(double width, double height, vector_t center) {
   body_t *player =
       body_init_with_info(rect, 1, SPRITE_COLOR, (void *)PLAYER_INFO, NULL);
 
-  return player;
+  return rectangle;
 }
 
 void start_game(state_t *state) {
@@ -92,7 +92,7 @@ state_t *emscripten_init() {
   state->player_motion = REGULAR;
 
   // Needs to be the first one
-  body_t *player = make_player_sprite(OUTER_RADIUS, INNER_RADIUS, VEC_ZERO);
+  body_t *player = make_rectangle_body(10, 40, VEC_ZERO);
   body_set_centroid(player, PLAYER_CENTER_POS);
   state->player = player;
   scene_add_body(state->scene, player);
@@ -100,8 +100,22 @@ state_t *emscripten_init() {
   // TODO: Initialize all 3 backgrounds
   background_init(state);
   SDL_Rect rect = (SDL_Rect){.x = 0, .y = 0, .w = MAX.x, .h = MAX.y};
-  body_t *sky_body = make_f;
-  body_t *sky = asset_make_image_with_body(SKY_PATH, sky_body);
+  body_t *sky = make_rectangle_body(state->bg.sky_pos.x, state->bg.sky_pos.y, VEC_ZERO);
+  body_t *sky_body = asset_make_image_with_body(SKY_PATH, sky);
+  
+  body_t *tree = make_rectangle_body(state->bg.tree_pos.x, state->bg.tree_pos.y, VEC_ZERO);
+  body_t *tree_body = asset_make_image_with_body(TREE_PATH, tree);
+
+  body_t *building = make_rectangle_body(state->bg.building_pos.x, state->bg.building_pos.y, VEC_ZERO);
+  body_t *building_body = asset_make_image_with_body(BUILDING_PATH, building);
+
+  state->bg.sky_body = sky_body;
+  state->bg.tree_body = tree_body;
+  state->bg.building_body = building_body;
+
+  scene_add_body(state->scene, state->bg.sky_body);
+  scene_add_body(state->scene, state->bg.tree_body);
+  scene_add_body(state->scene, state->bg.building_body);
 
   asset_make_image_with_body(PLAYER_SPRITE_PATH, player);
   sdl_on_key((key_handler_t)on_key);
