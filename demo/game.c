@@ -41,7 +41,7 @@ body_t *make_rectangle_body(double width, double height, vector_t center) {
   *vec_3 = (vector_t){center.x - (width / 2), center.y + (height / 2)};
   list_add(rect, vec_4);
 
-  body_t *player =
+  body_t *rectangle =
       body_init_with_info(rect, 1, SPRITE_COLOR, (void *)PLAYER_INFO, NULL);
 
   return rectangle;
@@ -100,21 +100,16 @@ state_t *emscripten_init() {
   // TODO: Initialize all 3 backgrounds
   background_init(state);
   SDL_Rect rect = (SDL_Rect){.x = 0, .y = 0, .w = MAX.x, .h = MAX.y};
-  body_t *sky =
-      make_rectangle_body(state->bg.sky_pos.x, state->bg.sky_pos.y, VEC_ZERO);
-  body_t *sky_body = asset_make_image_with_body(SKY_PATH, sky);
+  body_t *sky = make_rectangle_body(state->bg.sky_pos.x, state->bg.sky_pos.y, VEC_ZERO);
+  body_t *tree = make_rectangle_body(state->bg.tree_pos.x, state->bg.tree_pos.y, VEC_ZERO);
+  body_t *building = make_rectangle_body(state->bg.building_pos.x, state->bg.building_pos.y, VEC_ZERO);
+  asset_make_image_with_body(SKY_PATH, sky);
+  asset_make_image_with_body(TREE_PATH, tree);
+  asset_make_image_with_body(BUILDING_PATH, building);
 
-  body_t *tree =
-      make_rectangle_body(state->bg.tree_pos.x, state->bg.tree_pos.y, VEC_ZERO);
-  body_t *tree_body = asset_make_image_with_body(TREE_PATH, tree);
-
-  body_t *building = make_rectangle_body(state->bg.building_pos.x,
-                                         state->bg.building_pos.y, VEC_ZERO);
-  body_t *building_body = asset_make_image_with_body(BUILDING_PATH, building);
-
-  state->bg.sky_body = sky_body;
-  state->bg.tree_body = tree_body;
-  state->bg.building_body = building_body;
+  state->bg.sky_body = sky;
+  state->bg.tree_body = tree;
+  state->bg.building_body = building;
 
   scene_add_body(state->scene, state->bg.sky_body);
   scene_add_body(state->scene, state->bg.tree_body);
