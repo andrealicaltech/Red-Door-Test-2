@@ -16,12 +16,12 @@
 #include "obstacle.h"
 #include "sdl_wrapper.h"
 
-const vector_t SKY_BACKGROUND = (vector_t){.x = 1000, .y = 500};
-const vector_t SKY_CENTER = (vector_t){.x = 500, .y = 250};
+const vector_t SKY_BACKGROUND = (vector_t){.x = 1000, .y = 700};
+const vector_t SKY_CENTER = (vector_t){.x = 500, .y = 350};
 const vector_t TREE_BACKGROUND = (vector_t){.x = 1000, .y = 400};
 const vector_t TREE_CENTER = (vector_t){.x = 500, .y = 200};
-const vector_t BUILD_BACKGROUND = (vector_t){.x = 1000, .y = 300};
-const vector_t BUILD_CENTER = (vector_t){.x = 500, .y = 150};
+const vector_t BUILD_BACKGROUND = (vector_t){.x = 1000, .y = 350};
+const vector_t BUILD_CENTER = (vector_t){.x = 500, .y = 125};
 const size_t PANEL_WIDTH = 4000;
 
 // initialize background

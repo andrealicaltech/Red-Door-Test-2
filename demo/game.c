@@ -22,30 +22,33 @@
 /*
 MARK: Player control and kinematics
 */
-body_t *make_rectangle_body(double width, double height, vector_t center,
-                            color_t color) {
+body_t *make_rectangle_body(double width, double height, vector_t center) {
   list_t *rect = list_init(4, free);
 
   vector_t *vec_1 = malloc(sizeof(vector_t));
-  *vec_1 = (vector_t){center.x - (width / 2), center.y - (height / 2)};
+  *vec_1 = (vector_t){0, 0};
   list_add(rect, vec_1);
 
   vector_t *vec_2 = malloc(sizeof(vector_t));
-  *vec_2 = (vector_t){center.x + (width / 2), center.y - (height / 2)};
+  *vec_2 = (vector_t){width, 0};
   list_add(rect, vec_2);
 
   vector_t *vec_3 = malloc(sizeof(vector_t));
-  *vec_3 = (vector_t){center.x + (width / 2), center.y + (height / 2)};
+  *vec_3 = (vector_t){width, height};
   list_add(rect, vec_3);
 
   vector_t *vec_4 = malloc(sizeof(vector_t));
-  *vec_4 = (vector_t){center.x - (width / 2), center.y + (height / 2)};
+  *vec_4 = (vector_t){0, height};
   list_add(rect, vec_4);
 
-  body_t *rectangle =
-      body_init_with_info(rect, 1, color, (void *)PLAYER_INFO, NULL);
-
-  return rectangle;
+  if (player) {
+    body_t *rectangle =
+        body_init_with_info(rect, 1, SPRITE_COLOR, (void *)PLAYER_INFO, NULL);
+    return rectangle;
+  } else {
+    body_t *obstacle = body_init(rect, 1, SPRITE_COLOR);
+    return obstacle;
+  }
 }
 
 void start_game(state_t *state) {
@@ -93,35 +96,31 @@ state_t *emscripten_init() {
   state->player_motion = REGULAR;
 
   // Needs to be the first one
-  body_t *player =
-      make_rectangle_body(PLAYER_DIMS.x, PLAYER_DIMS.y, VEC_ZERO, SPRITE_COLOR);
+  body_t *player = make_rectangle_body(PLAYER_DIMS.x, PLAYER_DIMS.y, VEC_ZERO);
   body_set_centroid(player, PLAYER_CENTER_POS);
   state->player = player;
   scene_add_body(state->scene, player);
 
-  // TODO: Initialize all 3 backgrounds
   background_init(state);
-  body_t *sky = make_rectangle_body(SKY_BACKGROUND.x, SKY_BACKGROUND.y, MIN,
-                                    SPRITE_COLOR);
-  body_t *tree = make_rectangle_body(TREE_BACKGROUND.x, TREE_BACKGROUND.y, MIN),
-         SPRITE_COLOR;
-  body_t *building = make_rectangle_body(BUILD_BACKGROUND.x, BUILD_BACKGROUND.y,
-                                         MIN, SPRITE_COLOR);
+  body_t *sky = make_rectangle_body(SKY_BACKGROUND.x, SKY_BACKGROUND.y, MIN);
+  body_t *tree = make_rectangle_body(TREE_BACKGROUND.x, TREE_BACKGROUND.y, MIN);
+  body_t *building =
+      make_rectangle_body(BUILD_BACKGROUND.x, BUILD_BACKGROUND.y, MIN);
   asset_make_image_with_body(SKY_PATH, sky);
   asset_make_image_with_body(TREE_PATH, tree);
   asset_make_image_with_body(BUILDING_PATH, building);
 
-  state->bg.sky_body = sky;
-  state->bg.tree_body = tree;
-  state->bg.building_body = building;
+  // state->bg.sky_body = sky;
+  // state->bg.tree_body = tree;
+  // state->bg.building_body = building;
 
-  body_set_velocity(state->bg.sky_body, state->bg.bg_1_sky_vel);
-  body_set_velocity(state->bg.tree_body, state->bg.bg_2_tree_vel);
-  body_set_velocity(state->bg.building_body, state->bg.bg_3_building_vel);
+  // body_set_velocity(state->bg.sky_body, state->bg.bg_1_sky_vel);
+  // body_set_velocity(state->bg.tree_body, state->bg.bg_2_tree_vel);
+  // body_set_velocity(state->bg.building_body, state->bg.bg_3_building_vel);
 
-  scene_add_body(state->scene, state->bg.sky_body);
-  scene_add_body(state->scene, state->bg.tree_body);
-  scene_add_body(state->scene, state->bg.building_body);
+  // scene_add_body(state->scene, state->bg.sky_body);
+  // scene_add_body(state->scene, state->bg.tree_body);
+  // scene_add_body(state->scene, state->bg.building_body);
 
   asset_make_image_with_body(PLAYER_SPRITE_PATH, player);
   sdl_on_key((key_handler_t)on_key);
