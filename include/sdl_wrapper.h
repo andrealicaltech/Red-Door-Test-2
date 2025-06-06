@@ -97,7 +97,6 @@ SDL_Rect *sdl_get_rect(double x, double y, double w, double h);
  * image
  */
 
-
 void sdl_render_image(SDL_Texture *image_texture, SDL_Rect *rect);
 
 void sdl_render_text(TTF_Font *font, color_t color, const char *text,

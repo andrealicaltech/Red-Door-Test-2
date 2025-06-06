@@ -37,10 +37,9 @@ void asset_cache_destroy();
  */
 void *asset_cache_obj_get_or_create(asset_type_t ty, const char *filepath);
 
-//ADDED
+// ADDED
 void asset_cache_store_temp(const char *key, SDL_Texture *tex);
 
 SDL_Texture *asset_cache_lookup(const char *key);
-
 
 #endif // #ifndef __ASSET_CACHE_H__

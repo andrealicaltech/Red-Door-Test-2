@@ -30,13 +30,12 @@ static void asset_cache_free_entry(entry_t *entry) {
 void asset_cache_init() {
   ASSET_CACHE =
       list_init(INITIAL_CAPACITY, (free_func_t)asset_cache_free_entry);
-  TEMP_CACHE =
-      list_init(INITIAL_CAPACITY, (free_func_t)asset_cache_free_entry);
+  TEMP_CACHE = list_init(INITIAL_CAPACITY, (free_func_t)asset_cache_free_entry);
 }
 
-void asset_cache_destroy() { 
+void asset_cache_destroy() {
   list_free(ASSET_CACHE);
-  list_free(TEMP_CACHE); 
+  list_free(TEMP_CACHE);
 }
 
 entry_t *helper_asset_cache(asset_type_t ty, const char *filepath) {
@@ -70,11 +69,11 @@ void *asset_cache_obj_get_or_create(asset_type_t ty, const char *filepath) {
   return content->obj;
 }
 
-//ADDED
+// ADDED
 void asset_cache_store_temp(const char *key, SDL_Texture *tex) {
   entry_t *new_entry = malloc(sizeof(entry_t));
   new_entry->type = ASSET_IMAGE;
-  new_entry->filepath = key;  // Using the key as identifier
+  new_entry->filepath = key; // Using the key as identifier
   new_entry->obj = tex;
   list_add(TEMP_CACHE, new_entry);
 }

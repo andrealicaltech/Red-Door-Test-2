@@ -26,13 +26,13 @@ const size_t PANEL_WIDTH = 4000;
 
 // initialize background
 void background_init(state_t *state) {
-  state->bg =
-      (background_t){.bg_1_sky_vel = INIT_BACKGROUND_1_SKY_VELOCITY,
-                     .bg_2_tree_vel = INIT_BACKGROUND_2_TREE_VELOCITY,
-                     .bg_3_building_vel = INIT_BACKGROUND_3_BUILDINGS_VELOCITY,
-                     .sky_pos = (vector_t) {.x = 0, .y = SKY_BACKGROUND.y},
-                     .tree_pos = (vector_t) {.x = 0, .y = TREE_BACKGROUND.y},
-                     .building_pos = (vector_t) {.x = 0, .y = BUILD_BACKGROUND.y}};
+  state->bg = (background_t){
+      .bg_1_sky_vel = INIT_BACKGROUND_1_SKY_VELOCITY,
+      .bg_2_tree_vel = INIT_BACKGROUND_2_TREE_VELOCITY,
+      .bg_3_building_vel = INIT_BACKGROUND_3_BUILDINGS_VELOCITY,
+      .sky_pos = (vector_t){.x = 0, .y = SKY_BACKGROUND.y},
+      .tree_pos = (vector_t){.x = 0, .y = TREE_BACKGROUND.y},
+      .building_pos = (vector_t){.x = 0, .y = BUILD_BACKGROUND.y}};
 }
 
 // increase speed of player + backgrounds
@@ -48,4 +48,3 @@ void update_bg_pos(state_t *state, double dt) {
   state->bg.tree_pos.x -= state->bg.bg_2_tree_vel.x * dt;
   state->bg.building_pos.x -= state->bg.bg_3_building_vel.x * dt;
 }
-
