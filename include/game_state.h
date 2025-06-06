@@ -21,7 +21,10 @@ typedef struct {
   vector_t bg_3_building_vel;
   vector_t sky_pos;
   vector_t tree_pos;
-  vector_t build_pos;
+  vector_t building_pos;
+  body_t *sky_body;
+  body_t *tree_body;
+  body_t *building_body;
 } background_t;
 
 struct state {
@@ -30,6 +33,7 @@ struct state {
   GAME_SCREEN current_game_screen;
   bool is_game_over;
 
+  // background
   background_t bg;
   body_t *player;
 

@@ -6,7 +6,7 @@ const vector_t MAX = {1000, 500};
 const vector_t LEADERBOARD_SIZE = {100, 50};
 
 // TODO: Change
-const vector_t PLAYER_DIMS = {60, 60};
+const vector_t PLAYER_DIMS = {20, 40};
 const vector_t PLAYER_CENTER_POS = {500, 50};
 const char *PLAYER_INFO = "player";
 
@@ -50,9 +50,9 @@ const color_t LEADERBOARD_COLOR = (color_t){0.6, 0.3, 0}; // leaderboard
 const size_t BODY_ASSETS = 1;
 const char *PLAYER_SPRITE_PATH = "assets/Amudhan.png";
 const char *PLAYER_SPRITE_ANDREA_PATH = "assets/Andrea.png";
-const char *SKY_PATH = "assets/Sky.jpg";
-const char *BUILDING_PATH = "assets/Building.jpg";
-const char *TREE_PATH = "assets/Tree.jpg";
+const char *SKY_PATH = "assets/Sky.png";
+const char *BUILDING_PATH = "assets/Building.png";
+const char *TREE_PATH = "assets/Tree.png";
 const char *OBSTACLE_SPRITE_PATH = "assets/obstacle.png";
 
 const double OBSTACLE_START_WAIT_TIME = 3.0;
