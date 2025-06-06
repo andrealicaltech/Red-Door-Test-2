@@ -33,7 +33,7 @@ struct state {
   GAME_SCREEN current_game_screen;
   bool is_game_over;
 
-  //background
+  // background
   background_t bg;
   body_t *player;
 
