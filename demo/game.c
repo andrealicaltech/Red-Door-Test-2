@@ -194,7 +194,7 @@ bool emscripten_main(state_t *state) {
   if (dt < 0.0001) {
     dt = 0.001;
   }
-  
+
   update_bg_velocity(state, dt);
 
   update_bg_pos(state, dt);
