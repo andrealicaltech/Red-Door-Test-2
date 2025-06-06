@@ -38,7 +38,7 @@ body_t *make_rectangle_body(double width, double height, vector_t center) {
   list_add(rect, vec_3);
 
   vector_t *vec_4 = malloc(sizeof(vector_t));
-  *vec_3 = (vector_t){center.x - (width / 2), center.y + (height / 2)};
+  *vec_4 = (vector_t){center.x - (width / 2), center.y + (height / 2)};
   list_add(rect, vec_4);
 
   body_t *rectangle =
@@ -99,13 +99,13 @@ state_t *emscripten_init() {
 
   // TODO: Initialize all 3 backgrounds
   background_init(state);
-  body_t *sky = make_rectangle_body(state->bg.sky_pos.x, state->bg.sky_pos.y,
-                                    body_get_centroid(state->bg.sky_body));
-  body_t *tree = make_rectangle_body(state->bg.tree_pos.x, state->bg.tree_pos.y,
-                                     body_get_centroid(state->bg.tree_body));
+  body_t *sky = make_rectangle_body(SKY_BACKGROUND.x, SKY_BACKGROUND.y,
+                                    MIN);
+  body_t *tree = make_rectangle_body(TREE_BACKGROUND.x, TREE_BACKGROUND.y,
+                                     MIN);
   body_t *building =
-      make_rectangle_body(state->bg.building_pos.x, state->bg.building_pos.y,
-                          body_get_centroid(state->bg.building_body));
+      make_rectangle_body(BUILD_BACKGROUND.x, BUILD_BACKGROUND.y,
+                        MIN);
   asset_make_image_with_body(SKY_PATH, sky);
   asset_make_image_with_body(TREE_PATH, tree);
   asset_make_image_with_body(BUILDING_PATH, building);
