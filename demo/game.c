@@ -100,9 +100,12 @@ state_t *emscripten_init() {
   // TODO: Initialize all 3 backgrounds
   background_init(state);
   SDL_Rect rect = (SDL_Rect){.x = 0, .y = 0, .w = MAX.x, .h = MAX.y};
-  body_t *sky = make_rectangle_body(state->bg.sky_pos.x, state->bg.sky_pos.y, VEC_ZERO);
-  body_t *tree = make_rectangle_body(state->bg.tree_pos.x, state->bg.tree_pos.y, VEC_ZERO);
-  body_t *building = make_rectangle_body(state->bg.building_pos.x, state->bg.building_pos.y, VEC_ZERO);
+  body_t *sky =
+      make_rectangle_body(state->bg.sky_pos.x, state->bg.sky_pos.y, VEC_ZERO);
+  body_t *tree =
+      make_rectangle_body(state->bg.tree_pos.x, state->bg.tree_pos.y, VEC_ZERO);
+  body_t *building = make_rectangle_body(state->bg.building_pos.x,
+                                         state->bg.building_pos.y, VEC_ZERO);
   asset_make_image_with_body(SKY_PATH, sky);
   asset_make_image_with_body(TREE_PATH, tree);
   asset_make_image_with_body(BUILDING_PATH, building);
