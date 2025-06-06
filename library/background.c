@@ -36,8 +36,8 @@ void background_init(state_t *state) {
 }
 
 // increase speed of player + backgrounds
-void update_bg_velocity(state_t *state) {
-  vector_t add = (vector_t){.x = 0.02, .y = 0};
+void update_bg_velocity(state_t *state, double dt) {
+  vector_t add = (vector_t){.x = 2.0 * dt, .y = 0};
   state->bg.bg_1_sky_vel = vec_add(add, state->bg.bg_1_sky_vel);
   state->bg.bg_2_tree_vel = vec_add(add, state->bg.bg_2_tree_vel);
   state->bg.bg_3_building_vel = vec_add(add, state->bg.bg_3_building_vel);

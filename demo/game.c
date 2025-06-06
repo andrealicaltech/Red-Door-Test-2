@@ -36,13 +36,6 @@ void render_layers(SDL_Texture *texture, double *x, SDL_Rect *viewport) {
   SDL_Rect dest2 = *viewport;
   dest2.x = (int)(*x) + viewport->w;
 
-  printf("dest1.x = %d, dest2.x = %d\n", dest1.x, dest2.x);
-  printf("*x = %.2f\n", *x);
-
-  if (texture == NULL) {
-    printf("❌ ERROR: texture is NULL!\n");
-  }
-
   sdl_render_image(texture, &dest1);
   sdl_render_image(texture, &dest2);
 }
@@ -196,18 +189,13 @@ state_t *emscripten_init() {
 }
 
 bool emscripten_main(state_t *state) {
-  static double timer = 0;
   double dt = time_since_last_tick();
 
   if (dt < 0.0001) {
     dt = 0.001;
   }
-
-  timer += dt;
-  if (timer >= 1.0) {
-    update_bg_velocity(state);
-    timer = 0;
-  }
+  
+  update_bg_velocity(state, dt);
 
   update_bg_pos(state, dt);
 
@@ -218,8 +206,6 @@ bool emscripten_main(state_t *state) {
   render_layers(asset_cache_lookup("tree"), &state->bg.tree_pos.x, &viewport);
   render_layers(asset_cache_lookup("building"), &state->bg.building_pos.x,
                 &viewport);
-
-  // update_bg_velocity(state);
 
   list_t *body_assets = asset_get_asset_list();
 

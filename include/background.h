@@ -14,7 +14,7 @@ void background_init(state_t *state);
 
 void update_bg_pos(state_t *state, double dt);
 
-void update_bg_velocity(state_t *state);
+void update_bg_velocity(state_t *state, double dt);
 
 void wrap_backgrounds(state_t *state);
 
