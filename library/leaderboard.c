@@ -12,31 +12,10 @@
 #include "obstacle.h"
 
 body_t *render_scoreboard(state_t *state) {
-  body_t *scoreboard_bg = make_scoreboard_background();
-}
-
-body_t *make_scoreboard_background() {
-  list_t *c = list_init(4, free);
-  vector_t *v1 = malloc(sizeof(vector_t));
-  *v1 = (vector_t){MAX.x, MAX.y};
-  list_add(c, v1);
-
-  vector_t *v2 = malloc(sizeof(vector_t));
-  *v2 = (vector_t){MAX.x, MAX.y - LEADERBOARD_SIZE.y};
-  list_add(c, v2);
-
-  vector_t *v3 = malloc(sizeof(vector_t));
-  *v3 = (vector_t){MAX.x - LEADERBOARD_SIZE.x, MAX.y - LEADERBOARD_SIZE.y};
-  list_add(c, v3);
-
-  vector_t *v4 = malloc(sizeof(vector_t));
-  *v4 = (vector_t){MAX.x - LEADERBOARD_SIZE.x, MAX.y};
-  list_add(c, v4);
-
+  //NOTE: TTF_Init inside emscripten main
   vector_t center = (vector_t){MAX.x - LEADERBOARD_SIZE.x / 2,
-                               MAX.y - LEADERBOARD_SIZE.y / 2};
-  body_t *scoreboard =
-      body_init_with_info(c, 1, LEADERBOARD_COLOR, (void *)OBSTACLE_INFO, NULL);
-  body_set_centroid(scoreboard, center);
-  return scoreboard;
+    MAX.y - LEADERBOARD_SIZE.y / 2};
+  
+  body_t *scoreboard_bg_rectangle = make_rectangle_body(LEADERBOARD_SIZE.x, LEADERBOARD_SIZE.y, center, LEADERBOARD_COLOR);
+  body_t *text_rectangle = sdl_get_rect(MAX.x - LEADERBOARD_SIZE.x*0.75, MAX.y - LEADERBOARD_SIZE.y*0.75, LEADERBOARD_SIZE.x*0.5, LEADERBOARD_SIZE.y*0.5);
 }

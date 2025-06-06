@@ -22,7 +22,7 @@
 /*
 MARK: Player control and kinematics
 */
-body_t *make_rectangle_body(double width, double height, vector_t center) {
+body_t *make_rectangle_body(double width, double height, vector_t center, color_t color) {
   list_t *rect = list_init(4, free);
 
   vector_t *vec_1 = malloc(sizeof(vector_t));
@@ -42,7 +42,7 @@ body_t *make_rectangle_body(double width, double height, vector_t center) {
   list_add(rect, vec_4);
 
   body_t *rectangle =
-      body_init_with_info(rect, 1, SPRITE_COLOR, (void *)PLAYER_INFO, NULL);
+      body_init_with_info(rect, 1, color, (void *)PLAYER_INFO, NULL);
 
   return rectangle;
 }
@@ -92,17 +92,17 @@ state_t *emscripten_init() {
   state->player_motion = REGULAR;
 
   // Needs to be the first one
-  body_t *player = make_rectangle_body(PLAYER_DIMS.x, PLAYER_DIMS.y, VEC_ZERO);
+  body_t *player = make_rectangle_body(PLAYER_DIMS.x, PLAYER_DIMS.y, VEC_ZERO, SPRITE_COLOR);
   body_set_centroid(player, PLAYER_CENTER_POS);
   state->player = player;
   scene_add_body(state->scene, player);
 
   // TODO: Initialize all 3 backgrounds
   background_init(state);
-  body_t *sky = make_rectangle_body(SKY_BACKGROUND.x, SKY_BACKGROUND.y, MIN);
-  body_t *tree = make_rectangle_body(TREE_BACKGROUND.x, TREE_BACKGROUND.y, MIN);
+  body_t *sky = make_rectangle_body(SKY_BACKGROUND.x, SKY_BACKGROUND.y, MIN, SPRITE_COLOR);
+  body_t *tree = make_rectangle_body(TREE_BACKGROUND.x, TREE_BACKGROUND.y, MIN), SPRITE_COLOR;
   body_t *building =
-      make_rectangle_body(BUILD_BACKGROUND.x, BUILD_BACKGROUND.y, MIN);
+      make_rectangle_body(BUILD_BACKGROUND.x, BUILD_BACKGROUND.y, MIN, SPRITE_COLOR);
   asset_make_image_with_body(SKY_PATH, sky);
   asset_make_image_with_body(TREE_PATH, tree);
   asset_make_image_with_body(BUILDING_PATH, building);
