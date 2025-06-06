@@ -22,30 +22,29 @@
 /*
 MARK: Player control and kinematics
 */
-body_t *make_player_sprite(double width, double height,
-                           vector_t center) {
+body_t *make_player_sprite(double width, double height, vector_t center) {
   list_t *rect = list_init(4, free);
 
   vector_t *vec_1 = malloc(sizeof(vector_t));
-  *vec_1 = (vector_t) {center.x - (width / 2), center.y - (height / 2)};
+  *vec_1 = (vector_t){center.x - (width / 2), center.y - (height / 2)};
   list_add(rect, vec_1);
 
   vector_t *vec_2 = malloc(sizeof(vector_t));
-  *vec_2 = (vector_t) {center.x + (width / 2), center.y - (height / 2)};
+  *vec_2 = (vector_t){center.x + (width / 2), center.y - (height / 2)};
   list_add(rect, vec_2);
 
   vector_t *vec_3 = malloc(sizeof(vector_t));
-  *vec_3 = (vector_t) {center.x + (width / 2), center.y + (height / 2)};
+  *vec_3 = (vector_t){center.x + (width / 2), center.y + (height / 2)};
   list_add(rect, vec_3);
 
   vector_t *vec_4 = malloc(sizeof(vector_t));
-  *vec_3 = (vector_t) {center.x - (width / 2), center.y + (height / 2)};
+  *vec_3 = (vector_t){center.x - (width / 2), center.y + (height / 2)};
   list_add(rect, vec_4);
 
-  body_t *player = body_init_with_info(rect, 1, SPRITE_COLOR, (void *)PLAYER_INFO, NULL);
-  
-  return player;
+  body_t *player =
+      body_init_with_info(rect, 1, SPRITE_COLOR, (void *)PLAYER_INFO, NULL);
 
+  return player;
 }
 
 void start_game(state_t *state) {
@@ -101,7 +100,7 @@ state_t *emscripten_init() {
   // TODO: Initialize all 3 backgrounds
   background_init(state);
   SDL_Rect rect = (SDL_Rect){.x = 0, .y = 0, .w = MAX.x, .h = MAX.y};
-  body_t *sky_body = make_f ;
+  body_t *sky_body = make_f;
   body_t *sky = asset_make_image_with_body(SKY_PATH, sky_body);
 
   asset_make_image_with_body(PLAYER_SPRITE_PATH, player);
