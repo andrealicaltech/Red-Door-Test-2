@@ -99,13 +99,10 @@ state_t *emscripten_init() {
 
   // TODO: Initialize all 3 backgrounds
   background_init(state);
-  body_t *sky = make_rectangle_body(SKY_BACKGROUND.x, SKY_BACKGROUND.y,
-                                    MIN);
-  body_t *tree = make_rectangle_body(TREE_BACKGROUND.x, TREE_BACKGROUND.y,
-                                     MIN);
+  body_t *sky = make_rectangle_body(SKY_BACKGROUND.x, SKY_BACKGROUND.y, MIN);
+  body_t *tree = make_rectangle_body(TREE_BACKGROUND.x, TREE_BACKGROUND.y, MIN);
   body_t *building =
-      make_rectangle_body(BUILD_BACKGROUND.x, BUILD_BACKGROUND.y,
-                        MIN);
+      make_rectangle_body(BUILD_BACKGROUND.x, BUILD_BACKGROUND.y, MIN);
   asset_make_image_with_body(SKY_PATH, sky);
   asset_make_image_with_body(TREE_PATH, tree);
   asset_make_image_with_body(BUILDING_PATH, building);
