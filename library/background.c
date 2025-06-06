@@ -36,9 +36,13 @@ void update_bg_velocity(state_t *state) {
 }
 
 void update_bg_pos(state_t *state, double dt) {
-  state->bg.bg_1_sky_vel = vec_add(state->bg.bg_1_sky_vel, vec_multiply(dt, state->bg.bg_1_sky_vel));
-  state->bg.bg_2_tree_vel = vec_add(state->bg.bg_2_tree_vel, vec_multiply(dt, state->bg.bg_2_tree_vel));
-  state->bg.bg_3_building_vel = vec_add(state->bg.bg_3_building_vel, vec_multiply(dt, state->bg.bg_3_building_vel));
+  state->bg.bg_1_sky_vel =
+      vec_add(state->bg.bg_1_sky_vel, vec_multiply(dt, state->bg.bg_1_sky_vel));
+  state->bg.bg_2_tree_vel = vec_add(state->bg.bg_2_tree_vel,
+                                    vec_multiply(dt, state->bg.bg_2_tree_vel));
+  state->bg.bg_3_building_vel =
+      vec_add(state->bg.bg_3_building_vel,
+              vec_multiply(dt, state->bg.bg_3_building_vel));
 
   body_set_centroid(state->bg.building_body, BUILD_CENTER);
   body_set_centroid(state->bg.tree_body, TREE_CENTER);
