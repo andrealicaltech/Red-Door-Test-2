@@ -92,7 +92,9 @@ state_t *emscripten_init() {
   // TODO: Initialize all 3 backgrounds
   background_init(state);
   SDL_Rect rect = (SDL_Rect){.x = 0, .y = 0, .w = MAX.x, .h = MAX.y};
-  asset_make_image(BACKGROUND_PATH, rect);
+  asset_make_image(SKY_PATH, rect);
+  asset_make_image(TREE_PATH, rect);
+  asset_make_image(BUILDING_PATH, rect);
   asset_make_image_with_body(PLAYER_SPRITE_PATH, player);
   sdl_on_key((key_handler_t)on_key);
 

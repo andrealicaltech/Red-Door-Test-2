@@ -52,7 +52,9 @@ extern const color_t QUESADILLA_COLOR;
 
 extern const size_t BODY_ASSETS;
 extern const char *PLAYER_SPRITE_PATH;
-extern const char *BACKGROUND_PATH;
+extern const char *BUILDING_PATH;
+extern const char *TREE_PATH;
+extern const char *SKY_PATH;
 extern const char *OBSTACLE_SPRITE_PATH;
 
 extern const double OBSTACLE_START_WAIT_TIME;
