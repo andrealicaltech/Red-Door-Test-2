@@ -30,7 +30,7 @@ void background_init(state_t *state) {
                      .bg_3_building_vel = INIT_BACKGROUND_3_BUILDINGS_VELOCITY,
                      .sky_pos = SKY_BACKGROUND,
                      .tree_pos = TREE_BACKGROUND,
-                     .build_pos = BUILD_BACKGROUND};
+                     .building_pos = BUILD_BACKGROUND};
 }
 
 // increase speed of player + backgrounds
@@ -43,14 +43,15 @@ void update_bg_velocity(state_t *state) {
 
 // Wrap backgrounds for scrolling effect
 void wrap_backgrounds(state_t *state) {
-  ssize_t limit = -(PANEL_WIDTH - MAX.x);
-  if (state->bg.sky_pos.x <= limit) {
-    state->bg.sky_pos.x = 0.0f;
+  double limit = -(PANEL_WIDTH - MAX.x);
+
+  if (state->bg.building_pos.x <= limit) {
+    state->bg.building_pos.x = 0.0f;
   }
   if (state->bg.tree_pos.x <= limit) {
     state->bg.tree_pos.x = 0.0f;
   }
-  if (state->bg.build_pos.x <= limit) {
-    state->bg.build_pos.x = 0.0f;
+  if (state->bg.sky_pos.x <= limit) {
+    state->bg.sky_pos.x = 0.0f;
   }
 }
