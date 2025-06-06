@@ -37,7 +37,7 @@ void background_init(state_t *state) {
 
 // increase speed of player + backgrounds
 void update_bg_velocity(state_t *state) {
-  vector_t add = (vector_t){.x = 0.01, .y = 0};
+  vector_t add = (vector_t){.x = 0.02, .y = 0};
   state->bg.bg_1_sky_vel = vec_add(add, state->bg.bg_1_sky_vel);
   state->bg.bg_2_tree_vel = vec_add(add, state->bg.bg_2_tree_vel);
   state->bg.bg_3_building_vel = vec_add(add, state->bg.bg_3_building_vel);
@@ -47,4 +47,5 @@ void update_bg_pos(state_t *state, double dt) {
   state->bg.sky_pos.x -= state->bg.bg_1_sky_vel.x * dt;
   state->bg.tree_pos.x -= state->bg.bg_2_tree_vel.x * dt;
   state->bg.building_pos.x -= state->bg.bg_3_building_vel.x * dt;
+  printf("Before update: sky_pos.x = %.2f\n", state->bg.sky_pos.x);
 }

@@ -210,6 +210,7 @@ SDL_Rect *sdl_get_rect(double x, double y, double w, double h) {
 }
 
 void sdl_render_image(SDL_Texture *image_texture, SDL_Rect *rect) {
+  printf("Drawing at: x=%d y=%d w=%d h=%d\n", rect->x, rect->y, rect->w, rect->h);
   SDL_RenderCopy(renderer, image_texture, NULL, rect);
 }
 
@@ -254,13 +255,24 @@ void sdl_render_scene(scene_t *scene) {
 
 void sdl_on_key(key_handler_t handler) { key_handler = handler; }
 
+// double time_since_last_tick(void) {
+//   static clock_t last_clock = 0;
+//   clock_t now = clock();
+//   double difference = last_clock
+//                           ? (double)(now - last_clock) / CLOCKS_PER_SEC
+//                           : 0.0; // return 0 the first time this is called
+//   last_clock = now;
+//   return difference;
+// }
+
 double time_since_last_tick(void) {
-  clock_t now = clock();
-  double difference = last_clock
-                          ? (double)(now - last_clock) / CLOCKS_PER_SEC
-                          : 0.0; // return 0 the first time this is called
-  last_clock = now;
-  return difference;
+    static Uint32 last_ticks = 0;
+    Uint32 now = SDL_GetTicks();  // returns time in milliseconds since SDL init
+    double dt = last_ticks
+                  ? (now - last_ticks) / 1000.0  // convert to seconds
+                  : 0.0;
+    last_ticks = now;
+    return dt;
 }
 
 SDL_Rect sdl_get_body_bounding_box(body_t *body) {
