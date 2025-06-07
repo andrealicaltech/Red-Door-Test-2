@@ -38,7 +38,6 @@ extern const size_t QUESADILLA_PTS;
 // player movements
 extern const vector_t DUCK_INITIAL_VELOCITY;
 extern const vector_t JUMP_INITIAL_VELOCITY;
-extern const double Y_GRAV_ACCELERATION_MAG_PER_S;
 extern const double DUCK_ACCELERATION_CHANGE;
 
 // Background and obstacle velocity. Background 3 is the top layer (i.e. the
@@ -46,6 +45,9 @@ extern const double DUCK_ACCELERATION_CHANGE;
 extern const vector_t INIT_BACKGROUND_1_SKY_VELOCITY;
 extern const vector_t INIT_BACKGROUND_2_TREE_VELOCITY;
 extern const vector_t INIT_BACKGROUND_3_BUILDINGS_VELOCITY;
+
+extern const double JUMP_VEL_COMPONENT_RATIO;
+extern const double GRAV_JUMP_VEL_RATIO;
 
 extern const color_t SPRITE_COLOR;
 extern const color_t OBS_COLOR;

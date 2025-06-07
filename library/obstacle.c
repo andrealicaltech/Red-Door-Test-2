@@ -65,9 +65,6 @@ void obstacle_collision_handler(body_t *body1, body_t *body2, vector_t axis,
 
   double delta = (player_centroid.y - 0.5 * PLAYER_DIMS.y) -
                  (obstacle_centroid.y + 0.5 * obstacle_dims.y);
-  printf("player_bottom=%f\n", player_centroid.y - 0.5 * PLAYER_DIMS.y);
-  printf("obstacle_top=%f\n", obstacle_centroid.y + 0.5 * obstacle_dims.y);
-  printf("delta=%f\n", delta);
   if (abs(delta) <= EDGE_TOLERANCE) {
     body_set_velocity(player, VEC_ZERO);
     state->player_motion = REGULAR;
@@ -119,8 +116,8 @@ double get_smallest_obst_clearing_dist(state_t *state, double h_player,
   which gives (u + sqrt(u^2 - 2g(h_o-h_p)))/g
   */
   double time =
-      (u + sqrt(u * u - 2 * Y_GRAV_ACCELERATION_MAG_PER_S * min_del_h)) /
-      Y_GRAV_ACCELERATION_MAG_PER_S;
+      (u + sqrt(u * u - 2 * get_curr_gravity(state).y * min_del_h)) /
+      get_curr_gravity(state).y;
   double vx = state->bg.bg_3_building_vel.x;
 
   // Return the x-distance that will be covered in that time
@@ -135,7 +132,7 @@ double next_obst_x(state_t *state, body_t *last_obstacle) {
   vector_t curr_obst_speed = state->bg.bg_3_building_vel;
 
   double expected_x_dist_with_jump =
-      (2 * get_curr_jump_vel(state).y / Y_GRAV_ACCELERATION_MAG_PER_S) *
+      (2 * get_curr_jump_vel(state).y / get_curr_gravity(state).y) *
       curr_obst_speed.x;
   double smallest_clearing_dist = get_smallest_obst_clearing_dist(
       state, PLAYER_DIMS.y, last_obstacle_centroid.y);
@@ -223,6 +220,7 @@ void clean_obstacles(state_t *state) {
           state->curr_player_obstacle = NULL;
         }
       } else {
+        vector_t new_vel = vec_multiply(-1, state->bg.bg_3_building_vel);
         body_set_velocity(body, vec_multiply(-1, state->bg.bg_3_building_vel));
       }
     }

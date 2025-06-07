@@ -174,10 +174,6 @@ state_t *emscripten_init() {
 bool emscripten_main(state_t *state) {
   double dt = time_since_last_tick();
 
-  // TODO: Why is this here?
-  if (dt < 0.0001) {
-    dt = 0.001;
-  }
   update_bg_velocity(state, dt);
   update_bg_pos(state, dt);
 

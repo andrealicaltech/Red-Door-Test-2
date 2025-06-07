@@ -19,8 +19,13 @@ void revert_duck(state_t *state) {
 }
 
 vector_t get_curr_jump_vel(state_t *state) {
-  // TODO: Calculate correct value required to guarantee can clear jump
-  return (vector_t){.x = 0, .y = JUMP_INITIAL_VELOCITY.y};
+  // TODO
+  return (vector_t){.x = 0, .y = JUMP_VEL_COMPONENT_RATIO * INIT_BACKGROUND_3_BUILDINGS_VELOCITY.x};
+}
+
+vector_t get_curr_gravity(state_t *state){
+  // TODO
+  return vec_multiply(GRAV_JUMP_VEL_RATIO, get_curr_jump_vel(state));
 }
 
 void on_key(char key, key_event_type_t type, double held_time, state_t *state) {
@@ -54,7 +59,7 @@ void manipulate_player(state_t *state, double dt) {
   case FALLING:
     if (player_velocity.y <= 0.0 && player_centroid.y > state->jump_start_y &&
         (player_centroid.y - state->jump_start_y <
-         (Y_GRAV_ACCELERATION_MAG_PER_S * dt))) {
+         (get_curr_gravity(state).y * dt))) {
       body_set_velocity(player_body, VEC_ZERO);
       body_set_centroid(player_body, (vector_t){.x = PLAYER_CENTER_POS.x,
                                                 .y = state->jump_start_y});
@@ -65,7 +70,7 @@ void manipulate_player(state_t *state, double dt) {
       state->player_motion = REGULAR;
     } else {
       double new_y_vel =
-          player_velocity.y - (Y_GRAV_ACCELERATION_MAG_PER_S * dt);
+          player_velocity.y - (get_curr_gravity(state).y * dt);
       if (player_velocity.y <= 0) {
         new_y_vel = max_d(new_y_vel, -1.0 * JUMP_INITIAL_VELOCITY.y);
       }

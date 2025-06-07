@@ -31,7 +31,6 @@ const size_t QUESADILLA_PTS = 20;
 // player movements
 const vector_t DUCK_INITIAL_VELOCITY = (vector_t){.x = 0, .y = 0};
 const vector_t JUMP_INITIAL_VELOCITY = (vector_t){.x = 0, .y = 250.0};
-const double Y_GRAV_ACCELERATION_MAG_PER_S = 300.0;
 const double DUCK_ACCELERATION_CHANGE = 0;
 
 // Background and obstacle velocity. Background 3 is the top layer (i.e. the
@@ -41,6 +40,14 @@ const vector_t INIT_BACKGROUND_2_TREE_VELOCITY =
     (vector_t){.x = 100.0, .y = 0.0};
 const vector_t INIT_BACKGROUND_3_BUILDINGS_VELOCITY =
     (vector_t){.x = 150.0, .y = 0};
+
+// Magic ratios to make sure that jump velocity scales with x-velocity of obstacles
+// Found by tweaking with fixed initial values - these ratios gave a nice smooth look
+// Kinematics equations tell us that these work
+// Points should be deducted from Arjun if this is problematic
+const double JUMP_VEL_COMPONENT_RATIO = 5.0 / 3.0;
+const double GRAV_JUMP_VEL_RATIO = 6.0 / 5.0;
+
 
 const color_t SPRITE_COLOR = (color_t){0.0, 0.0, 0.0};
 const color_t OBS_COLOR = (color_t){0.2, 0.2, 0.3};       // going to be tables
