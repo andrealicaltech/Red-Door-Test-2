@@ -5,7 +5,6 @@
 #include <string.h>
 #include <time.h>
 
-
 #include "asset.h"
 #include "asset_cache.h"
 #include "background.h"
