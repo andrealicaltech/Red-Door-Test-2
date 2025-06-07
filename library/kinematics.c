@@ -70,6 +70,9 @@ void manipulate_player(state_t *state, double dt) {
       if (player_velocity.y <= 0) {
         new_y_vel = max_d(new_y_vel, -1.0 * JUMP_INITIAL_VELOCITY.y);
       }
+      printf("still falling, state->jump_start_y=%f, player_centroid.y=%f, "
+             "new_y_vel=%f\n",
+             state->jump_start_y, player_centroid.y, new_y_vel);
       body_set_velocity(player_body, (vector_t){.x = 0, .y = 1.0 * new_y_vel});
     }
     break;
