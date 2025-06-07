@@ -19,66 +19,6 @@
 #include "sdl_wrapper.h"
 // moved background positions to background.c
 
-void render_layers(SDL_Texture *texture, double *x, SDL_Rect *viewport) {
-  *x = fmod(*x, viewport->w);
-  if (*x > 0) {
-    *x -= viewport->w;
-  }
-
-  SDL_Rect dest1 = *viewport;
-  dest1.x = (int)(*x);
-
-  SDL_Rect dest2 = *viewport;
-  dest2.x = (int)(*x) + viewport->w;
-
-  sdl_render_image(texture, &dest1);
-  sdl_render_image(texture, &dest2);
-}
-
-body_t *make_background(double w, double h, vector_t center) {
-  list_t *c = list_init(4, free);
-  vector_t *v1 = malloc(sizeof(vector_t));
-  *v1 = (vector_t){-w / 2, -h / 2};
-  list_add(c, v1);
-
-  vector_t *v2 = malloc(sizeof(vector_t));
-  *v2 = (vector_t){w / 2, -h / 2};
-  list_add(c, v2);
-
-  vector_t *v3 = malloc(sizeof(vector_t));
-  *v3 = (vector_t){w / 2, h / 2};
-  list_add(c, v3);
-
-  vector_t *v4 = malloc(sizeof(vector_t));
-  *v4 = (vector_t){-w / 2, h / 2};
-  list_add(c, v4);
-  body_t *obstacle = body_init(c, 1, OBS_COLOR);
-  body_set_centroid(obstacle, center);
-  return obstacle;
-}
-
-body_t *make_player(double w, double h, vector_t center) {
-  list_t *c = list_init(4, free);
-  vector_t *v1 = malloc(sizeof(vector_t));
-  *v1 = (vector_t){0, 0};
-  list_add(c, v1);
-
-  vector_t *v2 = malloc(sizeof(vector_t));
-  *v2 = (vector_t){w, 0};
-  list_add(c, v2);
-
-  vector_t *v3 = malloc(sizeof(vector_t));
-  *v3 = (vector_t){w, h};
-  list_add(c, v3);
-
-  vector_t *v4 = malloc(sizeof(vector_t));
-  *v4 = (vector_t){0, h};
-  list_add(c, v4);
-  body_t *player =
-      body_init_with_info(c, 1, SPRITE_COLOR, (void *)PLAYER_INFO, NULL);
-  body_set_centroid(player, center);
-  return player;
-}
 
 void start_game(state_t *state) {
   if (state->is_game_over) {
@@ -123,11 +63,17 @@ state_t *emscripten_init() {
   state->bg.tree_pos.x = 0;
   state->bg.sky_pos.x = 0;
 
+  state->started = false;
+
   state->current_game_screen = HOME;
 
   srand(time(NULL));
   // state->scene = scene_init();
   state->player_motion = REGULAR;
+
+  SDL_Texture *start = asset_cache_obj_get_or_create(ASSET_IMAGE, START_PATH);
+  asset_cache_store_temp("start", start);
+
 
   // Needs to be the first one
   body_t *player = make_player(PLAYER_DIMS.x, PLAYER_DIMS.y, PLAYER_CENTER_POS);
@@ -179,6 +125,11 @@ bool emscripten_main(state_t *state) {
 
   sdl_clear();
   SDL_Rect viewport = {.x = 0, .y = 0, .w = MAX.x, .h = MAX.y};
+
+  if (!state->started) {
+    render_start_screen(&viewport);
+  }
+
   render_layers(asset_cache_lookup("sky"), &state->bg.sky_pos.x, &viewport);
   render_layers(asset_cache_lookup("tree"), &state->bg.tree_pos.x, &viewport);
   render_layers(asset_cache_lookup("building"), &state->bg.building_pos.x,

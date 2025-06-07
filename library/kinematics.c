@@ -6,6 +6,7 @@
 #include "kinematics.h"
 #include "math_utils.h"
 
+
 void revert_duck(state_t *state) {
   body_t *player_body = scene_get_body(state->scene, 0);
   // if (velocity.y >
@@ -44,6 +45,12 @@ void on_key(char key, key_event_type_t type, double held_time, state_t *state) {
     case DOWN_ARROW:
       body_set_velocity(player_body, DUCK_INITIAL_VELOCITY);
       state->player_motion = DUCK;
+      break;
+    case SPACE_BAR:
+      if (!state->started) {
+        state->started = true;
+        state->current_game_screen = GAME;
+      }
       break;
     }
   }

@@ -54,6 +54,8 @@ const color_t QUESADILLA_COLOR = (color_t){1, 1, 0};      // coin
 const color_t LEADERBOARD_COLOR = (color_t){0.6, 0.3, 0}; // leaderboard
 
 const size_t BODY_ASSETS = 1;
+extern const char *START_SCREEN_PATH = "assets/Start.png";
+extern const char *GAME_OVER_PATH = "assets/GameOver.png";
 const char *PLAYER_SPRITE_PATH = "assets/Amudhan.png";
 const char *PLAYER_SPRITE_ANDREA_PATH = "assets/Andrea.png";
 const char *PLAYER_SPRITE_ARJUN_PATH = "assets/Arjun.png";
