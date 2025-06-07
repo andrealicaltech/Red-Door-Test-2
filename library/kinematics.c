@@ -6,8 +6,6 @@
 #include "kinematics.h"
 #include "math_utils.h"
 
-const double JUMP_RESTORE_TOLERANCE = 2.0;
-
 void revert_duck(state_t *state) {
   body_t *player_body = scene_get_body(state->scene, 0);
   // if (velocity.y >
@@ -54,13 +52,17 @@ void manipulate_player(state_t *state, double dt) {
   switch (state->player_motion) {
   case JUMP:
   case FALLING:
-    if (player_velocity.y <= 0.0 &&
-        abs_d(body_get_centroid(player_body).y - state->jump_start_y) <
-            JUMP_RESTORE_TOLERANCE) {
+    if (player_velocity.y <= 0.0 && player_centroid.y > state->jump_start_y &&
+        (player_centroid.y - state->jump_start_y <
+         (Y_GRAV_ACCELERATION_MAG_PER_S * dt))) {
       body_set_velocity(player_body, VEC_ZERO);
       body_set_centroid(player_body, (vector_t){.x = PLAYER_CENTER_POS.x,
                                                 .y = state->jump_start_y});
       printf("Stopping jump\n");
+      if (player_centroid.y == PLAYER_CENTER_POS.y) {
+        // Edge case where jump off obstacle before falling off
+        state->curr_player_obstacle = NULL;
+      }
       state->player_motion = REGULAR;
     } else {
       double new_y_vel =
@@ -68,6 +70,9 @@ void manipulate_player(state_t *state, double dt) {
       if (player_velocity.y <= 0) {
         new_y_vel = max_d(new_y_vel, -1.0 * JUMP_INITIAL_VELOCITY.y);
       }
+      printf("still falling, state->jump_start_y=%f, player_centroid.y=%f, "
+             "new_y_vel=%f\n",
+             state->jump_start_y, player_centroid.y, new_y_vel);
       body_set_velocity(player_body, (vector_t){.x = 0, .y = 1.0 * new_y_vel});
     }
     break;

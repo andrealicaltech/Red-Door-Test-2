@@ -157,7 +157,7 @@ state_t *emscripten_init() {
   asset_make_image_with_body(PLAYER_SPRITE_PATH, player);
   sdl_on_key((key_handler_t)on_key);
 
-  state->jump_start_y = 0.0;
+  state->jump_start_y = PLAYER_CENTER_POS.y;
 
   // Obstacles
   state->time_till_next_obstacle = FIRST_OBSTACLE_WAIT_TIME;
