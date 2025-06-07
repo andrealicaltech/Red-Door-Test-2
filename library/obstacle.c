@@ -60,15 +60,11 @@ void obstacle_collision_handler(body_t *body1, body_t *body2, vector_t axis,
   vector_t obstacle_centroid = body_get_centroid(obstacle);
   vector_t obstacle_dims = get_obstacle_dims(obstacle);
 
-  printf("Obstacle: centroid.x=%f, centroid.y=%f. w=%f, h=%f\n",
-         obstacle_centroid.x, obstacle_centroid.y, obstacle_dims.x,
-         obstacle_dims.y);
+  double player_right_edge = player_centroid.x + 0.5 * PLAYER_DIMS.x;
+  double obstacle_left_edge = obstacle_centroid.x - (0.5 * obstacle_dims.x);
 
-  double player_left_edge = player_centroid.x - 0.5 * PLAYER_DIMS.x;
-  double obstacle_right_edge = obstacle_centroid.x + 0.5 * obstacle_dims.x;
-  double delta = abs_d(player_left_edge - obstacle_right_edge);
-  printf("player_left_edge=%f, obstacle_right_edge=%f, delta=%f\n",
-         player_left_edge, obstacle_right_edge, delta);
+  // double player_left_edge = player_centroid.x - 0.5 * PLAYER_DIMS.x;
+  // double obstacle_right_edge = obstacle_centroid.x + 0.5 * obstacle_dims.x;
 
   if (player_centroid.y > obstacle_centroid.y &&
       ((player_centroid.y - 0.5 * PLAYER_DIMS.y) -
@@ -77,9 +73,11 @@ void obstacle_collision_handler(body_t *body1, body_t *body2, vector_t axis,
     body_set_velocity(player, VEC_ZERO);
     state->player_motion = REGULAR;
     state->curr_player_obstacle = obstacle;
+    state->jump_start_y = PLAYER_CENTER_POS.y;
     printf("Stuck to the top of obstacle_centroid.x=%f, obstacle_dims.x=%f\n",
            obstacle_centroid.x, obstacle_dims.x);
-  } else if (obstacle_right_edge > player_left_edge || delta < EDGE_TOLERANCE) {
+  } else if (player_right_edge > obstacle_left_edge ||
+             obstacle_left_edge - player_right_edge < EDGE_TOLERANCE) {
     printf("head-on collision-you lose!\n");
     state->is_game_over = true;
     // exit();
@@ -93,11 +91,17 @@ void check_player_falling_off_edge(state_t *state) {
   if (!obstacle) {
     return;
   }
+
+  // Fall off when the majority of the player's body is falling off
   vector_t player_centroid = body_get_centroid(state->player);
   vector_t obstacle_centroid = body_get_centroid(obstacle);
-  double edge_dist =
-      (player_centroid.x) -
-      (obstacle_centroid.x - (get_obstacle_dims(obstacle).x / 2));
+
+  double obstacle_right_edge =
+      (obstacle_centroid.x + (0.5 * get_obstacle_dims(obstacle).x));
+  double edge_dist = obstacle_right_edge - player_centroid.x;
+
+  printf("obstacle_right_edge=%f, edge_dist=%f, EDGE_TOL=%f\n",
+         obstacle_right_edge, edge_dist, EDGE_TOLERANCE);
 
   if (edge_dist < EDGE_TOLERANCE) {
     state->curr_player_obstacle = NULL;
@@ -129,7 +133,7 @@ double next_obst_x(state_t *state, body_t *last_obstacle) {
   vector_t last_obstacle_dims = get_obstacle_dims(last_obstacle);
   vector_t last_obstacle_centroid = body_get_centroid(last_obstacle);
   double last_obst_end =
-      min_d(last_obstacle_centroid.x - last_obstacle_dims.x, 0.0);
+      max_d(last_obstacle_centroid.x + last_obstacle_dims.x, MAX.x);
   vector_t curr_obst_speed = state->bg.bg_3_building_vel;
 
   double expected_x_dist_with_jump =
@@ -138,24 +142,23 @@ double next_obst_x(state_t *state, body_t *last_obstacle) {
   double smallest_clearing_dist = get_smallest_obst_clearing_dist(
       state, PLAYER_DIMS.y, last_obstacle_centroid.y);
   double furthest_poss_x =
-      last_obst_end + smallest_clearing_dist - expected_x_dist_with_jump;
-  // printf("last_obst_end=%f, smallest_clearing_dist=%f, "
-  //  "expected_x_dist_with_jump=%f, furthest_poss_x=%f\n",
-  //  last_obst_end, smallest_clearing_dist, expected_x_dist_with_jump,
-  //  furthest_poss_x);
+      last_obst_end - smallest_clearing_dist + expected_x_dist_with_jump;
+  printf("last_obst_end=%f, smallest_clearing_dist=%f, "
+         "expected_x_dist_with_jump=%f, furthest_poss_x=%f\n",
+         last_obst_end, smallest_clearing_dist, expected_x_dist_with_jump,
+         furthest_poss_x);
 
   // Additional random spacing between obstacles
-  double running_space = (rand() % ((int)MAX.x)) / 2.0;
+  double running_space = rand() % ((int)(MAX.x / 5.0));
   // if running space is low, need to guarantee that we give the player enough
   // distance to jump such that they clear the height of the obstacle
   double clearing_space =
       get_smallest_obst_clearing_dist(state, PLAYER_DIMS.y, OBSTACLE_HW);
-  // printf("running_space=%f,clearing_space=%f\n", running_space,
-  // clearing_space);
+  printf("running_space=%f,clearing_space=%f\n", running_space, clearing_space);
 
   // It is possible that the spacing is small enough that it doesn't given
   // reasonable reaction time for a player
-  return furthest_poss_x - max_d(running_space + clearing_space,
+  return furthest_poss_x + max_d(running_space + clearing_space,
                                  MIN_REACTION_TIME_S * curr_obst_speed.x);
 }
 
@@ -163,7 +166,7 @@ void update_obstacles(state_t *state) {
   if (state->time_till_next_obstacle > 0.0) {
     return;
   }
-  // Force avoid a double overflow - obstacle
+  // Force avoid a double overflow
   if (state->n_queued_obstacles == MAX_N_QUEUED_OBST) {
     // printf("Would return here\n");
     return;
@@ -173,28 +176,25 @@ void update_obstacles(state_t *state) {
       (size_t)((1 + (rand() % (MAX_STACKED_OBSTACLES - 1))) * OBSTACLE_HW);
   size_t height = OBSTACLE_HW;
 
-  double x = 0;
+  // Default value is edge of the screen
+  double x = MAX.x + (OBSTACLE_HW * MAX_STACKED_OBSTACLES);
   double y = (PLAYER_CENTER_POS.y - PLAYER_DIMS.y / 2) + OBSTACLE_HW; // TODO
 
-  if (scene_bodies(state->scene) == 1) {
-    // Extremely small value
-    x = -1.0;
-  } else {
+  if (scene_bodies(state->scene) > 1) {
     // Use 1 + n_q - 1 for clarity: first body is player. Subtract 1 for
     // zero-indexing
     body_t *last_obstacle =
         scene_get_body(state->scene, (1 + state->n_queued_obstacles) - 1);
-    double next_obst_x_val = next_obst_x(state, last_obstacle);
-    x = next_obst_x_val;
-    // printf("new x=%f\n", x);
+    x = next_obst_x(state, last_obstacle);
   }
 
   vector_t new_centroid = (vector_t){.x = x, .y = y};
   body_t *new_obstacle = make_obstacle(width, height, new_centroid);
 
   scene_add_body(state->scene, new_obstacle);
-  // asset_make_image_with_body(OBSTACLE_SPRITE_PATH, new_obstacle);
-  body_set_velocity(new_obstacle, state->bg.bg_3_building_vel);
+  asset_make_image_with_body(OBSTACLE_SPRITE_PATH, new_obstacle);
+  body_set_velocity(new_obstacle,
+                    vec_multiply(-1, state->bg.bg_3_building_vel));
 
   body_t *player = scene_get_body(state->scene, 0);
   create_collision(state->scene, player, new_obstacle,
@@ -213,7 +213,8 @@ void clean_obstacles(state_t *state) {
     body_t *body = scene_get_body(state->scene, i);
     if (strcmp(body_get_info(body), OBSTACLE_INFO) == 0) {
       vector_t obst_pos = body_get_centroid(body);
-      if (obst_pos.x > MAX.x) {
+      vector_t obst_dims = get_obstacle_dims(body);
+      if (obst_pos.x + (obst_dims.x / 2) < MIN.x) {
         state->n_queued_obstacles -= 1;
         body_remove(body);
 
