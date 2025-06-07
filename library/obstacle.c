@@ -100,8 +100,8 @@ void check_player_falling_off_edge(state_t *state) {
       (obstacle_centroid.x + (0.5 * get_obstacle_dims(obstacle).x));
   double edge_dist = obstacle_right_edge - player_centroid.x;
 
-  printf("obstacle_right_edge=%f, edge_dist=%f, EDGE_TOL=%f\n",
-         obstacle_right_edge, edge_dist, EDGE_TOLERANCE);
+  // printf("obstacle_right_edge=%f, edge_dist=%f, EDGE_TOL=%f\n",
+  //        obstacle_right_edge, edge_dist, EDGE_TOLERANCE);
 
   if (edge_dist < EDGE_TOLERANCE) {
     state->curr_player_obstacle = NULL;
@@ -143,10 +143,10 @@ double next_obst_x(state_t *state, body_t *last_obstacle) {
       state, PLAYER_DIMS.y, last_obstacle_centroid.y);
   double furthest_poss_x =
       last_obst_end - smallest_clearing_dist + expected_x_dist_with_jump;
-  printf("last_obst_end=%f, smallest_clearing_dist=%f, "
-         "expected_x_dist_with_jump=%f, furthest_poss_x=%f\n",
-         last_obst_end, smallest_clearing_dist, expected_x_dist_with_jump,
-         furthest_poss_x);
+  // printf("last_obst_end=%f, smallest_clearing_dist=%f, "
+  //        "expected_x_dist_with_jump=%f, furthest_poss_x=%f\n",
+  //        last_obst_end, smallest_clearing_dist, expected_x_dist_with_jump,
+  //        furthest_poss_x);
 
   // Additional random spacing between obstacles
   double running_space = rand() % ((int)(MAX.x / 5.0));
@@ -154,7 +154,7 @@ double next_obst_x(state_t *state, body_t *last_obstacle) {
   // distance to jump such that they clear the height of the obstacle
   double clearing_space =
       get_smallest_obst_clearing_dist(state, PLAYER_DIMS.y, OBSTACLE_HW);
-  printf("running_space=%f,clearing_space=%f\n", running_space, clearing_space);
+  // printf("running_space=%f,clearing_space=%f\n", running_space, clearing_space);
 
   // It is possible that the spacing is small enough that it doesn't given
   // reasonable reaction time for a player
