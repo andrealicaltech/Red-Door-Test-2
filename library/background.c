@@ -47,5 +47,4 @@ void update_bg_pos(state_t *state, double dt) {
   state->bg.sky_pos.x -= state->bg.bg_1_sky_vel.x * dt;
   state->bg.tree_pos.x -= state->bg.bg_2_tree_vel.x * dt;
   state->bg.building_pos.x -= state->bg.bg_3_building_vel.x * dt;
-  printf("Before update: sky_pos.x = %.2f\n", state->bg.sky_pos.x);
 }

@@ -26,8 +26,6 @@ void render_layers(SDL_Texture *texture, double *x, SDL_Rect *viewport) {
     *x -= viewport->w;
   }
 
-  printf("Rendering at x = %.2f\n", *x);
-
   SDL_Rect dest1 = *viewport;
   dest1.x = (int)(*x);
 

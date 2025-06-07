@@ -210,8 +210,6 @@ SDL_Rect *sdl_get_rect(double x, double y, double w, double h) {
 }
 
 void sdl_render_image(SDL_Texture *image_texture, SDL_Rect *rect) {
-  printf("Drawing at: x=%d y=%d w=%d h=%d\n", rect->x, rect->y, rect->w,
-         rect->h);
   SDL_RenderCopy(renderer, image_texture, NULL, rect);
 }
 
