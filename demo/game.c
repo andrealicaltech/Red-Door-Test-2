@@ -19,9 +19,7 @@
 
 // moved background positions to background.c
 
-/*
-MARK: Player control and kinematics
-*/
+
 void render_layers(SDL_Texture *texture, double *x, SDL_Rect *viewport) {
   *x = fmod(*x, viewport->w);
   if (*x > 0) {
@@ -62,20 +60,6 @@ body_t *make_background(double w, double h, vector_t center) {
   return obstacle;
 }
 
-body_t *make_frog(double outer_radius, double inner_radius, vector_t center) {
-  center.y += inner_radius;
-  list_t *c = list_init(4, free);
-  for (size_t i = 0; i < 4; i++) {
-    double angle = 2 * M_PI * i / 4;
-    vector_t *v = malloc(sizeof(*v));
-    *v = (vector_t){center.x + inner_radius * cos(angle),
-                    center.y + outer_radius * sin(angle)};
-    list_add(c, v);
-  }
-  body_t *froggy = body_init(c, 1, SPRITE_COLOR);
-  return froggy;
-}
-
 body_t *make_player(double w, double h, vector_t center) {
   list_t *c = list_init(4, free);
   vector_t *v1 = malloc(sizeof(vector_t));
@@ -93,7 +77,7 @@ body_t *make_player(double w, double h, vector_t center) {
   vector_t *v4 = malloc(sizeof(vector_t));
   *v4 = (vector_t){0, h};
   list_add(c, v4);
-  body_t *player = body_init(c, 1, SPRITE_COLOR);
+  body_t *player = body_init_with_info(c, 1, SPRITE_COLOR, (void *) PLAYER_INFO, NULL);
   body_set_centroid(player, center);
   return player;
 }
@@ -191,12 +175,12 @@ state_t *emscripten_init() {
 bool emscripten_main(state_t *state) {
   double dt = time_since_last_tick();
 
+  // TODO: Why is this here?
   if (dt < 0.0001) {
     dt = 0.001;
   }
 
   update_bg_velocity(state, dt);
-
   update_bg_pos(state, dt);
 
   sdl_clear();
