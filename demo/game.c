@@ -19,7 +19,6 @@
 
 // moved background positions to background.c
 
-
 void render_layers(SDL_Texture *texture, double *x, SDL_Rect *viewport) {
   *x = fmod(*x, viewport->w);
   if (*x > 0) {
@@ -75,7 +74,8 @@ body_t *make_player(double w, double h, vector_t center) {
   vector_t *v4 = malloc(sizeof(vector_t));
   *v4 = (vector_t){0, h};
   list_add(c, v4);
-  body_t *player = body_init_with_info(c, 1, SPRITE_COLOR, (void *) PLAYER_INFO, NULL);
+  body_t *player =
+      body_init_with_info(c, 1, SPRITE_COLOR, (void *)PLAYER_INFO, NULL);
   body_set_centroid(player, center);
   return player;
 }
