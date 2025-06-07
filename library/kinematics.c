@@ -20,10 +20,12 @@ void revert_duck(state_t *state) {
 
 vector_t get_curr_jump_vel(state_t *state) {
   // TODO
-  return (vector_t){.x = 0, .y = JUMP_VEL_COMPONENT_RATIO * INIT_BACKGROUND_3_BUILDINGS_VELOCITY.x};
+  return (vector_t){.x = 0,
+                    .y = JUMP_VEL_COMPONENT_RATIO *
+                         INIT_BACKGROUND_3_BUILDINGS_VELOCITY.x};
 }
 
-vector_t get_curr_gravity(state_t *state){
+vector_t get_curr_gravity(state_t *state) {
   // TODO
   return vec_multiply(GRAV_JUMP_VEL_RATIO, get_curr_jump_vel(state));
 }
@@ -69,8 +71,7 @@ void manipulate_player(state_t *state, double dt) {
       }
       state->player_motion = REGULAR;
     } else {
-      double new_y_vel =
-          player_velocity.y - (get_curr_gravity(state).y * dt);
+      double new_y_vel = player_velocity.y - (get_curr_gravity(state).y * dt);
       if (player_velocity.y <= 0) {
         new_y_vel = max_d(new_y_vel, -1.0 * JUMP_INITIAL_VELOCITY.y);
       }

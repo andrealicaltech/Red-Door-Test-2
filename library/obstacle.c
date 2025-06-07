@@ -115,9 +115,8 @@ double get_smallest_obst_clearing_dist(state_t *state, double h_player,
   top edge of the obstacle Solve for t in the y-axis h_o - h_p = ut - 0.5gt^2
   which gives (u + sqrt(u^2 - 2g(h_o-h_p)))/g
   */
-  double time =
-      (u + sqrt(u * u - 2 * get_curr_gravity(state).y * min_del_h)) /
-      get_curr_gravity(state).y;
+  double time = (u + sqrt(u * u - 2 * get_curr_gravity(state).y * min_del_h)) /
+                get_curr_gravity(state).y;
   double vx = state->bg.bg_3_building_vel.x;
 
   // Return the x-distance that will be covered in that time
