@@ -56,6 +56,7 @@ const char *BUILDING_PATH = "assets/Building.png";
 const char *TREE_PATH = "assets/Tree.png";
 const char *OBSTACLE_SPRITE_PATH = "assets/Obstacle.png";
 const char *QUESADILLA_PATH = "assets/Quesadilla.png";
+const char *MUSIC_PATH = "assets/memphis-trap-wav-349366.wav";
 
 const double OBSTACLE_START_WAIT_TIME = 3.0;
 const double GAME_OVER_WAIT_TIME = 3.0;

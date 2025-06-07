@@ -9,6 +9,7 @@
         "stdlib.h": "c",
         "sdl_wrapper.h": "c",
         "game_state.h": "c",
-        "constants.h": "c"
+        "constants.h": "c",
+        "music.h": "c"
     }
 }
