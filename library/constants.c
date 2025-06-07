@@ -13,14 +13,14 @@ const char *PLAYER_INFO = "player";
 const double OUTER_RADIUS = 30;
 const double INNER_RADIUS = 30;
 
-const double MIN_REACTION_TIME_S = 1.5;
+const double MIN_REACTION_TIME_S = 1.0;
 
 // obstacle = table (square 50 x 50) can spawn multiple obstacles in a row
 const size_t OBSTACLE_HW = 50;
 const size_t MAX_STACKED_OBSTACLES = 5;
-const double FIRST_OBSTACLE_WAIT_TIME = 3.0;
 const size_t OBSTACLE_CAPACITY = 1024;
-const double AVG_TIME_OBSTACLES = 5.0;
+const double FIRST_OBSTACLE_WAIT_TIME = 1.5;
+const double AVG_TIME_OBSTACLES = 3.0;
 const char *OBSTACLE_INFO = "obstacle";
 
 // pts of player depending on action

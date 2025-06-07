@@ -11,8 +11,8 @@
 #include "kinematics.h"
 #include "obstacle.h"
 
-const double EDGE_TOLERANCE = 1.0;
-const size_t MAX_N_QUEUED_OBST = 10;
+const double EDGE_TOLERANCE = 3.0;
+const size_t MAX_N_QUEUED_OBST = 25;
 
 body_t *make_obstacle(size_t w, size_t h, vector_t center) {
   list_t *c = list_init(4, free);
@@ -63,13 +63,12 @@ void obstacle_collision_handler(body_t *body1, body_t *body2, vector_t axis,
   double player_right_edge = player_centroid.x + 0.5 * PLAYER_DIMS.x;
   double obstacle_left_edge = obstacle_centroid.x - (0.5 * obstacle_dims.x);
 
-  // double player_left_edge = player_centroid.x - 0.5 * PLAYER_DIMS.x;
-  // double obstacle_right_edge = obstacle_centroid.x + 0.5 * obstacle_dims.x;
-
-  if (player_centroid.y > obstacle_centroid.y &&
-      ((player_centroid.y - 0.5 * PLAYER_DIMS.y) -
-           (obstacle_centroid.y + 0.5 * obstacle_dims.y) <
-       EDGE_TOLERANCE)) {
+  double delta = (player_centroid.y - 0.5 * PLAYER_DIMS.y) -
+           (obstacle_centroid.y + 0.5 * obstacle_dims.y);
+  printf("player_bottom=%f\n", player_centroid.y - 0.5*PLAYER_DIMS.y);
+  printf("obstacle_top=%f\n", obstacle_centroid.y + 0.5*obstacle_dims.y);
+  printf("delta=%f\n", delta);
+  if (abs(delta) <= EDGE_TOLERANCE) {
     body_set_velocity(player, VEC_ZERO);
     state->player_motion = REGULAR;
     state->curr_player_obstacle = obstacle;
@@ -80,7 +79,6 @@ void obstacle_collision_handler(body_t *body1, body_t *body2, vector_t axis,
              obstacle_left_edge - player_right_edge < EDGE_TOLERANCE) {
     printf("head-on collision-you lose!\n");
     state->is_game_over = true;
-    // exit();
   } else {
     printf("Can't handle collision\n");
   }
@@ -223,7 +221,9 @@ void clean_obstacles(state_t *state) {
         if (state->curr_player_obstacle == body) {
           state->curr_player_obstacle = NULL;
         }
-      }
+    }  else {
+    body_set_velocity(body, vec_multiply(-1, state->bg.bg_3_building_vel));    
+    }
     }
   }
 }

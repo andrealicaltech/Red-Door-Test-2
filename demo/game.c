@@ -111,9 +111,7 @@ void clean_elapsed_coins(state_t *state) {
 MARK: Emscripten
 */
 state_t *emscripten_init() {
-  printf("Here!\n");
   play_audio();
-  printf("Here 2!\n");
 
   asset_cache_init();
   sdl_init(MIN, MAX);
