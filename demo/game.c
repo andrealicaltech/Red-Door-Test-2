@@ -5,6 +5,7 @@
 #include <string.h>
 #include <time.h>
 
+
 #include "asset.h"
 #include "asset_cache.h"
 #include "background.h"
@@ -14,9 +15,9 @@
 #include "game_state.h"
 #include "kinematics.h"
 #include "math_utils.h"
+#include "music.h"
 #include "obstacle.h"
 #include "sdl_wrapper.h"
-
 // moved background positions to background.c
 
 /*
@@ -129,6 +130,9 @@ void clean_elapsed_coins(state_t *state) {
 MARK: Emscripten
 */
 state_t *emscripten_init() {
+  printf("Here!\n");
+  play_audio();
+  printf("Here 2!\n");
 
   asset_cache_init();
   sdl_init(MIN, MAX);
@@ -190,18 +194,15 @@ state_t *emscripten_init() {
 
 bool emscripten_main(state_t *state) {
   double dt = time_since_last_tick();
-
   if (dt < 0.0001) {
     dt = 0.001;
   }
-
   update_bg_velocity(state, dt);
 
   update_bg_pos(state, dt);
 
   sdl_clear();
   SDL_Rect viewport = {.x = 0, .y = 0, .w = MAX.x, .h = MAX.y};
-
   render_layers(asset_cache_lookup("sky"), &state->bg.sky_pos.x, &viewport);
   render_layers(asset_cache_lookup("tree"), &state->bg.tree_pos.x, &viewport);
   render_layers(asset_cache_lookup("building"), &state->bg.building_pos.x,
