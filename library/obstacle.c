@@ -64,9 +64,9 @@ void obstacle_collision_handler(body_t *body1, body_t *body2, vector_t axis,
   double obstacle_left_edge = obstacle_centroid.x - (0.5 * obstacle_dims.x);
 
   double delta = (player_centroid.y - 0.5 * PLAYER_DIMS.y) -
-           (obstacle_centroid.y + 0.5 * obstacle_dims.y);
-  printf("player_bottom=%f\n", player_centroid.y - 0.5*PLAYER_DIMS.y);
-  printf("obstacle_top=%f\n", obstacle_centroid.y + 0.5*obstacle_dims.y);
+                 (obstacle_centroid.y + 0.5 * obstacle_dims.y);
+  printf("player_bottom=%f\n", player_centroid.y - 0.5 * PLAYER_DIMS.y);
+  printf("obstacle_top=%f\n", obstacle_centroid.y + 0.5 * obstacle_dims.y);
   printf("delta=%f\n", delta);
   if (abs(delta) <= EDGE_TOLERANCE) {
     body_set_velocity(player, VEC_ZERO);
@@ -152,7 +152,8 @@ double next_obst_x(state_t *state, body_t *last_obstacle) {
   // distance to jump such that they clear the height of the obstacle
   double clearing_space =
       get_smallest_obst_clearing_dist(state, PLAYER_DIMS.y, OBSTACLE_HW);
-  // printf("running_space=%f,clearing_space=%f\n", running_space, clearing_space);
+  // printf("running_space=%f,clearing_space=%f\n", running_space,
+  // clearing_space);
 
   // It is possible that the spacing is small enough that it doesn't given
   // reasonable reaction time for a player
@@ -221,9 +222,9 @@ void clean_obstacles(state_t *state) {
         if (state->curr_player_obstacle == body) {
           state->curr_player_obstacle = NULL;
         }
-    }  else {
-    body_set_velocity(body, vec_multiply(-1, state->bg.bg_3_building_vel));    
-    }
+      } else {
+        body_set_velocity(body, vec_multiply(-1, state->bg.bg_3_building_vel));
+      }
     }
   }
 }
