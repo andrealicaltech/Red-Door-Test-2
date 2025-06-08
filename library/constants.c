@@ -28,7 +28,6 @@ const char *COIN_INFO = "coin";
 const double MAGNET_FREQUENCY = 0.3;
 const double MAGNET_PERIOD_S = 20.0;
 
-
 // pts of player depending on action
 const size_t PLAYER_STANDING_PTS = 16;
 const size_t PLAYER_RUNNING = 31;
@@ -58,7 +57,7 @@ const color_t SPRITE_COLOR = (color_t){0.0, 0.0, 0.0};
 const color_t OBS_COLOR = (color_t){0.2, 0.2, 0.3};       // going to be tables
 const color_t COIN_COLOR = (color_t){1, 1, 0};            // coin
 const color_t LEADERBOARD_COLOR = (color_t){0.6, 0.3, 0}; // leaderboard
-const color_t MAGNET_COLOR  = (color_t) {1, 0, 0};
+const color_t MAGNET_COLOR = (color_t){1, 0, 0};
 const color_t TEXT_COLOR = (color_t){1, 1, 1};
 
 const size_t BODY_ASSETS = 1;
