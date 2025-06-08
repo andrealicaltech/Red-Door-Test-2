@@ -5,6 +5,7 @@
 #include <SDL2/SDL_ttf.h>
 #include <assert.h>
 #include <math.h>
+#include <mouse.h>
 #include <stdlib.h>
 #include <time.h>
 
@@ -14,6 +15,10 @@ const size_t WINDOW_HEIGHT = 500;
 const SDL_Color SDL_BLACK = {0, 0, 0};
 const int8_t FONT_HEIGHT_SCALE = 2;
 const double MS_PER_S = 1000.0;
+
+static SDL_Renderer *renderer;
+
+SDL_Renderer *sdl_get_renderer(void) { return renderer; }
 
 /**
  * The coordinate at the center of the screen.
@@ -147,6 +152,11 @@ bool sdl_is_done(state_t *state) {
           event->type == SDL_KEYDOWN ? KEY_PRESSED : KEY_RELEASED;
       double held_time = (timestamp - key_start_timestamp) / MS_PER_S;
       key_handler(key, type, held_time, state);
+      break;
+    // mouse handling
+    case SDL_MOUSEBUTTONDOWN:
+    case SDL_MOUSEMOTION:
+      mouse_process(state, event);
       break;
     }
   }

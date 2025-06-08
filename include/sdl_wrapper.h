@@ -10,6 +10,8 @@
 #include <SDL2/SDL_ttf.h>
 #include <stdbool.h>
 
+SDL_Renderer *sdl_get_renderer(void);
+
 // Values passed to a key handler when the given arrow key is pressed
 typedef enum {
   LEFT_ARROW = 1,

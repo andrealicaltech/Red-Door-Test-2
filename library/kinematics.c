@@ -36,24 +36,25 @@ void on_key(char key, key_event_type_t type, double held_time, state_t *state) {
   assert(strcmp(body_get_info(player_body), PLAYER_INFO) == 0);
 
   if (type == KEY_PRESSED && state->player_motion == REGULAR) {
-    switch (key) {
-    case UP_ARROW:
-      body_set_velocity(player_body, get_curr_jump_vel(state));
-      state->player_motion = JUMP;
-      play_music(JUMP_MUSIC_PATH);
-      state->jump_start_y = body_get_centroid(player_body).y;
-      break;
-    case DOWN_ARROW:
-      body_set_velocity(player_body, DUCK_INITIAL_VELOCITY);
-      state->player_motion = DUCK;
-      break;
-    case SPACE_BAR:
-      if (!state->started) {
-        state->started = true;
-        halt_music();
-        state->current_game_screen = GAME;
+    if (!state->started && key == SPACE_BAR) {
+      state->started = true;
+      state->current_game_screen = GAME;
+      return;
+    }
+
+    if (state->started && state->player_motion == REGULAR) {
+      switch (key) {
+      case UP_ARROW:
+        body_set_velocity(player_body, get_curr_jump_vel(state));
+        state->player_motion = JUMP;
+        play_music(JUMP_MUSIC_PATH);
+        state->jump_start_y = body_get_centroid(player_body).y;
+        break;
+      case DOWN_ARROW:
+        body_set_velocity(player_body, DUCK_INITIAL_VELOCITY);
+        state->player_motion = DUCK;
+        break;
       }
-      break;
     }
   }
 }
