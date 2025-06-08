@@ -119,21 +119,34 @@ void check_player_falling_off_edge(state_t *state) {
 double next_obst_x(state_t *state, body_t *last_obstacle) {
   vector_t last_obstacle_dims = get_obstacle_dims(last_obstacle);
   vector_t last_obstacle_centroid = body_get_centroid(last_obstacle);
-  double last_obst_end =
-      max_d(last_obstacle_centroid.x + last_obstacle_dims.x, MAX.x);
+  printf("lo_centre.x=%f, lo_centre.y=%f\n", last_obstacle_centroid.x, last_obstacle_centroid.y);
+  printf("lo_dims.x=%f, lo_dims.y=%f\n", last_obstacle_dims.x, last_obstacle_dims.y);
+
   vector_t curr_obst_speed = state->bg.bg_3_building_vel;
 
+  double smallest_clearing_dist_before_obst = get_smallest_obst_clearing_dist(
+      state, PLAYER_DIMS.y, last_obstacle_centroid.y);
   double expected_x_dist_with_jump =
       (2 * get_curr_jump_vel(state).y / get_curr_gravity(state).y) *
       curr_obst_speed.x;
-  double smallest_clearing_dist = get_smallest_obst_clearing_dist(
-      state, PLAYER_DIMS.y, last_obstacle_centroid.y);
-  double furthest_poss_x =
-      last_obst_end - smallest_clearing_dist + expected_x_dist_with_jump;
-  // printf("last_obst_end=%f, smallest_clearing_dist=%f, "
-  //        "expected_x_dist_with_jump=%f, furthest_poss_x=%f\n",
-  //        last_obst_end, smallest_clearing_dist, expected_x_dist_with_jump,
-  //        furthest_poss_x);
+  printf("smallest_clearing_dist_before_obst=%f\n", smallest_clearing_dist_before_obst);
+  printf("expected_x_dist_with_jump=%f\n", expected_x_dist_with_jump);
+  /*
+  Suppose we jump at the minimum distance before the obstacle.
+  2 possibilities depending on the width of the obstacle:
+  1. We clear the obstacle completely: x_dist_with_jump > smallest_clearing_dist_before_obst + obst_width. Calculate corresponding landing point. 
+  2. Land on top of the obstacle. Give enough space to fall off the right edge obstacle (the player has no control during this). 
+  Now just need to give arbitrary max(reaction_space, running space + clearing_space) before the next obstacle
+  */
+  double final_x = 0.0;
+  if (expected_x_dist_with_jump > smallest_clearing_dist_before_obst + last_obstacle_dims.x){
+    final_x = (last_obstacle_centroid.x - (0.5*last_obstacle_dims.x) - smallest_clearing_dist_before_obst) + expected_x_dist_with_jump;
+    printf("Will clear obstacle, final_x=%f\n", final_x);
+  } else {
+    double fall_time = sqrt(2 * last_obstacle_dims.y / get_curr_gravity(state).y);
+    final_x = last_obstacle_centroid.x + (0.5*last_obstacle_dims.x) + (fall_time * curr_obst_speed.x);
+    printf("Will not clear obstacle, fall_time=%f, final_x=%f\n", fall_time, final_x);
+  }
 
   // Additional random spacing between obstacles
   double running_space = rand() % ((int)(MAX.x / 5.0));
@@ -146,7 +159,7 @@ double next_obst_x(state_t *state, body_t *last_obstacle) {
 
   // It is possible that the spacing is small enough that it doesn't given
   // reasonable reaction time for a player
-  return furthest_poss_x + max_d(running_space + clearing_space,
+  return final_x + max_d(running_space + clearing_space,
                                  MIN_REACTION_TIME_S * curr_obst_speed.x);
 }
 
@@ -171,7 +184,7 @@ void update_obstacles(state_t *state) {
   size_t height = OBSTACLE_HW;
 
   // Default value is edge of the screen
-  double x = MAX.x + (OBSTACLE_HW * MAX_STACKED_OBSTACLES);
+  double x = MAX.x;
   double y =
       (PLAYER_CENTER_POS.y - PLAYER_DIMS.y / 2) + (OBSTACLE_HW / 2); // TODO
 
@@ -183,7 +196,7 @@ void update_obstacles(state_t *state) {
     x = next_obst_x(state, last_obstacle);
   }
 
-  vector_t new_centroid = (vector_t){.x = x, .y = y};
+  vector_t new_centroid = (vector_t){.x = (0.5*width) + x, .y = y};
   body_t *new_obstacle = make_obstacle(width, height, new_centroid);
 
   scene_add_body(state->scene, new_obstacle);
