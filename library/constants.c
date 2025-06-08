@@ -17,7 +17,7 @@ const double MIN_REACTION_TIME_S = 1.0;
 
 // obstacle = table (square 50 x 50) can spawn multiple obstacles in a row
 const size_t OBSTACLE_HW = 50;
-const size_t MAX_STACKED_OBSTACLES = 20;
+const size_t MAX_STACKED_OBSTACLES = 10;
 const size_t MAX_N_QUEUED_OBST = 15;
 const size_t OBSTACLE_CAPACITY = 1024;
 const double FIRST_OBSTACLE_WAIT_TIME = 1.5;
@@ -25,9 +25,12 @@ const double MAX_TIME_UPDATE = 3.0;
 const char *OBSTACLE_INFO = "obstacle";
 const char *MAGNET_INFO = "magnet";
 const char *COIN_INFO = "coin";
-const double MAGNET_FREQUENCY = 0.0;
+const double MAGNET_FREQUENCY = 0.99;
 const double MAGNET_PERIOD_S = 20.0;
 const char *LEADERBOARD_INFO = "leaderboard";
+
+const double MAGNET_RAD = 12.5;
+const double COIN_RAD = 10;
 
 // pts of player depending on action
 const size_t PLAYER_STANDING_PTS = 16;

@@ -35,6 +35,8 @@ extern const char *COIN_INFO;
 extern const double MAGNET_FREQUENCY;
 extern const double MAGNET_PERIOD_S;
 extern const char *LEADERBOARD_INFO;
+extern const double MAGNET_RAD;
+extern const double COIN_RAD;
 
 // pts of player depending on action
 extern const size_t PLAYER_STANDING_PTS;
