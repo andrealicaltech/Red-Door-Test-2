@@ -87,6 +87,8 @@ void obstacle_collision_handler(body_t *body1, body_t *body2, vector_t axis,
              obstacle_left_edge - player_right_edge < EDGE_TOLERANCE) {
     printf("head-on collision-you lose!\n");
     state->is_game_over = true;
+    body_remove(obstacle);
+    state->n_queued_obstacles -= 1;
   } else {
     printf("Can't handle collision\n");
   }
