@@ -70,7 +70,7 @@ void obstacle_collision_handler(body_t *body1, body_t *body2, vector_t axis,
   double player_right_edge = player_centroid.x + 0.5 * PLAYER_DIMS.x;
   double obstacle_left_edge = obstacle_centroid.x - (0.5 * obstacle_dims.x);
   // printf("player_right_edge=%f, obstacle_left_edge=%f\n", player_right_edge,
-        //  obstacle_left_edge);
+  //  obstacle_left_edge);
 
   double y_gap = (player_centroid.y - 0.5 * PLAYER_DIMS.y) -
                  (obstacle_centroid.y + 0.5 * obstacle_dims.y);
@@ -80,8 +80,9 @@ void obstacle_collision_handler(body_t *body1, body_t *body2, vector_t axis,
     state->player_motion = REGULAR;
     state->curr_player_obstacle = obstacle;
     state->jump_start_y = PLAYER_CENTER_POS.y;
-    // printf("Stuck to the top of obstacle_centroid.x=%f, obstacle_dims.x=%f\n",
-          //  obstacle_centroid.x, obstacle_dims.x);
+    // printf("Stuck to the top of obstacle_centroid.x=%f,
+    // obstacle_dims.x=%f\n",
+    //  obstacle_centroid.x, obstacle_dims.x);
   } else if (player_right_edge > obstacle_left_edge ||
              obstacle_left_edge - player_right_edge < EDGE_TOLERANCE) {
     printf("head-on collision-you lose!\n");
@@ -157,7 +158,7 @@ double next_obst_x(state_t *state, body_t *last_obstacle) {
     final_x = last_obstacle_centroid.x + (0.5 * last_obstacle_dims.x) +
               (fall_time * curr_obst_speed.x);
     // printf("Will not clear obstacle, fall_time=%f, final_x=%f\n", fall_time,
-          //  final_x);
+    //  final_x);
   }
 
   // Additional random spacing between obstacles
