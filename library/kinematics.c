@@ -1,5 +1,6 @@
 #include "body.h"
 #include "state.h"
+#include "music.h"
 
 #include "constants.h"
 #include "game_state.h"
@@ -39,6 +40,7 @@ void on_key(char key, key_event_type_t type, double held_time, state_t *state) {
     case UP_ARROW:
       body_set_velocity(player_body, get_curr_jump_vel(state));
       state->player_motion = JUMP;
+      play_music(JUMP_MUSIC_PATH);
       state->jump_start_y = body_get_centroid(player_body).y;
       break;
     case DOWN_ARROW:
@@ -48,6 +50,7 @@ void on_key(char key, key_event_type_t type, double held_time, state_t *state) {
     case SPACE_BAR:
       if (!state->started) {
         state->started = true;
+        halt_music();
         state->current_game_screen = GAME;
       }
       break;

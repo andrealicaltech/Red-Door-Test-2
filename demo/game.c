@@ -50,7 +50,6 @@ void clean_elapsed_coins(state_t *state) {
 MARK: Emscripten
 */
 state_t *emscripten_init() {
-  play_audio();
 
   asset_cache_init();
   sdl_init(MIN, MAX);
@@ -130,11 +129,12 @@ bool emscripten_main(state_t *state) {
 
   if (!state->started && !state->is_game_over) {
     render_screen("start", &viewport);
+    play_music(MENU_MUSIC_PATH);
   } // start screen
 
   if (state->started) {
     double dt = time_since_last_tick();
-
+    play_music(GAME_MUSIC_PATH);
     update_bg_velocity(state, dt);
     update_bg_pos(state, dt);
     render_layers(asset_cache_lookup("sky"), &state->bg.sky_pos.x, &viewport);
