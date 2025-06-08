@@ -68,12 +68,11 @@ state_t *emscripten_init() {
   state->current_game_screen = HOME;
 
   srand(time(NULL));
-  // state->scene = scene_init();
   state->player_motion = REGULAR;
 
-  // SDL_Texture *start =
-  //     asset_cache_obj_get_or_create(ASSET_IMAGE, START_SCREEN_PATH);
-  // asset_cache_store_temp("start", start);
+  SDL_Texture *start =
+      asset_cache_obj_get_or_create(ASSET_IMAGE, START_SCREEN_PATH);
+  asset_cache_store_temp("start", start);
 
   // Needs to be the first one
   body_t *player = make_player(PLAYER_DIMS.x, PLAYER_DIMS.y, PLAYER_CENTER_POS);
@@ -130,27 +129,26 @@ bool emscripten_main(state_t *state) {
     render_start_screen(&viewport);
   }
 
-  render_layers(asset_cache_lookup("sky"), &state->bg.sky_pos.x, &viewport);
-  render_layers(asset_cache_lookup("tree"), &state->bg.tree_pos.x, &viewport);
-  render_layers(asset_cache_lookup("building"), &state->bg.building_pos.x,
-                &viewport);
+  if (state->started) {
+    render_layers(asset_cache_lookup("sky"), &state->bg.sky_pos.x, &viewport);
+    render_layers(asset_cache_lookup("tree"), &state->bg.tree_pos.x, &viewport);
+    render_layers(asset_cache_lookup("building"), &state->bg.building_pos.x, &viewport);
+    list_t *body_assets = asset_get_asset_list();
 
-  list_t *body_assets = asset_get_asset_list();
+    for (size_t i = 0; i < list_size(body_assets); i++) {
+      asset_render(list_get(body_assets, i));
+    }
 
-  for (size_t i = 0; i < list_size(body_assets); i++) {
-    asset_render(list_get(body_assets, i));
+    sdl_render_scene(state->scene);
+    state->time_till_next_obstacle -= dt;
+    update_obstacles(state);
+    clean_obstacles(state);
+    check_player_falling_off_edge(state);
+    manipulate_player(state, dt);
   }
-  sdl_render_scene(state->scene);
-
-  state->time_till_next_obstacle -= dt;
-  update_obstacles(state);
-
-  clean_obstacles(state);
-  check_player_falling_off_edge(state);
-
+  
   sdl_show();
   scene_tick(state->scene, dt);
-  manipulate_player(state, dt);
   return false;
 }
 

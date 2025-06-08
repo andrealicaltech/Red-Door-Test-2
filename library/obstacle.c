@@ -14,9 +14,6 @@
 const double EDGE_TOLERANCE = 3.0;
 const size_t MAX_N_QUEUED_OBST = 25;
 
-const char *START_SCREEN_PATH = "assets/Start.png";
-const char *GAME_OVER_PATH = "assets/GameOver.png";
-
 body_t *make_obstacle(size_t w, size_t h, vector_t center) {
   list_t *c = list_init(4, free);
   vector_t *v1 = malloc(sizeof(vector_t));

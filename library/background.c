@@ -8,7 +8,6 @@
 #include "asset.h"
 #include "asset_cache.h"
 #include "collision.h"
-#include "constants.h"
 #include "forces.h"
 #include "game_state.h"
 #include "kinematics.h"
