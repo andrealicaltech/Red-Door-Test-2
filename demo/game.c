@@ -78,6 +78,11 @@ state_t *emscripten_init() {
       asset_cache_obj_get_or_create(ASSET_IMAGE, GAME_OVER_PATH);
   asset_cache_store_temp("game over", game_over);
 
+  SDL_Texture *shop =
+      asset_cache_obj_get_or_create(ASSET_IMAGE, SHOP_PATH);
+  asset_cache_store_temp("shop", shop);
+  state->show_shop = false;
+
   // Needs to be the first one
   body_t *player = make_player(PLAYER_DIMS.x, PLAYER_DIMS.y, PLAYER_CENTER_POS);
   body_set_centroid(player, PLAYER_CENTER_POS);
@@ -150,15 +155,34 @@ bool emscripten_main(state_t *state) {
     check_player_falling_off_edge(state);
     manipulate_player(state, dt);
     scene_tick(state->scene, dt);
+
+    if (state->is_game_over) {
+      state->started = false;
+    }
   } // game screen
 
   if (!state->started && state->is_game_over) {
-    sdl_clear();
-    render_screen("game over", &viewport);
-    sdl_show();
-    SDL_Delay(2000); // delay shop screen 2 se
-    state->started = false;
-  } // shop screen
+   sdl_clear();
+   render_screen("game over", &viewport);
+   sdl_show();
+
+
+   double time = time_since_last_tick();
+   state->delay_time += time;
+
+
+   if (state->delay_time >= 1.0) {
+     state->show_shop = true;
+     state->delay_time = 0;
+   }
+ } //game over screen
+
+
+ if (state->show_shop) {
+   render_screen("shop", &viewport);
+ }//shop screen
+
+  
 
   sdl_show();
   return false;
