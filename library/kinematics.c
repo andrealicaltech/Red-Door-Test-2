@@ -11,14 +11,12 @@
 void revert_duck(state_t *state) {}
 
 vector_t get_curr_jump_vel(state_t *state) {
-  // TODO
   return (vector_t){.x = 0,
                     .y = JUMP_VEL_COMPONENT_RATIO *
                          INIT_BACKGROUND_3_BUILDINGS_VELOCITY.x};
 }
 
 vector_t get_curr_gravity(state_t *state) {
-  // TODO
   return vec_multiply(GRAV_JUMP_VEL_RATIO, get_curr_jump_vel(state));
 }
 
