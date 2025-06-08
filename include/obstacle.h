@@ -48,6 +48,11 @@ currently be the last scheduled obstacle to appear
 double next_obst_x(state_t *state, body_t *last_obstacle);
 
 /*
+Gets the n-th obstacle in the scene. Uses zero indexing
+*/
+body_t *get_nth_obstacle(state_t *state, size_t n);
+
+/*
 Called in the main loop.
 Check if the timer to spawn the next obstacle has elapsed.
 If so, add an obstacle to the edge of the far left of the screen and reset a
