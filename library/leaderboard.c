@@ -1,7 +1,7 @@
 #include <assert.h>
 #include <math.h>
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "asset.h"
 #include "asset_cache.h"
@@ -32,7 +32,7 @@ body_t *make_scoreboard(double width, double height, vector_t center,
   *vec_4 = (vector_t){0, height};
   list_add(rect, vec_4);
   body_t *leaderboard = body_init(rect, 1, color);
-  
+
   return leaderboard;
 }
 
@@ -48,9 +48,9 @@ void *create_scoreboard(state_t *state) {
 
 void update_text(state_t *state) {
   SDL_Rect *text_rectangle = sdl_get_rect(
-    MAX.x - LEADERBOARD_SIZE.x * 0.75, MAX.y - LEADERBOARD_SIZE.y * 0.75,
-    LEADERBOARD_SIZE.x * 0.5, LEADERBOARD_SIZE.y * 0.5);
-  char* text = malloc(sizeof(char)*(log10(1+state->points)));
+      MAX.x - LEADERBOARD_SIZE.x * 0.75, MAX.y - LEADERBOARD_SIZE.y * 0.75,
+      LEADERBOARD_SIZE.x * 0.5, LEADERBOARD_SIZE.y * 0.5);
+  char *text = malloc(sizeof(char) * (log10(1 + state->points)));
   sprintf(text, "Coins: %d", state->points);
   sdl_render_text(state->font, TEXT_COLOR, text, text_rectangle);
   free(text);
