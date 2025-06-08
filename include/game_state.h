@@ -1,8 +1,8 @@
 #ifndef __GAME_STATE_H__
 #define __GAME_STATE_H__
 
-#include <stdlib.h>
 #include <SDL2/SDL.h>
+#include <stdlib.h>
 
 #include "constants.h"
 #include "scene.h"
@@ -59,7 +59,7 @@ struct state {
   list_t *all_points;
   const TTF_Font *font;
 
-  //sprites
+  // sprites
   SDL_Rect andrea_rect;
   SDL_Rect arjun_rect;
   SDL_Rect amudhan_rect;
