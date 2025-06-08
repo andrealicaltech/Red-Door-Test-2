@@ -131,7 +131,6 @@ state_t *emscripten_init() {
   state->n_queued_obstacles = 0;
   state->curr_player_obstacle = NULL;
 
-
   state->is_magnet_activated = false;
 
   state->points = 0;
@@ -164,19 +163,19 @@ bool emscripten_main(state_t *state) {
     }
 
     sdl_render_scene(state->scene);
-  state->time_till_next_update -= dt;
-  if (state->time_till_next_update <= 0.0) {
-    update_obstacles(state);
-    state->time_till_next_update = mod_d((double)rand(), MAX_TIME_UPDATE);
-    gen_coin_arc(state, false);
-  }
+    state->time_till_next_update -= dt;
+    if (state->time_till_next_update <= 0.0) {
+      update_obstacles(state);
+      state->time_till_next_update = mod_d((double)rand(), MAX_TIME_UPDATE);
+      gen_coin_arc(state, false);
+    }
 
-  clean_obstacles(state);
-  clean_coins(state);
-  check_player_falling_off_edge(state);
+    clean_obstacles(state);
+    clean_coins(state);
+    check_player_falling_off_edge(state);
 
-  manipulate_player(state, dt);
-  scene_tick(state->scene, dt);
+    manipulate_player(state, dt);
+    scene_tick(state->scene, dt);
 
     if (state->is_game_over) {
       state->started = false;
