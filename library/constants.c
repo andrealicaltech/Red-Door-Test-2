@@ -13,14 +13,14 @@ const char *PLAYER_INFO = "player";
 const double OUTER_RADIUS = 30;
 const double INNER_RADIUS = 30;
 
-const double MIN_REACTION_TIME_S = 1.5;
+const double MIN_REACTION_TIME_S = 1.0;
 
 // obstacle = table (square 50 x 50) can spawn multiple obstacles in a row
 const size_t OBSTACLE_HW = 50;
 const size_t MAX_STACKED_OBSTACLES = 5;
-const double FIRST_OBSTACLE_WAIT_TIME = 3.0;
 const size_t OBSTACLE_CAPACITY = 1024;
-const double AVG_TIME_OBSTACLES = 5.0;
+const double FIRST_OBSTACLE_WAIT_TIME = 1.5;
+const double AVG_TIME_OBSTACLES = 3.0;
 const char *OBSTACLE_INFO = "obstacle";
 
 // pts of player depending on action
@@ -31,7 +31,6 @@ const size_t QUESADILLA_PTS = 20;
 // player movements
 const vector_t DUCK_INITIAL_VELOCITY = (vector_t){.x = 0, .y = 0};
 const vector_t JUMP_INITIAL_VELOCITY = (vector_t){.x = 0, .y = 250.0};
-const double Y_GRAV_ACCELERATION_MAG_PER_S = 300.0;
 const double DUCK_ACCELERATION_CHANGE = 0;
 
 // Background and obstacle velocity. Background 3 is the top layer (i.e. the
@@ -42,6 +41,13 @@ const vector_t INIT_BACKGROUND_2_TREE_VELOCITY =
 const vector_t INIT_BACKGROUND_3_BUILDINGS_VELOCITY =
     (vector_t){.x = 150.0, .y = 0};
 
+// Magic ratios to make sure that jump velocity scales with x-velocity of
+// obstacles Found by tweaking with fixed initial values - these ratios gave a
+// nice smooth look Kinematics equations tell us that these work Points should
+// be deducted from Arjun if this is problematic
+const double JUMP_VEL_COMPONENT_RATIO = 5.0 / 3.0;
+const double GRAV_JUMP_VEL_RATIO = 6.0 / 5.0;
+
 const color_t SPRITE_COLOR = (color_t){0.0, 0.0, 0.0};
 const color_t OBS_COLOR = (color_t){0.2, 0.2, 0.3};       // going to be tables
 const color_t QUESADILLA_COLOR = (color_t){1, 1, 0};      // coin
@@ -49,6 +55,8 @@ const color_t LEADERBOARD_COLOR = (color_t){0.6, 0.3, 0}; // leaderboard
 const color_t TEXT_COLOR = (color_t){1, 1, 1};
 
 const size_t BODY_ASSETS = 1;
+extern const char *START_SCREEN_PATH = "assets/Start.png";
+extern const char *GAME_OVER_PATH = "assets/GameOver.png";
 const char *PLAYER_SPRITE_PATH = "assets/Amudhan.png";
 const char *PLAYER_SPRITE_ANDREA_PATH = "assets/Andrea.png";
 const char *PLAYER_SPRITE_ARJUN_PATH = "assets/Arjun.png";

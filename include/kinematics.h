@@ -11,6 +11,7 @@
 
 void revert_duck(state_t *state);
 
+vector_t get_curr_gravity(state_t *state);
 vector_t get_curr_jump_vel(state_t *state);
 
 void on_key(char key, key_event_type_t type, double held_time, state_t *state);

@@ -47,5 +47,48 @@ void update_bg_pos(state_t *state, double dt) {
   state->bg.sky_pos.x -= state->bg.bg_1_sky_vel.x * dt;
   state->bg.tree_pos.x -= state->bg.bg_2_tree_vel.x * dt;
   state->bg.building_pos.x -= state->bg.bg_3_building_vel.x * dt;
-  printf("Before update: sky_pos.x = %.2f\n", state->bg.sky_pos.x);
+}
+
+void render_start_screen(SDL_Rect *viewport) {
+  SDL_Texture *start = asset_cache_lookup("start");
+  sdl_render_image(start, viewport);
+}
+
+void render_layers(SDL_Texture *texture, double *x, SDL_Rect *viewport) {
+  *x = fmod(*x, viewport->w);
+  if (*x > 0) {
+    *x -= viewport->w;
+  }
+
+  SDL_Rect dest1 = *viewport;
+  dest1.x = (int)(*x);
+
+  SDL_Rect dest2 = *viewport;
+  dest2.x = (int)(*x) + viewport->w;
+
+  sdl_render_image(texture, &dest1);
+  sdl_render_image(texture, &dest2);
+}
+
+body_t *make_player(double w, double h, vector_t center) {
+  list_t *c = list_init(4, free);
+  vector_t *v1 = malloc(sizeof(vector_t));
+  *v1 = (vector_t){0, 0};
+  list_add(c, v1);
+
+  vector_t *v2 = malloc(sizeof(vector_t));
+  *v2 = (vector_t){w, 0};
+  list_add(c, v2);
+
+  vector_t *v3 = malloc(sizeof(vector_t));
+  *v3 = (vector_t){w, h};
+  list_add(c, v3);
+
+  vector_t *v4 = malloc(sizeof(vector_t));
+  *v4 = (vector_t){0, h};
+  list_add(c, v4);
+  body_t *player =
+      body_init_with_info(c, 1, SPRITE_COLOR, (void *)PLAYER_INFO, NULL);
+  body_set_centroid(player, center);
+  return player;
 }

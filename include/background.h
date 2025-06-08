@@ -18,4 +18,10 @@ void update_bg_velocity(state_t *state, double dt);
 
 void wrap_backgrounds(state_t *state);
 
+void render_start_screen(SDL_Rect *viewport);
+
+void render_layers(SDL_Texture *texture, double *x, SDL_Rect *viewport);
+
+body_t *make_player(double w, double h, vector_t center);
+
 #endif
