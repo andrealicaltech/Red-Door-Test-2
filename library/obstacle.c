@@ -16,7 +16,7 @@
 
 const double EDGE_TOLERANCE = 3.0;
 
-// Need this to estimate tolerance for landing on top of an obstacle 
+// Need this to estimate tolerance for landing on top of an obstacle
 // - tolerance for when the function was last called
 const double AVG_DT_S = 0.01;
 
