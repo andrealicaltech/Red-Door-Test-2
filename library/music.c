@@ -8,13 +8,12 @@
 // Our music file
 Mix_Music *music = NULL;
 
-int play_music(char *music_path) {
+int play_music(char *music_path, bool side_by_side) {
 
   // Initialize SDL.
   if (SDL_Init(SDL_INIT_AUDIO) < 0) {
     return -1;
   }
-
   // Initialize SDL_mixer
   if (Mix_OpenAudio(22050, MIX_DEFAULT_FORMAT, 2, 4096) == -1) {
     return -1;
@@ -32,17 +31,16 @@ int play_music(char *music_path) {
   music = Mix_LoadMUS(music_path);
   if (music == NULL)
     return -1;
-
   // if ( Mix_PlayChannel(-1, wave, 0) == -1 )
   // return -1;
 
-  if (Mix_PlayingMusic()) {
+  if (!side_by_side && Mix_PlayingMusic()) {
     return -1;
   }
+  printf("Reset!\n");
   if (Mix_PlayMusic(music, 1) == -1) {
     return -1;
   }
-
   // while ( Mix_PlayingMusic() ) ;
 
   // clean up our resources
@@ -55,4 +53,7 @@ int play_music(char *music_path) {
   return 0;
 }
 
-int halt_music() { Mix_HaltMusic(); }
+void halt_music() { 
+  Mix_HaltMusic(); 
+  printf("I'm here here!\n");
+}

@@ -3,7 +3,7 @@
 
 const vector_t MIN = {0, 0};
 const vector_t MAX = {1000, 500};
-const vector_t LEADERBOARD_SIZE = {100, 50};
+const vector_t LEADERBOARD_SIZE = {180, 100};
 
 // TODO: Change
 const vector_t PLAYER_DIMS = {40, 80};
@@ -22,6 +22,7 @@ const size_t OBSTACLE_CAPACITY = 1024;
 const double FIRST_OBSTACLE_WAIT_TIME = 1.5;
 const double MAX_TIME_UPDATE = 3.0;
 const char *OBSTACLE_INFO = "obstacle";
+const char *LEADERBOARD_INFO = "leaderboard";
 
 // pts of player depending on action
 const size_t PLAYER_STANDING_PTS = 16;

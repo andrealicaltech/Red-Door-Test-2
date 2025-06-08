@@ -3,8 +3,8 @@
 /**
  *Plays the music that is sent in to the file
  */
-int play_music(char *music_path);
+int play_music(char *music_path, bool side_by_side);
 
-int halt_music();
+void halt_music();
 
 #endif

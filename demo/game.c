@@ -14,6 +14,7 @@
 #include "forces.h"
 #include "game_state.h"
 #include "kinematics.h"
+#include "leaderboard.h"
 #include "math_utils.h"
 #include "music.h"
 #include "obstacle.h"
@@ -125,7 +126,7 @@ state_t *emscripten_init() {
 
   asset_make_image_with_body(PLAYER_SPRITE_AMUDHAN_PATH, player);
   sdl_on_key((key_handler_t)on_key);
-
+  create_scoreboard(state);
   state->jump_start_y = PLAYER_CENTER_POS.y;
 
   // Obstacles
@@ -137,6 +138,9 @@ state_t *emscripten_init() {
 
   state->points = 0;
   state->all_points = list_init(MAX_GAMES, NULL);
+  double* funny = malloc(sizeof(double));
+  *funny = 2;
+  list_add(state->all_points, funny);
   return state;
 }
 
@@ -146,12 +150,12 @@ bool emscripten_main(state_t *state) {
 
   if (!state->started && !state->is_game_over) {
     render_screen("start", &viewport);
-    play_music(MENU_MUSIC_PATH);
+    play_music(MENU_MUSIC_PATH, false);
   } // start screen
 
   if (state->started) {
     double dt = time_since_last_tick();
-    play_music(GAME_MUSIC_PATH);
+    play_music(GAME_MUSIC_PATH, false);
     update_bg_velocity(state, dt);
     update_bg_pos(state, dt);
     render_layers(asset_cache_lookup("sky"), &state->bg.sky_pos.x, &viewport);
@@ -159,12 +163,12 @@ bool emscripten_main(state_t *state) {
     render_layers(asset_cache_lookup("building"), &state->bg.building_pos.x,
                   &viewport);
     list_t *body_assets = asset_get_asset_list();
-
+    
     for (size_t i = 0; i < list_size(body_assets); i++) {
       asset_render(list_get(body_assets, i));
     }
-
     sdl_render_scene(state->scene);
+    render_text(state);
     state->time_till_next_update -= dt;
     if (state->time_till_next_update <= 0.0) {
       update_obstacles(state);

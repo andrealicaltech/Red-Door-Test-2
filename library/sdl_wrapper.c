@@ -224,9 +224,12 @@ void sdl_render_text(TTF_Font *font, color_t color, const char *text,
 
   SDL_Color sdl_color = {255 * color.red, 255 * color.green, 255 * color.blue};
 
-  SDL_Surface *surfaceMessage = TTF_RenderText_Solid(font, text, sdl_color);
-  SDL_Texture *Message = SDL_CreateTextureFromSurface(renderer, surfaceMessage);
-  SDL_RenderCopy(renderer, Message, NULL, bounding_box);
+  SDL_Surface *message_in_surface = TTF_RenderText_Solid(font, text, sdl_color);
+  SDL_Texture *value =
+      SDL_CreateTextureFromSurface(renderer, message_in_surface);
+  SDL_RenderCopy(renderer, value, NULL, bounding_box);
+  SDL_FreeSurface(message_in_surface);
+  SDL_DestroyTexture(value);
 }
 
 void sdl_show(void) {

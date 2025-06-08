@@ -29,6 +29,7 @@ extern const double FIRST_OBSTACLE_WAIT_TIME;
 extern const size_t OBSTACLE_CAPACITY;
 extern const double MAX_TIME_UPDATE;
 extern const char *OBSTACLE_INFO;
+extern const char *LEADERBOARD_INFO;
 
 // pts of player depending on action
 extern const size_t PLAYER_STANDING_PTS;

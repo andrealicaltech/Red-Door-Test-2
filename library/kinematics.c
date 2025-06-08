@@ -8,15 +8,7 @@
 #include "math_utils.h"
 
 void revert_duck(state_t *state) {
-  // body_t *player_body = scene_get_body(state->scene, 0);
-  // if (velocity.y >
-  //     -DUCK_INITIAL_VELOCITY) { // TODO: Replace with if colliding with
-  //     ground
-  //   state->player_velocity.y = 0;
-  //   state->player_motion = REGULAR;
-  // } else {
-  //   state->player_velocity.y += DUCK_ACCELERATION_CHANGE;
-  // }
+
 }
 
 vector_t get_curr_jump_vel(state_t *state) {
@@ -39,6 +31,7 @@ void on_key(char key, key_event_type_t type, double held_time, state_t *state) {
     if (!state->started && key == SPACE_BAR) {
       state->started = true;
       state->current_game_screen = GAME;
+      halt_music();
       return;
     }
 
@@ -47,7 +40,8 @@ void on_key(char key, key_event_type_t type, double held_time, state_t *state) {
       case UP_ARROW:
         body_set_velocity(player_body, get_curr_jump_vel(state));
         state->player_motion = JUMP;
-        play_music(JUMP_MUSIC_PATH);
+        state->points += 1;
+        play_music(JUMP_MUSIC_PATH, true);
         state->jump_start_y = body_get_centroid(player_body).y;
         state->curr_player_obstacle = NULL;
         break;

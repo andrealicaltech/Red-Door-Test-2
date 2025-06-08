@@ -53,7 +53,7 @@ struct state {
   // Powerups
   bool is_magnet_activated;
 
-  size_t points;
+  double points;
   list_t *all_points;
   const TTF_Font *font;
 
