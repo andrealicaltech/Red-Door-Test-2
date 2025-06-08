@@ -34,7 +34,6 @@ list_t *flat_path(state_t *state, vector_t min_start_pos,
   if (delta < 0) {
     return NULL;
   }
-  double space_per_coin = (coin_spacing(state) + (COIN_RAD * 2));
   size_t max_packed_coins = (size_t)((max_end_pos.x - min_start_pos.x) /
                                      (coin_spacing(state) + (COIN_RAD * 2)));
 
