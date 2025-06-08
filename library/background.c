@@ -53,7 +53,6 @@ void render_screen(const char *screen_key, SDL_Rect *viewport) {
   sdl_render_image(screen, viewport);
 }
 
-
 void render_layers(SDL_Texture *texture, double *x, SDL_Rect *viewport) {
   *x = fmod(*x, viewport->w);
   if (*x > 0) {

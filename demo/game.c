@@ -126,7 +126,7 @@ bool emscripten_main(state_t *state) {
 
   if (!state->started && !state->is_game_over) {
     render_screen("start", &viewport);
-  }//start screen
+  } // start screen
 
   if (state->started) {
     double dt = time_since_last_tick();
@@ -150,16 +150,15 @@ bool emscripten_main(state_t *state) {
     check_player_falling_off_edge(state);
     manipulate_player(state, dt);
     scene_tick(state->scene, dt);
-  }//game screen
+  } // game screen
 
   if (!state->started && state->is_game_over) {
     sdl_clear();
     render_screen("game over", &viewport);
     sdl_show();
-    SDL_Delay(2000); //delay shop screen 2 se
+    SDL_Delay(2000); // delay shop screen 2 se
     state->started = false;
-  }//shop screen
-
+  } // shop screen
 
   sdl_show();
   return false;
