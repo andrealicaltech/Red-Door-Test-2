@@ -62,7 +62,7 @@ state_t *emscripten_init() {
 }
 
 bool emscripten_main(state_t *state) {
-  sdl_clear();
+  //sdl_clear();
   SDL_Rect viewport = {.x = 0, .y = 0, .w = MAX.x, .h = MAX.y};
 
   if (!state->started && !state->is_game_over) {
@@ -81,11 +81,15 @@ bool emscripten_main(state_t *state) {
                   &viewport);
     list_t *body_assets = asset_get_asset_list();
 
+    
     for (size_t i = 0; i < list_size(body_assets); i++) {
       asset_render(list_get(body_assets, i));
     }
-    sdl_render_scene(state->scene);
+
+    //sdl_render_scene(state->scene);
     render_text(state);
+    sdl_show();
+    
     state->time_till_next_update -= dt;
 
     if (state->time_till_next_update <= 0.0) {
