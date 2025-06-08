@@ -11,8 +11,11 @@
 #include "kinematics.h"
 #include "obstacle.h"
 
+// TODOs: remove
+#include <emscripten.h>
+
 const double EDGE_TOLERANCE = 3.0;
-const size_t MAX_N_QUEUED_OBST = 25;
+const size_t MAX_N_QUEUED_OBST = 15;
 
 body_t *make_obstacle(size_t w, size_t h, vector_t center) {
   list_t *c = list_init(4, free);
@@ -34,6 +37,7 @@ body_t *make_obstacle(size_t w, size_t h, vector_t center) {
   body_t *obstacle =
       body_init_with_info(c, 1, OBS_COLOR, (void *)OBSTACLE_INFO, NULL);
   body_set_centroid(obstacle, center);
+  printf("Made obstacle w=%f, h=%f, center.x=%f\n", w, h, center.x);
   return obstacle;
 }
 
@@ -65,7 +69,7 @@ void obstacle_collision_handler(body_t *body1, body_t *body2, vector_t axis,
 
   double delta = (player_centroid.y - 0.5 * PLAYER_DIMS.y) -
                  (obstacle_centroid.y + 0.5 * obstacle_dims.y);
-  if (abs(delta) <= EDGE_TOLERANCE) {
+  if (fabs(delta) <= EDGE_TOLERANCE) {
     body_set_velocity(player, VEC_ZERO);
     state->player_motion = REGULAR;
     state->curr_player_obstacle = obstacle;
@@ -75,6 +79,7 @@ void obstacle_collision_handler(body_t *body1, body_t *body2, vector_t axis,
   } else if (player_right_edge > obstacle_left_edge ||
              obstacle_left_edge - player_right_edge < EDGE_TOLERANCE) {
     printf("head-on collision-you lose!\n");
+    emscripten_force_exit(2);
     state->is_game_over = true;
   } else {
     printf("Can't handle collision\n");
@@ -157,10 +162,23 @@ double next_obst_x(state_t *state, body_t *last_obstacle) {
                                  MIN_REACTION_TIME_S * curr_obst_speed.x);
 }
 
-void update_obstacles(state_t *state) {
-  if (state->time_till_next_obstacle > 0.0) {
-    return;
+body_t *get_nth_obstacle(state_t *state, size_t n) {
+  size_t count = -1;
+  for (size_t i = 0; i < scene_bodies(state->scene); i++) {
+    body_t *body = scene_get_body(state->scene, i);
+    if (strcmp(body_get_info(body), OBSTACLE_INFO) == 0) {
+      count++;
+    }
+    if (count == n) {
+      return body;
+    }
   }
+  printf("Could not find obstacle %zu\n", n);
+  return NULL;
+}
+
+void update_obstacles(state_t *state) {
+
   // Force avoid a double overflow
   if (state->n_queued_obstacles == MAX_N_QUEUED_OBST) {
     // printf("Would return here\n");
@@ -173,13 +191,14 @@ void update_obstacles(state_t *state) {
 
   // Default value is edge of the screen
   double x = MAX.x + (OBSTACLE_HW * MAX_STACKED_OBSTACLES);
-  double y = (PLAYER_CENTER_POS.y - PLAYER_DIMS.y / 2) + OBSTACLE_HW; // TODO
+  double y =
+      (PLAYER_CENTER_POS.y - PLAYER_DIMS.y / 2) + (OBSTACLE_HW / 2); // TODO
 
-  if (scene_bodies(state->scene) > 1) {
+  if (state->n_queued_obstacles > 0) {
     // Use 1 + n_q - 1 for clarity: first body is player. Subtract 1 for
     // zero-indexing
     body_t *last_obstacle =
-        scene_get_body(state->scene, (1 + state->n_queued_obstacles) - 1);
+        get_nth_obstacle(state, state->n_queued_obstacles - 1);
     x = next_obst_x(state, last_obstacle);
   }
 
@@ -196,14 +215,12 @@ void update_obstacles(state_t *state) {
                    obstacle_collision_handler, state, 0, NULL);
 
   state->n_queued_obstacles += 1;
-  state->time_till_next_obstacle = mod_d((double)rand(), AVG_TIME_OBSTACLES);
 }
 
 void clean_obstacles(state_t *state) {
   if (scene_bodies(state->scene) == 1) {
     return;
   }
-  // First obstacle is always the player
   for (size_t i = 1; i < scene_bodies(state->scene); i++) {
     body_t *body = scene_get_body(state->scene, i);
     if (strcmp(body_get_info(body), OBSTACLE_INFO) == 0) {
@@ -219,7 +236,6 @@ void clean_obstacles(state_t *state) {
           state->curr_player_obstacle = NULL;
         }
       } else {
-        vector_t new_vel = vec_multiply(-1, state->bg.bg_3_building_vel);
         body_set_velocity(body, vec_multiply(-1, state->bg.bg_3_building_vel));
       }
     }

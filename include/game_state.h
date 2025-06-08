@@ -47,7 +47,7 @@ struct state {
   double jump_start_y;
 
   // Obstacles
-  double time_till_next_obstacle;
+  double time_till_next_update;
   size_t n_queued_obstacles;
   body_t *curr_player_obstacle;
 

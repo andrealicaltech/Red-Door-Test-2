@@ -17,6 +17,7 @@
 #include "math_utils.h"
 #include "music.h"
 #include "obstacle.h"
+#include "quesedilla.h"
 #include "sdl_wrapper.h"
 // moved background positions to background.c
 
@@ -125,7 +126,7 @@ state_t *emscripten_init() {
   state->jump_start_y = PLAYER_CENTER_POS.y;
 
   // Obstacles
-  state->time_till_next_obstacle = FIRST_OBSTACLE_WAIT_TIME;
+  state->time_till_next_update = FIRST_OBSTACLE_WAIT_TIME;
   state->n_queued_obstacles = 0;
   state->curr_player_obstacle = NULL;
 
@@ -163,12 +164,19 @@ bool emscripten_main(state_t *state) {
     }
 
     sdl_render_scene(state->scene);
-    state->time_till_next_obstacle -= dt;
+  state->time_till_next_update -= dt;
+  if (state->time_till_next_update <= 0.0) {
     update_obstacles(state);
-    clean_obstacles(state);
-    check_player_falling_off_edge(state);
-    manipulate_player(state, dt);
-    scene_tick(state->scene, dt);
+    state->time_till_next_update = mod_d((double)rand(), MAX_TIME_UPDATE);
+    gen_coin_arc(state, false);
+  }
+
+  clean_obstacles(state);
+  clean_coins(state);
+  check_player_falling_off_edge(state);
+
+  manipulate_player(state, dt);
+  scene_tick(state->scene, dt);
 
     if (state->is_game_over) {
       state->started = false;

@@ -49,12 +49,14 @@ void on_key(char key, key_event_type_t type, double held_time, state_t *state) {
         state->player_motion = JUMP;
         play_music(JUMP_MUSIC_PATH);
         state->jump_start_y = body_get_centroid(player_body).y;
+        state->curr_player_obstacle = NULL;
         break;
       case DOWN_ARROW:
         body_set_velocity(player_body, DUCK_INITIAL_VELOCITY);
         state->player_motion = DUCK;
         break;
       }
+>>>>>>> library/kinematics.c
     }
   }
 }
@@ -69,9 +71,10 @@ void manipulate_player(state_t *state, double dt) {
   switch (state->player_motion) {
   case JUMP:
   case FALLING:
-    if (player_velocity.y <= 0.0 && player_centroid.y > state->jump_start_y &&
-        (player_centroid.y - state->jump_start_y <
-         (get_curr_gravity(state).y * dt))) {
+    if (player_centroid.y < PLAYER_CENTER_POS.y ||
+        (player_velocity.y <= 0.0 && player_centroid.y > state->jump_start_y &&
+         (player_centroid.y - state->jump_start_y <
+          (get_curr_gravity(state).y * dt)))) {
       body_set_velocity(player_body, VEC_ZERO);
       body_set_centroid(player_body, (vector_t){.x = PLAYER_CENTER_POS.x,
                                                 .y = state->jump_start_y});
