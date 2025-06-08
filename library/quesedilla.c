@@ -149,9 +149,7 @@ void quesedilla_collision_handler(body_t *body1, body_t *body2, vector_t axis,
   body_remove(coin);
 }
 
-void gen_coin_arc(state_t *state, bool_should_include_powerup,
-                  bool should_require_powerup) {
-  double translation = should_require_powerup ? MAGNET_TRANSLATION : 0.0;
+void gen_coin_arc(state_t *state, bool should_include_powerup) {
 
   // The first obstacle will never have coins on top of it
   if (state->n_queued_obstacles < 2) {
@@ -190,21 +188,17 @@ void gen_coin_arc(state_t *state, bool_should_include_powerup,
   }
   if (points) {
     body_t *player = scene_get_body(state->scene, 0);
-    size_t parabola_idx = -1;
-    if (bool_should_include_powerup) {
+    size_t powerup_idx = -1;
+    if (should_include_powerup) {
       powerup_idx = rand() % list_size(points);
     }
     for (size_t i = 0; i < list_size(points); i++) {
       vector_t *center = list_get(points, i);
-      if (i == powerup_idx) {
-        // do nothing
-      } else {
-        body_t *coin = make_coin(COIN_RAD, *center);
-        scene_add_body(state->scene, coin);
-        create_collision(state->scene, player, coin,
-                         quesedilla_collision_handler, state, 0, NULL);
-        body_set_velocity(coin, vec_multiply(-1, state->bg.bg_3_building_vel));
-      }
+      body_t *new_body = (i == powerup_idx) ? make_magnet(*center) : make_coin(COIN_RAD, *center);
+      scene_add_body(state->scene, new_body);
+      collision_handler_t handler = (i == powerup_idx) ? magnet_body_collision_handler : quesedilla_collision_handler;
+      create_collision(state->scene, player, new_body, handler, state, 0, NULL);
+      body_set_velocity(new_body, vec_multiply(-1, state->bg.bg_3_building_vel));
     }
     list_free(points);
   }

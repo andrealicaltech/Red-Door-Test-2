@@ -12,6 +12,8 @@
         "constants.h": "c",
         "music.h": "c",
         "assert.h": "c",
-        "math.h": "c"
+        "math.h": "c",
+        "magnet.h": "c",
+        "collision.h": "c"
     }
 }

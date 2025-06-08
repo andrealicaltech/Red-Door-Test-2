@@ -18,6 +18,7 @@
 #include "music.h"
 #include "obstacle.h"
 #include "quesedilla.h"
+#include "magnet.h"
 #include "sdl_wrapper.h"
 // moved background positions to background.c
 
@@ -136,13 +137,12 @@ bool emscripten_main(state_t *state) {
                   &viewport);
     list_t *body_assets = asset_get_asset_list();
 
+    sdl_render_scene(state->scene);
     for (size_t i = 0; i < list_size(body_assets); i++) {
       asset_render(list_get(body_assets, i));
     }
 
-    sdl_render_scene(state->scene);
     state->time_till_next_update -= dt;
-    state->time_till_next_magnet -= dt;
 
     if (state->time_till_next_update <= 0.0) {
       if (state->n_queued_obstacles < MAX_N_QUEUED_OBST) {
@@ -152,10 +152,14 @@ bool emscripten_main(state_t *state) {
       }
       state->time_till_next_update = mod_d((double)rand(), MAX_TIME_UPDATE);
     }
+    if (state->is_magnet_activated){
+      state->time_elapsed_with_magnet -= dt;
+    }
 
     clean_obstacles(state);
     clean_coins(state);
     check_player_falling_off_edge(state);
+    apply_magnet(state, dt);
 
     manipulate_player(state, dt);
     scene_tick(state->scene, dt);
