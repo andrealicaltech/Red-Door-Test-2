@@ -54,6 +54,7 @@ struct state {
 
   // Powerups
   bool is_magnet_activated;
+  double time_elapsed_with_magnet;
 
   double points;
   size_t n_coins_collected;
