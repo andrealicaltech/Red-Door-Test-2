@@ -55,7 +55,7 @@ void on_key(char key, key_event_type_t type, double held_time, state_t *state) {
         state->player_motion = DUCK;
         break;
       }
-      break;
+      
     }
   }
 }
