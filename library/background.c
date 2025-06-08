@@ -32,6 +32,10 @@ void background_init(state_t *state) {
       .sky_pos = (vector_t){.x = 0, .y = SKY_BACKGROUND.y},
       .tree_pos = (vector_t){.x = 0, .y = TREE_BACKGROUND.y},
       .building_pos = (vector_t){.x = 0, .y = BUILD_BACKGROUND.y}};
+
+  state->bg.building_pos.x = 0;
+  state->bg.tree_pos.x = 0;
+  state->bg.sky_pos.x = 0;
 }
 
 // increase speed of player + backgrounds
@@ -90,4 +94,73 @@ body_t *make_player(double w, double h, vector_t center) {
       body_init_with_info(c, 1, SPRITE_COLOR, (void *)PLAYER_INFO, NULL);
   body_set_centroid(player, center);
   return player;
+}
+
+body_t *init_player(state_t *state) {
+  body_t *player = make_player(PLAYER_DIMS.x, PLAYER_DIMS.y, PLAYER_CENTER_POS);
+  body_set_centroid(player, PLAYER_CENTER_POS);
+  state->player = player;
+  scene_add_body(state->scene, player);
+  state->player_motion = REGULAR;
+  return player;
+}
+
+state_t *init_parameters(state_t *state) {
+  state->jump_start_y = PLAYER_CENTER_POS.y;
+  state->player_motion = REGULAR;
+  state->time_till_next_update = FIRST_OBSTACLE_WAIT_TIME;
+  state->n_queued_obstacles = 0;
+  state->curr_player_obstacle = NULL;
+  state->is_magnet_activated = false;
+  state->n_coins_collected = 0;
+  state->points = 0;
+  state->all_points = list_init(MAX_GAMES, NULL);
+  return state;
+}
+
+void init_screens(state_t *state) {
+  SDL_Texture *start =
+      asset_cache_obj_get_or_create(ASSET_IMAGE, START_SCREEN_PATH);
+  asset_cache_store_temp("start", start);
+
+  SDL_Texture *game_over =
+      asset_cache_obj_get_or_create(ASSET_IMAGE, GAME_OVER_PATH);
+  asset_cache_store_temp("game over", game_over);
+
+  SDL_Texture *shop = asset_cache_obj_get_or_create(ASSET_IMAGE, SHOP_PATH);
+  asset_cache_store_temp("shop", shop);
+  state->show_shop = false;
+}
+
+void make_layers(state_t *state) {
+  SDL_Texture *sky = asset_cache_obj_get_or_create(ASSET_IMAGE, SKY_PATH);
+  SDL_Texture *tree = asset_cache_obj_get_or_create(ASSET_IMAGE, TREE_PATH);
+  SDL_Texture *building =
+      asset_cache_obj_get_or_create(ASSET_IMAGE, BUILDING_PATH);
+
+  background_init(state);
+
+  asset_cache_store_temp("sky", sky);
+  asset_cache_store_temp("tree", tree);
+  asset_cache_store_temp("building", building);
+}
+
+void reset_game(state_t *state) {
+  scene_free(state->scene);
+  state->scene = scene_init();
+
+  list_free(asset_get_asset_list());
+  asset_cache_reset_temp();
+
+  body_t *player = init_player(state);
+  make_layers(state);
+
+  asset_make_image_with_body(PLAYER_SPRITE_AMUDHAN_PATH, player);
+
+  init_parameters(state);
+
+  state->started = true;
+  state->show_shop = false;
+  state->is_game_over = false;
+  state->current_game_screen = GAME;
 }

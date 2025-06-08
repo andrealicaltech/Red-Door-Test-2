@@ -22,38 +22,12 @@
 #include "sdl_wrapper.h"
 // moved background positions to background.c
 
-double delay_time = 0.0;
-
-void start_game(state_t *state) {
-  if (state->is_game_over) {
-    state->current_game_screen = HOME;
-  } else {
-    state->current_game_screen = GAME;
-  }
-
-  // TODO: Week 2 - Change state of screen to game
-}
-
-void end_game(state_t *state) {
-  // TODO: Week 2 - End the game, show the score, and go back to home after
-  // GAME_OVER_WAIT_TIME seconds
-}
-
-/*
-MARK: Coins
-*/
-
-void spawn_coins(state_t *state) {
-  // TODO: Week 2 - spawn coins at random intervals
-}
-
-void clean_elapsed_coins(state_t *state) {
-  // TODO: Week 2  - Remove coins after they hit the end of the screen
-}
-
 /*
 MARK: Emscripten
 */
+
+double delay_time = 0.0;
+
 state_t *emscripten_init() {
 
   asset_cache_init();
@@ -63,85 +37,25 @@ state_t *emscripten_init() {
   state_t *state = malloc(sizeof(state_t));
   state->scene = scene_init();
 
-  state->bg.building_pos.x = 0;
-  state->bg.tree_pos.x = 0;
-  state->bg.sky_pos.x = 0;
-
   state->started = false;
   state->is_game_over = false;
   state->font = TTF_OpenFont("assets/Roboto-Regular.ttf", 24);
   state->current_game_screen = HOME;
 
   srand(time(NULL));
-  state->player_motion = REGULAR;
 
-  SDL_Texture *start =
-      asset_cache_obj_get_or_create(ASSET_IMAGE, START_SCREEN_PATH);
-  asset_cache_store_temp("start", start);
-
-  SDL_Texture *game_over =
-      asset_cache_obj_get_or_create(ASSET_IMAGE, GAME_OVER_PATH);
-  asset_cache_store_temp("game over", game_over);
-
-  SDL_Texture *shop = asset_cache_obj_get_or_create(ASSET_IMAGE, SHOP_PATH);
-  asset_cache_store_temp("shop", shop);
-  state->show_shop = false;
-
-  // state->andrea_rect = (SDL_Rect) {.x = 0, .y = 0, .w = 332, .h = 499};
-  // state->arjun_rect = (SDL_Rect) {.x = 333, .y = 0, .w = 332, .h = 499};
-  // state->amudhan_rect = (SDL_Rect) {.x = 666, .y = 0, .w = 332, .h = 499};
-
-  // SDL_Renderer *rend = sdl_get_renderer();
-  // state->rend = rend;
-  // SDL_RenderCopy(state->rend,
-  // sdl_get_image_texture(PLAYER_SPRITE_ANDREA_PATH), NULL,
-  // &state->andrea_rect); SDL_RenderCopy(state->rend,
-  // sdl_get_image_texture(PLAYER_SPRITE_ARJUN_PATH), NULL, &state->arjun_rect);
-  // SDL_RenderCopy(state->rend,
-  // sdl_get_image_texture(PLAYER_SPRITE_AMUDHAN_PATH), NULL,
-  // &state->amudhan_rect);
+  init_screens(state);
 
   // Needs to be the first one
-  body_t *player = make_player(PLAYER_DIMS.x, PLAYER_DIMS.y, PLAYER_CENTER_POS);
-  body_set_centroid(player, PLAYER_CENTER_POS);
-  state->player = player;
-  scene_add_body(state->scene, player);
+  body_t *player = init_player(state);
 
-  SDL_Rect *rect = malloc(sizeof(SDL_Rect));
-  rect->x = MIN.x;
-  rect->y = MIN.y;
-  rect->w = MAX.x;
-  rect->h = MAX.y;
-
-  SDL_Texture *sky = asset_cache_obj_get_or_create(ASSET_IMAGE, SKY_PATH);
-  SDL_Texture *tree = asset_cache_obj_get_or_create(ASSET_IMAGE, TREE_PATH);
-  SDL_Texture *building =
-      asset_cache_obj_get_or_create(ASSET_IMAGE, BUILDING_PATH);
-
-  background_init(state);
-
-  asset_cache_store_temp("sky", sky);
-  asset_cache_store_temp("tree", tree);
-  asset_cache_store_temp("building", building);
+  make_layers(state);
 
   asset_make_image_with_body(PLAYER_SPRITE_AMUDHAN_PATH, player);
   sdl_on_key((key_handler_t)on_key);
   create_scoreboard(state);
-  state->jump_start_y = PLAYER_CENTER_POS.y;
 
-  // Obstacles
-  state->time_till_next_update = FIRST_OBSTACLE_WAIT_TIME;
-  state->n_queued_obstacles = 0;
-  state->curr_player_obstacle = NULL;
-
-  state->is_magnet_activated = false;
-
-  state->points = 0;
-  state->all_points = list_init(MAX_GAMES, NULL);
-  double *funny = malloc(sizeof(double));
-  *funny = 2;
-  list_add(state->all_points, funny);
-  return state;
+  return init_parameters(state);
 }
 
 bool emscripten_main(state_t *state) {
@@ -170,10 +84,14 @@ bool emscripten_main(state_t *state) {
     sdl_render_scene(state->scene);
     render_text(state);
     state->time_till_next_update -= dt;
+
     if (state->time_till_next_update <= 0.0) {
-      update_obstacles(state);
+      if (state->n_queued_obstacles < MAX_N_QUEUED_OBST) {
+        // Generate
+        update_obstacles(state);
+        gen_coin_arc(state, false);
+      }
       state->time_till_next_update = mod_d((double)rand(), MAX_TIME_UPDATE);
-      gen_coin_arc(state, false);
     }
 
     clean_obstacles(state);

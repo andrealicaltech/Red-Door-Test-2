@@ -25,6 +25,7 @@ extern const double MIN_REACTION_TIME_S;
 // obstacle;
 extern const size_t OBSTACLE_HW;
 extern const size_t MAX_STACKED_OBSTACLES;
+extern const size_t MAX_N_QUEUED_OBST;
 extern const double FIRST_OBSTACLE_WAIT_TIME;
 extern const size_t OBSTACLE_CAPACITY;
 extern const double MAX_TIME_UPDATE;

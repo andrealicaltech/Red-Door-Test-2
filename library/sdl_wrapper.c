@@ -5,7 +5,6 @@
 #include <SDL2/SDL_ttf.h>
 #include <assert.h>
 #include <math.h>
-#include <mouse.h>
 #include <stdlib.h>
 #include <time.h>
 
@@ -151,9 +150,6 @@ bool sdl_is_done(state_t *state) {
       double held_time = (timestamp - key_start_timestamp) / MS_PER_S;
       key_handler(key, type, held_time, state);
       break;
-    // mouse handling
-    case SDL_MOUSEBUTTONDOWN:
-    case SDL_MOUSEMOTION:
     }
   }
   free(event);
@@ -262,16 +258,6 @@ void sdl_render_scene(scene_t *scene) {
 }
 
 void sdl_on_key(key_handler_t handler) { key_handler = handler; }
-
-// double time_since_last_tick(void) {
-//   static clock_t last_clock = 0;
-//   clock_t now = clock();
-//   double difference = last_clock
-//                           ? (double)(now - last_clock) / CLOCKS_PER_SEC
-//                           : 0.0; // return 0 the first time this is called
-//   last_clock = now;
-//   return difference;
-// }
 
 double time_since_last_tick(void) {
   static Uint32 last_ticks = 0;

@@ -2,6 +2,7 @@
 #include "music.h"
 #include "state.h"
 
+#include "background.h"
 #include "constants.h"
 #include "game_state.h"
 #include "kinematics.h"
@@ -22,8 +23,10 @@ vector_t get_curr_gravity(state_t *state) {
 }
 
 void on_key(char key, key_event_type_t type, double held_time, state_t *state) {
-  body_t *player_body = scene_get_body(state->scene, 0);
-  assert(strcmp(body_get_info(player_body), PLAYER_INFO) == 0);
+  if (state->show_shop && key == SPACE_BAR) {
+    reset_game(state);
+    return;
+  }
 
   if (type == KEY_PRESSED && state->player_motion == REGULAR) {
     if (!state->started && key == SPACE_BAR) {
@@ -34,6 +37,9 @@ void on_key(char key, key_event_type_t type, double held_time, state_t *state) {
     }
 
     if (state->started && state->player_motion == REGULAR) {
+      body_t *player_body = scene_get_body(state->scene, 0);
+      assert(strcmp(body_get_info(player_body), PLAYER_INFO) == 0);
+
       switch (key) {
       case UP_ARROW:
         body_set_velocity(player_body, get_curr_jump_vel(state));
@@ -92,4 +98,26 @@ void manipulate_player(state_t *state, double dt) {
     fprintf(stderr, "Player is not moving in a valid way.");
     exit(2);
   }
+}
+
+/*
+Part of obstacle / quesedilla but abstracted to kinematics
+*/
+double get_smallest_obst_clearing_dist(state_t *state, double h_player,
+                                       double h_obstacle) {
+  double u = get_curr_jump_vel(state).y;
+  double min_del_h = h_obstacle;
+  /*
+
+  Find the time which results in the bottom of the player exactly hitting the
+  top edge of the obstacle Solve for t in the y-axis h_o - h_p = ut - 0.5gt^2
+  which gives (u + sqrt(u^2 - 2g(h_o-h_p)))/g
+  */
+  double time =
+      (u + sqrt((u * u) - 2 * get_curr_gravity(state).y * min_del_h)) /
+      get_curr_gravity(state).y;
+  double vx = state->bg.bg_3_building_vel.x;
+
+  // Return the x-distance that will be covered in that time
+  return vx * time;
 }
