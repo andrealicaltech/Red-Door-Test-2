@@ -5,9 +5,9 @@
 #include <SDL2/SDL_ttf.h>
 #include <assert.h>
 #include <math.h>
+#include <mouse.h>
 #include <stdlib.h>
 #include <time.h>
-#include <mouse.h>
 
 const char WINDOW_TITLE[] = "CS 3";
 const size_t WINDOW_WIDTH = 1000;

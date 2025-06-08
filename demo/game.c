@@ -1,10 +1,10 @@
+#include <SDL2/SDL.h>
 #include <assert.h>
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
-#include <SDL2/SDL.h>
 
 #include "asset.h"
 #include "asset_cache.h"
@@ -89,9 +89,13 @@ state_t *emscripten_init() {
 
   // SDL_Renderer *rend = sdl_get_renderer();
   // state->rend = rend;
-  // SDL_RenderCopy(state->rend, sdl_get_image_texture(PLAYER_SPRITE_ANDREA_PATH), NULL, &state->andrea_rect);
-  // SDL_RenderCopy(state->rend, sdl_get_image_texture(PLAYER_SPRITE_ARJUN_PATH), NULL, &state->arjun_rect);
-  // SDL_RenderCopy(state->rend, sdl_get_image_texture(PLAYER_SPRITE_AMUDHAN_PATH), NULL, &state->amudhan_rect);
+  // SDL_RenderCopy(state->rend,
+  // sdl_get_image_texture(PLAYER_SPRITE_ANDREA_PATH), NULL,
+  // &state->andrea_rect); SDL_RenderCopy(state->rend,
+  // sdl_get_image_texture(PLAYER_SPRITE_ARJUN_PATH), NULL, &state->arjun_rect);
+  // SDL_RenderCopy(state->rend,
+  // sdl_get_image_texture(PLAYER_SPRITE_AMUDHAN_PATH), NULL,
+  // &state->amudhan_rect);
 
   // Needs to be the first one
   body_t *player = make_player(PLAYER_DIMS.x, PLAYER_DIMS.y, PLAYER_CENTER_POS);
