@@ -45,9 +45,10 @@ void asset_cache_reset_temp() {
   TEMP_CACHE = list_init(INITIAL_CAPACITY, (free_func_t)asset_cache_free_entry);
 }
 
-entry_t *helper_asset_cache(asset_type_t ty, const char *filepath) {
+entry_t *helper_asset_cache(asset_type_t ty, char *filepath) {
   for (size_t i = 0; i < list_size(ASSET_CACHE); i++) {
     entry_t *entry = (entry_t *)list_get(ASSET_CACHE, i);
+    printf("%s entry, %s filepath \n", entry->filepath, filepath);
     if (entry && entry->type == ty &&
         (strcmp(entry->filepath, filepath) == 0)) {
       return entry;
@@ -56,7 +57,7 @@ entry_t *helper_asset_cache(asset_type_t ty, const char *filepath) {
   return NULL;
 }
 
-void *asset_cache_obj_get_or_create(asset_type_t ty, const char *filepath) {
+void *asset_cache_obj_get_or_create(asset_type_t ty, char *filepath) {
   entry_t *content = helper_asset_cache(ty, filepath);
   if (content == NULL) {
     entry_t *new_entry = (entry_t *)malloc(sizeof(entry_t));

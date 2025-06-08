@@ -23,9 +23,24 @@ vector_t get_curr_gravity(state_t *state) {
 }
 
 void on_key(char key, key_event_type_t type, double held_time, state_t *state) {
-  if (state->show_shop && key == SPACE_BAR) {
-    reset_game(state);
-    return;
+  if (state->show_shop) {
+
+  }
+  if (state->show_shop) {
+    switch (key) {
+      case SPACE_BAR: 
+        reset_game(state);
+        return;
+      case LEFT_ARROW:
+        state->sprite_path = PLAYER_SPRITE_ANDREA_PATH;
+        return;
+      case UP_ARROW:
+        state->sprite_path = PLAYER_SPRITE_AMUDHAN_PATH;
+        return;
+      case RIGHT_ARROW:
+        state->sprite_path = PLAYER_SPRITE_ARJUN_PATH;
+        return;
+    }
   }
 
   if (type == KEY_PRESSED && state->player_motion == REGULAR) {
