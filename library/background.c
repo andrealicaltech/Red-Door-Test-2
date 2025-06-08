@@ -96,7 +96,7 @@ body_t *make_player(double w, double h, vector_t center) {
   return player;
 }
 
-body_t *init_player (state_t *state) {
+body_t *init_player(state_t *state) {
   body_t *player = make_player(PLAYER_DIMS.x, PLAYER_DIMS.y, PLAYER_CENTER_POS);
   body_set_centroid(player, PLAYER_CENTER_POS);
   state->player = player;
@@ -159,7 +159,7 @@ void reset_game(state_t *state) {
 
   init_parameters(state);
 
-  state->started = true;               
+  state->started = true;
   state->show_shop = false;
   state->is_game_over = false;
   state->current_game_screen = GAME;
