@@ -53,7 +53,8 @@ void on_key(char key, key_event_type_t type, double held_time, state_t *state) {
       return;
     }
 
-    if (!state->show_shop && state->started && state->player_motion == REGULAR) {
+    if (!state->show_shop && state->started &&
+        state->player_motion == REGULAR) {
       body_t *player_body = scene_get_body(state->scene, 0);
       assert(strcmp(body_get_info(player_body), PLAYER_INFO) == 0);
 
