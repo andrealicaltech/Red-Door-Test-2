@@ -79,7 +79,6 @@ void obstacle_collision_handler(body_t *body1, body_t *body2, vector_t axis,
   } else if (player_right_edge > obstacle_left_edge ||
              obstacle_left_edge - player_right_edge < EDGE_TOLERANCE) {
     printf("head-on collision-you lose!\n");
-    emscripten_force_exit(2);
     state->is_game_over = true;
   } else {
     printf("Can't handle collision\n");
