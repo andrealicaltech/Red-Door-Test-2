@@ -37,6 +37,7 @@ struct state {
   bool started;
   bool show_shop;
   char *sprite_path;
+  //size_t sprite_index;
 
   // background
   background_t bg;

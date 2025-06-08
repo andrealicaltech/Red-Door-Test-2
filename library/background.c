@@ -158,5 +158,7 @@ void reset_game(state_t *state) {
   // PLAYER_CENTER_POS); state->player = new_player;
   // scene_add_body(state->scene, new_player);
 
+  // state->sprite_index = scene_bodies(state->scene);
+
   // asset_make_image_with_body(state->sprite_path, new_player);
 }
