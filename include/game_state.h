@@ -56,6 +56,7 @@ struct state {
   bool is_magnet_activated;
 
   size_t points;
+  size_t n_coins_collected;
   list_t *all_points;
   const TTF_Font *font;
 };

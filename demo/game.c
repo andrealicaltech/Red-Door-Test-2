@@ -21,38 +21,12 @@
 #include "sdl_wrapper.h"
 // moved background positions to background.c
 
-double delay_time = 0.0;
-
-void start_game(state_t *state) {
-  if (state->is_game_over) {
-    state->current_game_screen = HOME;
-  } else {
-    state->current_game_screen = GAME;
-  }
-
-  // TODO: Week 2 - Change state of screen to game
-}
-
-void end_game(state_t *state) {
-  // TODO: Week 2 - End the game, show the score, and go back to home after
-  // GAME_OVER_WAIT_TIME seconds
-}
-
-/*
-MARK: Coins
-*/
-
-void spawn_coins(state_t *state) {
-  // TODO: Week 2 - spawn coins at random intervals
-}
-
-void clean_elapsed_coins(state_t *state) {
-  // TODO: Week 2  - Remove coins after they hit the end of the screen
-}
-
 /*
 MARK: Emscripten
 */
+
+double delay_time = 0.0;
+
 state_t *emscripten_init() {
 
   asset_cache_init();
@@ -120,6 +94,7 @@ state_t *emscripten_init() {
   state->curr_player_obstacle = NULL;
 
   state->is_magnet_activated = false;
+  state->n_coins_collected = 0;
 
   state->points = 0;
   state->all_points = list_init(MAX_GAMES, NULL);
@@ -152,10 +127,14 @@ bool emscripten_main(state_t *state) {
 
     sdl_render_scene(state->scene);
     state->time_till_next_update -= dt;
+
     if (state->time_till_next_update <= 0.0) {
-      update_obstacles(state);
+      if (state->n_queued_obstacles < MAX_N_QUEUED_OBST) {
+        // Generate
+        update_obstacles(state);
+        gen_coin_arc(state, false);
+      }
       state->time_till_next_update = mod_d((double)rand(), MAX_TIME_UPDATE);
-      gen_coin_arc(state, false);
     }
 
     clean_obstacles(state);

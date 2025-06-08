@@ -15,7 +15,10 @@
 const double COIN_RAD = 10;
 const size_t COIN_NUM_POINTS = 20;
 const double COIN_SPACING = 12.5;
+const double PARABOLIC_COIN_SPACING = 50;
 const size_t MIN_COINS_PER_PATH = 3;
+const size_t V_LARG_NUM_COINS = 100;
+const double Y_TOLERANCE = 10.0;
 const double PARABOLIC_PATH_PCT = 50.0;
 const double MAGNET_TRANSLATION = 15.0;
 const char *COIN_INFO = "coin";
@@ -25,7 +28,6 @@ double coin_spacing(state_t *state) { return COIN_SPACING; }
 list_t *flat_path(state_t *state, vector_t min_start_pos,
                   vector_t max_end_pos) {
   if (min_start_pos.y != max_end_pos.y) {
-    printf("Error: nonmatching y-coords for linear path\n");
     return NULL;
   }
   double delta = (max_end_pos.x - min_start_pos.x);
@@ -35,8 +37,6 @@ list_t *flat_path(state_t *state, vector_t min_start_pos,
   double space_per_coin = (coin_spacing(state) + (COIN_RAD * 2));
   size_t max_packed_coins = (size_t)((max_end_pos.x - min_start_pos.x) /
                                      (coin_spacing(state) + (COIN_RAD * 2)));
-  printf("delta=%f, space_per_coin=%f, max_packed_coins=%zu\n", delta,
-         space_per_coin, max_packed_coins);
 
   if (max_packed_coins < MIN_COINS_PER_PATH) {
     // Bad UX to generate too few coins - return early
@@ -54,8 +54,6 @@ list_t *flat_path(state_t *state, vector_t min_start_pos,
   double empty_space = (max_end_pos.x - min_start_pos.x) -
                        ((coin_spacing(state) + (COIN_RAD * 2)) * packed_coins);
   double x_offset = min_start_pos.x + (rand() % (int)empty_space);
-  printf("packed_coins=%zu, empty_space=%f, x_offset=%f\n", packed_coins,
-         empty_space, x_offset);
 
   list_t *coin_positions = list_init(packed_coins, free);
   for (size_t i = 0; i < packed_coins; i++) {
@@ -65,6 +63,53 @@ list_t *flat_path(state_t *state, vector_t min_start_pos,
         .y = min_start_pos.y};
     list_add(coin_positions, pos);
   }
+
+  return coin_positions;
+}
+
+list_t *parabolic_path(state_t *state, vector_t min_start_pos,
+                       vector_t max_end_pos) {
+  double expected_x_dist_with_jump =
+      (2 * get_curr_jump_vel(state).y / get_curr_gravity(state).y) *
+      state->bg.bg_3_building_vel.x;
+
+  double delta = max_end_pos.x - min_start_pos.x;
+  if (delta < 0 || delta < expected_x_dist_with_jump) {
+    return NULL;
+  }
+
+  double x_offset =
+      min_start_pos.x + (rand() % ((int)(delta - expected_x_dist_with_jump)));
+
+  list_t *coin_positions = list_init(V_LARG_NUM_COINS, free);
+
+  // Constants to use in calculation of points along arc
+  double u_y = get_curr_jump_vel(state).y;
+  double v_x = state->bg.bg_3_building_vel.x;
+  double g = get_curr_gravity(state).y;
+
+  double DS = PARABOLIC_COIN_SPACING;
+  double x = 0;
+  double y = 0;
+
+  // These are values required for our approximation of dx which we reuse
+  double t1 = pow(u_y / v_x, 2);
+  double t2 = 2 * u_y * g / pow(v_x, 3);
+  double t3 = pow(g / (v_x * v_x), 2);
+
+  /*
+  Local approximation of ds approxeq s, dx approxeq x to give constant arc
+  length
+  */
+  do {
+    vector_t *pos = malloc(sizeof(vector_t));
+    // term should be always positive
+    *pos = (vector_t){.x = x_offset + x, .y = min_start_pos.y + y};
+    list_add(coin_positions, pos);
+    double squared_deriv = t1 - (t2 * x) + (t3 * pow(x, 2));
+    x += DS / sqrt(1 + squared_deriv);
+    y = u_y * (x / v_x) - (0.5 * g) * pow((x / v_x), 2);
+  } while (x_offset + x < max_end_pos.x && y >= 0);
 
   return coin_positions;
 }
@@ -84,72 +129,76 @@ body_t *make_coin(double radius, vector_t center) {
   return coin;
 }
 
-list_t *parabolic_path(state_t *state, vector_t min_start_pos,
-                       vector_t min_end_pos) {
-  return NULL;
+/*
+Calculate the x-gap to leave after an obstacle before generating coins
+
+Assume the player falls off the edge of an obstacle. Find the distance they will
+cover while falling Then leave enough time for reaction
+*/
+double min_gap_after_obstacle(state_t *state, double obstacle_height) {
+  double time = sqrt(2 * obstacle_height / get_curr_gravity(state).y);
+  return (time * state->bg.bg_3_building_vel.x) +
+         (MIN_REACTION_TIME_S * state->bg.bg_3_building_vel.x);
 }
 
-/*
-Generates an arc between the two last queued obstacles and on top of the last
-queued obstacle
-*/
+void quesedilla_collision_handler(body_t *body1, body_t *body2, vector_t axis,
+                                  void *aux, double force_const) {
+  body_t *coin = strcmp(body_get_info(body2), COIN_INFO) == 0 ? body2 : body1;
+  state_t *state = (state_t *)aux;
+  state->n_coins_collected += 1;
+  body_remove(coin);
+}
 
 void gen_coin_arc(state_t *state, bool should_require_powerup) {
   double translation = should_require_powerup ? MAGNET_TRANSLATION : 0.0;
-  uint8_t roll = rand() % 100;
-  // TODO: Remove
-  roll = 99;
 
   // The first obstacle will never have coins on top of it
   if (state->n_queued_obstacles < 2) {
     return;
   }
 
+  // TODO: CQ - Clean this mess up
+
   body_t *slast_obstacle =
       get_nth_obstacle(state, state->n_queued_obstacles - 2);
-
   vector_t slast_obst_dim = get_obstacle_dims(slast_obstacle);
-  vector_t slast_obst_cent = body_get_centroid(slast_obstacle);
-  printf("slast_obst_dim.x=%f, slast_obst_cent.x=%f\n", slast_obst_dim.x,
-         slast_obst_cent.x);
-  vector_t slast_obstacle_end = vec_add(
-      body_get_centroid(slast_obstacle),
-      (vector_t){.x = get_obstacle_dims(slast_obstacle).x * 0.5, .y = 0});
-  printf("slast_obstacle_end.x=%f, slast_obstacle_end.y=%f\n",
-         slast_obstacle_end.x, slast_obstacle_end.y);
+
+  vector_t slast_obstacle_end =
+      vec_add(body_get_centroid(slast_obstacle),
+              (vector_t){.x = get_obstacle_dims(slast_obstacle).x * 0.5 +
+                              min_gap_after_obstacle(state, slast_obst_dim.y),
+                         .y = 0});
 
   body_t *last_obstacle =
       get_nth_obstacle(state, state->n_queued_obstacles - 1);
   vector_t last_obst_dim = get_obstacle_dims(last_obstacle);
-  vector_t last_obst_cent = body_get_centroid(last_obstacle);
-  printf("last_obst_dim.x=%f, last_obst_cent.x=%f\n", last_obst_dim.x,
-         last_obst_cent.x);
-  vector_t last_obstacle_begin = vec_subtract(
-      body_get_centroid(last_obstacle),
-      (vector_t){.x = get_obstacle_dims(last_obstacle).x * 0.5, .y = 0});
-  printf("last_obstacle_begin.x=%f, last_obstacle_begin.y=%f\n",
-         last_obstacle_begin.x, last_obstacle_begin.y);
+  vector_t last_obstacle_begin =
+      vec_subtract(body_get_centroid(last_obstacle),
+                   (vector_t){.x = last_obst_dim.x * 0.5 +
+                                   get_smallest_obst_clearing_dist(
+                                       state, PLAYER_DIMS.y, last_obst_dim.y),
+                              .y = 0});
 
   list_t *points = NULL;
 
+  uint8_t roll = rand() % 100;
   if (roll < PARABOLIC_PATH_PCT) {
-    // TODO
-    points = flat_path(state, slast_obstacle_end, last_obstacle_begin);
+    points = parabolic_path(state, slast_obstacle_end, last_obstacle_begin);
   } else {
-    printf("Generating linear path\n");
     points = flat_path(state, slast_obstacle_end, last_obstacle_begin);
   }
   if (points) {
+    body_t *player = scene_get_body(state->scene, 0);
     for (size_t i = 0; i < list_size(points); i++) {
       vector_t *center = list_get(points, i);
-      printf("Made coin i=%zu, center.x=%f, center.y=%f\n", i, center->x,
-             center->y);
       body_t *coin = make_coin(COIN_RAD, *center);
       scene_add_body(state->scene, coin);
+      create_collision(state->scene, player, coin, quesedilla_collision_handler,
+                       state, 0, NULL);
       body_set_velocity(coin, vec_multiply(-1, state->bg.bg_3_building_vel));
     }
+    list_free(points);
   }
-  list_free(points);
 }
 
 void clean_coins(state_t *state) {
@@ -161,7 +210,6 @@ void clean_coins(state_t *state) {
     if (strcmp(body_get_info(body), COIN_INFO) == 0) {
       vector_t body_pos = body_get_centroid(body);
       if (body_pos.x + (COIN_RAD * 2) < MIN.x) {
-        printf("Removing coin at body_pos.x=%f\n", body_pos.x);
         body_remove(body);
       } else {
         body_set_velocity(body, vec_multiply(-1, state->bg.bg_3_building_vel));
