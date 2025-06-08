@@ -119,6 +119,7 @@ state_t *emscripten_init() {
 
   asset_cache_init();
   sdl_init(MIN, MAX);
+  TTF_Init();
 
   state_t *state = malloc(sizeof(state_t));
   state->scene = scene_init();
@@ -126,7 +127,7 @@ state_t *emscripten_init() {
   state->bg.building_pos.x = 0;
   state->bg.tree_pos.x = 0;
   state->bg.sky_pos.x = 0;
-
+  state->font = TTF_OpenFont("assets/Roboto-Regular.ttf", 24);
   state->current_game_screen = HOME;
 
   srand(time(NULL));

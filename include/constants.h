@@ -51,6 +51,7 @@ extern const color_t SPRITE_COLOR;
 extern const color_t OBS_COLOR;
 extern const color_t QUESADILLA_COLOR;
 extern const color_t LEADERBOARD_COLOR;
+extern const color_t TEXT_COLOR;
 
 extern const size_t BODY_ASSETS;
 extern const char *PLAYER_SPRITE_PATH;

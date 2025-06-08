@@ -51,6 +51,7 @@ struct state {
 
   size_t points;
   list_t *all_points;
+  const TTF_Font *font;
 };
 
 #endif
