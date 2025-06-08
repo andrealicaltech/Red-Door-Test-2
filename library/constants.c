@@ -5,7 +5,6 @@ const vector_t MIN = {0, 0};
 const vector_t MAX = {1000, 500};
 const vector_t LEADERBOARD_SIZE = {100, 50};
 
-
 const vector_t PLAYER_DIMS = {20, 40};
 const vector_t PLAYER_CENTER_POS = {500, 50};
 const char *PLAYER_INFO = "player";

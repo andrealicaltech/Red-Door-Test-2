@@ -21,8 +21,6 @@
 #include "sdl_wrapper.h"
 // moved background positions to background.c
 
-
-
 /*
 MARK: Emscripten
 */
@@ -106,7 +104,6 @@ state_t *emscripten_init() {
   state->n_queued_obstacles = 0;
   state->curr_player_obstacle = NULL;
 
-  
   state->is_magnet_activated = false;
   state->n_coins_collected = 0;
 
@@ -143,10 +140,10 @@ bool emscripten_main(state_t *state) {
     state->time_till_next_update -= dt;
 
     if (state->time_till_next_update <= 0.0) {
-      if (state->n_queued_obstacles < MAX_N_QUEUED_OBST){
-        // Generate 
+      if (state->n_queued_obstacles < MAX_N_QUEUED_OBST) {
+        // Generate
         update_obstacles(state);
-        gen_coin_arc(state, false); 
+        gen_coin_arc(state, false);
       }
       state->time_till_next_update = mod_d((double)rand(), MAX_TIME_UPDATE);
     }

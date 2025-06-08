@@ -24,8 +24,6 @@ obstacle. Must be called at every time step.
 */
 void check_player_falling_off_edge(state_t *state);
 
-
-
 /*
 Guarrantee that if the player jumps from the latest possible point to clear
 the last obstacle in the queue, there is sufficient space before the next

@@ -102,7 +102,6 @@ void manipulate_player(state_t *state, double dt) {
   }
 }
 
-
 double get_smallest_obst_clearing_dist(state_t *state, double h_player,
                                        double h_obstacle) {
   double u = get_curr_jump_vel(state).y;

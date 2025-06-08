@@ -26,6 +26,7 @@ Calculation of the smallest distance before an obstacle
 `h_player`: distance between ground and player centroid
 `h_obstacle`: distance between ground and top of obstacle
 */
-double get_smallest_obst_clearing_dist(state_t *state, double h_player, double h_obstacle);
+double get_smallest_obst_clearing_dist(state_t *state, double h_player,
+                                       double h_obstacle);
 
 #endif

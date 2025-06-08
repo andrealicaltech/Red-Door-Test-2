@@ -112,7 +112,8 @@ list_t *parabolic_path(state_t *state, vector_t min_start_pos,
   Local approximation of ds approxeq s, dx approxeq x to give constant arc
   length
   */
-  while (x_offset + x < max_end_pos.x && (y > min_start_pos.y || min_start_pos.y - y < Y_TOLERANCE)) {
+  while (x_offset + x < max_end_pos.x &&
+         (y > min_start_pos.y || min_start_pos.y - y < Y_TOLERANCE)) {
     vector_t *pos = malloc(sizeof(vector_t));
     // term should be always positive
     double squared_deriv = t1 - (t2 * x) + (t3 * pow(x, 2));
