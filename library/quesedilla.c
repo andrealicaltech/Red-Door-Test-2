@@ -86,8 +86,7 @@ list_t *parabolic_path(state_t *state, vector_t min_start_pos,
   }
 
   double x_offset =
-      min_start_pos.x + (rand() % ((int)(expected_x_dist_with_jump - delta)));
-  printf("x_offset=%f\n", x_offset);
+      min_start_pos.x + (rand() % ((int)(delta - expected_x_dist_with_jump)));
 
   list_t *coin_positions = list_init(V_LARG_NUM_COINS, free);
 
@@ -100,8 +99,6 @@ list_t *parabolic_path(state_t *state, vector_t min_start_pos,
   double x = 0;
   double y = 0;
 
-  printf("initial y=%f, min_start_pos.y=%f\n", y);
-  printf("u_y=%f, v_x=%f, g=%f, DS=%f, x=%f\n", u_y, v_x, g, DS, x);
 
   // These are values required for our approximation of dx which we reuse
   double t1 = pow(u_y / v_x, 2);
@@ -114,7 +111,7 @@ list_t *parabolic_path(state_t *state, vector_t min_start_pos,
   Local approximation of ds approxeq s, dx approxeq x to give constant arc
   length
   */
-  while (x_offset + x < max_end_pos.x && y >= 0) {
+ do {
     vector_t *pos = malloc(sizeof(vector_t));
     // term should be always positive
     *pos = (vector_t){.x = x_offset + x, .y = min_start_pos.y + y};
@@ -122,8 +119,7 @@ list_t *parabolic_path(state_t *state, vector_t min_start_pos,
     double squared_deriv = t1 - (t2 * x) + (t3 * pow(x, 2));
     x += DS / sqrt(1 + squared_deriv);
     y = u_y * (x / v_x) - (0.5 * g) * pow((x / v_x), 2);
-    printf("DS=%f, x=%f, y=%f\n", DS, x, y);
-  }
+ } while (x_offset + x < max_end_pos.x && y >= 0);
 
   return coin_positions;
 }
@@ -156,7 +152,6 @@ double min_gap_after_obstacle(state_t *state, double obstacle_height) {
          (MIN_REACTION_TIME_S * state->bg.bg_3_building_vel.x);
 }
 
-
 void quesedilla_collision_handler(body_t *body1, body_t *body2, vector_t axis,
                                   void *aux, double force_const) {
   bool b1_is_player = strcmp(body_get_info(body1), PLAYER_INFO) == 0;
@@ -167,7 +162,6 @@ void quesedilla_collision_handler(body_t *body1, body_t *body2, vector_t axis,
   body_remove(coin);
   printf("Successful collision!\n");
 }
-
 
 void gen_coin_arc(state_t *state, bool should_require_powerup) {
   double translation = should_require_powerup ? MAGNET_TRANSLATION : 0.0;
@@ -196,7 +190,7 @@ void gen_coin_arc(state_t *state, bool should_require_powerup) {
   vector_t last_obst_dim = get_obstacle_dims(last_obstacle);
   vector_t last_obstacle_begin =
       vec_subtract(body_get_centroid(last_obstacle),
-                   (vector_t){.x = last_obst_dim.x * 0.5 -
+                   (vector_t){.x = last_obst_dim.x * 0.5 +
                                    get_smallest_obst_clearing_dist(
                                        state, PLAYER_DIMS.y, last_obst_dim.y),
                               .y = 0});
@@ -224,13 +218,13 @@ void gen_coin_arc(state_t *state, bool should_require_powerup) {
              center->y);
       body_t *coin = make_coin(COIN_RAD, *center);
       scene_add_body(state->scene, coin);
-      create_collision(state->scene, player, coin, quesedilla_collision_handler, state, 0, NULL);
+      create_collision(state->scene, player, coin, quesedilla_collision_handler,
+                       state, 0, NULL);
       body_set_velocity(coin, vec_multiply(-1, state->bg.bg_3_building_vel));
     }
     list_free(points);
   }
 }
-
 
 void clean_coins(state_t *state) {
   if (scene_bodies(state->scene) == 1) {
