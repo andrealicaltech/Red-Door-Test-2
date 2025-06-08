@@ -17,7 +17,7 @@ const double MIN_REACTION_TIME_S = 1.0;
 
 // obstacle = table (square 50 x 50) can spawn multiple obstacles in a row
 const size_t OBSTACLE_HW = 50;
-const size_t MAX_STACKED_OBSTACLES = 10;
+const size_t MAX_STACKED_OBSTACLES = 20;
 const size_t MAX_N_QUEUED_OBST = 15;
 const size_t OBSTACLE_CAPACITY = 1024;
 const double FIRST_OBSTACLE_WAIT_TIME = 1.5;
@@ -76,11 +76,12 @@ const char *PLAYER_SPRITE_ARJUN_PATH = "assets/Arjun.png";
 const char *SKY_PATH = "assets/Sky.png";
 const char *BUILDING_PATH = "assets/Building.png";
 const char *TREE_PATH = "assets/Tree.png";
-const char *OBSTACLE_SPRITE_PATH = "assets/Obstacle.png";
 const char *QUESADILLA_PATH = "assets/Quesadilla.png";
 const char *GAME_MUSIC_PATH = "assets/GameAudio.wav";
 const char *JUMP_MUSIC_PATH = "assets/Jump.wav";
 const char *MENU_MUSIC_PATH = "assets/MainMenuAudio.wav";
+const char *OBSTACLE_GEN_PATH_TEMPLATE = "assets/obstacles/obstacle-";
+const char *OBSTACLE_IMG_EXT = ".png";
 
 const double OBSTACLE_START_WAIT_TIME = 3.0;
 const double GAME_OVER_WAIT_TIME = 3.0;

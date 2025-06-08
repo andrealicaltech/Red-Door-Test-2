@@ -197,11 +197,11 @@ void gen_coin_arc(state_t *state, bool should_include_powerup) {
                                             : make_coin(COIN_RAD, *center);
       scene_add_body(state->scene, new_body);
       char *path = (i == powerup_idx) ? CARD_PATH : QUESADILLA_PATH;
-       collision_handler_t handler = (i == powerup_idx)
+      collision_handler_t handler = (i == powerup_idx)
                                         ? magnet_body_collision_handler
                                         : quesedilla_collision_handler;
       asset_make_image_with_body(path, new_body);
-     
+
       create_collision(state->scene, player, new_body, handler, state, 0, NULL);
       body_set_velocity(new_body,
                         vec_multiply(-1, state->bg.bg_3_building_vel));
