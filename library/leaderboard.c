@@ -36,28 +36,24 @@ body_t *make_scoreboard(double width, double height, vector_t center,
   return leaderboard;
 }
 
-void create_scoreboard(state_t *state) {
-  // NOTE: TTF_Init inside emscripten main
-  vector_t center = (vector_t){MAX.x - LEADERBOARD_SIZE.x / 2,
-                               MAX.y - LEADERBOARD_SIZE.y / 2};
-  body_t *scoreboard_bg_rectangle = make_scoreboard(
-      LEADERBOARD_SIZE.x, LEADERBOARD_SIZE.y, center, LEADERBOARD_COLOR);
-  printf("Scene size: %d\n", scene_bodies(state->scene));
-  scene_add_body(state->scene, scoreboard_bg_rectangle);
+void create_reg_text(TTF_Font *font, vector_t top_left, vector_t size, char* text, double count){
+  SDL_Rect *text_rectangle =
+      sdl_get_rect(top_left.x, top_left.y, size.x, size.y);
+  char *new_text = malloc(sizeof(char) * (log10(1 + count) + strlen(text) + 10));
+  sprintf(new_text, "%s%d", text, (size_t)(count));
+  sdl_render_text(font, TEXT_COLOR, new_text, text_rectangle);
+  free(new_text);
 }
 
-void render_text(state_t *state) {
-  SDL_Rect *score_rectangle =
-      sdl_get_rect(MAX.x - LEADERBOARD_SIZE.x * 0.75, LEADERBOARD_SIZE.y * 0.1,
-                   LEADERBOARD_SIZE.x * 0.5, LEADERBOARD_SIZE.y * 0.3);
+void render_score_text(state_t *state) {
+  vector_t score_rectangle_tl = (vector_t){MAX.x - LEADERBOARD_SIZE.x * 0.75, LEADERBOARD_SIZE.y * 0.1};
+  vector_t score_size = (vector_t){LEADERBOARD_SIZE.x * 0.5, LEADERBOARD_SIZE.y * 0.3};
+  create_reg_text(state->font, score_rectangle_tl, score_size, "Score: ", state->points);
   SDL_Rect *high_score_rectangle =
       sdl_get_rect(MAX.x - LEADERBOARD_SIZE.x * 0.9, LEADERBOARD_SIZE.y * 0.6,
                    LEADERBOARD_SIZE.x * 0.8, LEADERBOARD_SIZE.y * 0.3);
   char *high_score_text = malloc(
       sizeof(char) * (log10(1 + state->points) + strlen("High score: ") + 10));
-  char *score_text = malloc(
-      sizeof(char) * (log10(1 + state->points) + strlen("Score: ") + 10));
-  sprintf(score_text, "Score: %d", (size_t)(state->points));
   if (list_size(state->all_points) == 0) {
     sprintf(high_score_text, "High Score: %d", state->points);
   } else {
@@ -66,9 +62,33 @@ void render_text(state_t *state) {
             (size_t)(max_d(*((double *)(list_get(state->all_points, 0))),
                            state->points)));
   }
-  sdl_render_text(state->font, TEXT_COLOR, score_text, score_rectangle);
   sdl_render_text(state->font, TEXT_COLOR, high_score_text,
                   high_score_rectangle);
-  free(score_text);
   free(high_score_text);
+}
+
+void render_coin_text(state_t * state){
+  vector_t coin_rectangle_tl = (vector_t){LEADERBOARD_SIZE.x * 0.25, LEADERBOARD_SIZE.y * 0.35};
+  vector_t coin_size = (vector_t){LEADERBOARD_SIZE.x * 0.5, LEADERBOARD_SIZE.y * 0.3};
+  create_reg_text(state->font, coin_rectangle_tl, coin_size, "Coins: ", state->n_coins_collected);
+}
+void update_score(state_t *state){
+  list_t* lowest_values = list_init(list_size(state->all_points)+1, NULL);
+  double* points_pointer = malloc(sizeof(double));
+  *points_pointer = state->points;
+  for (int i = list_size(state->all_points)-1; i >= -1; i--){
+    if (i == -1 || *((double *)(list_get(state->all_points, i))) > state->points){
+      list_add(state->all_points, (void*)points_pointer);
+      break;
+    } else{
+      list_add(lowest_values, list_get(state->all_points, i));
+      list_remove(state->all_points, i);
+    }
+  }
+  for (int i = list_size(lowest_values)-1; i >= 0; i--){
+    void* value = list_get(lowest_values, i);
+    list_add(state->all_points, value);
+  }
+  state->points = 0;
+  list_free(lowest_values);
 }

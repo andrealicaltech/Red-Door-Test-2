@@ -53,7 +53,6 @@ state_t *emscripten_init() {
 
   asset_make_image_with_body(PLAYER_SPRITE_AMUDHAN_PATH, player);
   sdl_on_key((key_handler_t)on_key);
-  create_scoreboard(state);
 
   return init_parameters(state);
 }
@@ -82,7 +81,8 @@ bool emscripten_main(state_t *state) {
       asset_render(list_get(body_assets, i));
     }
     sdl_render_scene(state->scene);
-    render_text(state);
+    render_score_text(state);
+    render_coin_text(state);
     state->time_till_next_update -= dt;
 
     if (state->time_till_next_update <= 0.0) {
@@ -103,6 +103,7 @@ bool emscripten_main(state_t *state) {
 
     if (state->is_game_over) {
       state->started = false;
+      update_score(state);
     }
   } // game screen
 
@@ -110,10 +111,9 @@ bool emscripten_main(state_t *state) {
     sdl_clear();
     render_screen("game over", &viewport);
     sdl_show();
-
+    
     double time = time_since_last_tick();
     delay_time += time;
-
     if (delay_time >= 2.0) {
       state->show_shop = true;
       delay_time = 0;
@@ -122,6 +122,7 @@ bool emscripten_main(state_t *state) {
 
   if (state->show_shop) {
     render_screen("shop", &viewport);
+    render_coin_text(state);
   } // shop screen
 
   sdl_show();
