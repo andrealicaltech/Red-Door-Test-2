@@ -113,7 +113,6 @@ void init_parameters(state_t *state) {
   state->curr_player_obstacle = NULL;
   state->is_magnet_activated = false;
   state->points = 0;
-  return state;
 }
 
 void init_screens(state_t *state) {
