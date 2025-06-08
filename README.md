@@ -22,7 +22,7 @@ Here are all of the individual features we will have in our game:
 
 Here are all of the individual features we will have in our game:
 
-1. Basic Mechanics (Priority 1): Moving our character on screen by adding a forward velocity to the particle and having the character jump (increasing the y-velocity) whenever the spacebar key is ptwressed and duck (decreasing the height of the player)  
+1. Basic Mechanics (Priority 1): Moving our character on screen by adding a forward velocity to the particle and having the character jump (increasing the y-velocity) whenever the spacebar key is pressed and duck (decreasing the height of the player)  
 2. Obstacle spawning (Priority 1): Randomly spawning obstacles within the screen, each of an arbitrary size. We will need to incorporate kinematics-based estimations to guarantee adequate spacing between consecutive obstacles, augmented with some additional random spacing. This will depend on the current velocity / difficulty of the game.
 3. Obstacle collision handling (Priority 2): Head-on collisions with obstacles should result in the player losing; but landing on top of the obstacle should affect the kinematic state of the player by allowing them to 'run' on top of the obstacle and fall off once they hit the edge. This will require nontrivial modifications to typical collision handling logic due to the requirement to continuously check the state of the collision.
 4. Camera tracking logic (Priority 1): The player sprite must be centred at the middle of the screen, so an internal camera state must be managed which centres the viewport on the player, taking into account their current position.  
