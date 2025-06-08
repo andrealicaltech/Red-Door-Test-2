@@ -2,6 +2,7 @@
 #define __GAME_STATE_H__
 
 #include <stdlib.h>
+#include <SDL2/SDL.h>
 
 #include "constants.h"
 #include "scene.h"
@@ -40,6 +41,7 @@ struct state {
   // background
   background_t bg;
   body_t *player;
+  SDL_Renderer *rend;
 
   PLAYER_MOTION player_motion;
   double jump_start_y;
@@ -56,6 +58,11 @@ struct state {
   size_t points;
   list_t *all_points;
   const TTF_Font *font;
+
+  //sprites
+  SDL_Rect andrea_rect;
+  SDL_Rect arjun_rect;
+  SDL_Rect amudhan_rect;
 };
 
 #endif
