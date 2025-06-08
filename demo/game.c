@@ -14,11 +14,11 @@
 #include "forces.h"
 #include "game_state.h"
 #include "kinematics.h"
+#include "magnet.h"
 #include "math_utils.h"
 #include "music.h"
 #include "obstacle.h"
 #include "quesedilla.h"
-#include "magnet.h"
 #include "sdl_wrapper.h"
 // moved background positions to background.c
 
@@ -152,7 +152,7 @@ bool emscripten_main(state_t *state) {
       }
       state->time_till_next_update = mod_d((double)rand(), MAX_TIME_UPDATE);
     }
-    if (state->is_magnet_activated){
+    if (state->is_magnet_activated) {
       state->time_elapsed_with_magnet -= dt;
     }
 
