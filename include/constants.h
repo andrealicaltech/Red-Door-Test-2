@@ -60,7 +60,7 @@ extern const color_t TEXT_COLOR;
 extern const size_t BODY_ASSETS;
 extern const char *START_SCREEN_PATH;
 extern const char *GAME_OVER_PATH;
-
+extern const char *CARD_PATH;
 extern const char *PLAYER_SPRITE_AMUDHAN_PATH;
 extern const char *PLAYER_SPRITE_ANDREA_PATH;
 extern const char *PLAYER_SPRITE_ARJUN_PATH;
