@@ -18,6 +18,7 @@ const double MIN_REACTION_TIME_S = 1.0;
 // obstacle = table (square 50 x 50) can spawn multiple obstacles in a row
 const size_t OBSTACLE_HW = 50;
 const size_t MAX_STACKED_OBSTACLES = 20;
+const size_t MAX_N_QUEUED_OBST = 15;
 const size_t OBSTACLE_CAPACITY = 1024;
 const double FIRST_OBSTACLE_WAIT_TIME = 1.5;
 const double MAX_TIME_UPDATE = 3.0;
