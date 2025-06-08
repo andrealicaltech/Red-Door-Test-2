@@ -8,7 +8,7 @@
 #include "math_utils.h"
 
 void revert_duck(state_t *state) {
-  body_t *player_body = scene_get_body(state->scene, 0);
+  //body_t *player_body = scene_get_body(state->scene, 0);
   // if (velocity.y >
   //     -DUCK_INITIAL_VELOCITY) { // TODO: Replace with if colliding with
   //     ground
@@ -36,22 +36,6 @@ void on_key(char key, key_event_type_t type, double held_time, state_t *state) {
   assert(strcmp(body_get_info(player_body), PLAYER_INFO) == 0);
 
   if (type == KEY_PRESSED && state->player_motion == REGULAR) {
-<<<<<<< HEAD
-    switch (key) {
-    case UP_ARROW:
-      body_set_velocity(player_body, get_curr_jump_vel(state));
-      state->player_motion = JUMP;
-      state->jump_start_y = body_get_centroid(player_body).y;
-      break;
-    case DOWN_ARROW:
-      body_set_velocity(player_body, DUCK_INITIAL_VELOCITY);
-      state->player_motion = DUCK;
-      break;
-    case SPACE_BAR:
-      if (!state->started) {
-        state->started = true;
-        state->current_game_screen = GAME;
-=======
     if (!state->started && key == SPACE_BAR) {
       state->started = true;
       state->current_game_screen = GAME;
@@ -70,7 +54,6 @@ void on_key(char key, key_event_type_t type, double held_time, state_t *state) {
         body_set_velocity(player_body, DUCK_INITIAL_VELOCITY);
         state->player_motion = DUCK;
         break;
->>>>>>> 469e2eea7fbf5339e2253b303469a32a00da314e
       }
       break;
     }
