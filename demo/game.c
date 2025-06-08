@@ -78,8 +78,7 @@ state_t *emscripten_init() {
       asset_cache_obj_get_or_create(ASSET_IMAGE, GAME_OVER_PATH);
   asset_cache_store_temp("game over", game_over);
 
-  SDL_Texture *shop =
-      asset_cache_obj_get_or_create(ASSET_IMAGE, SHOP_PATH);
+  SDL_Texture *shop = asset_cache_obj_get_or_create(ASSET_IMAGE, SHOP_PATH);
   asset_cache_store_temp("shop", shop);
   state->show_shop = false;
 
@@ -162,27 +161,22 @@ bool emscripten_main(state_t *state) {
   } // game screen
 
   if (!state->started && state->is_game_over) {
-   sdl_clear();
-   render_screen("game over", &viewport);
-   sdl_show();
+    sdl_clear();
+    render_screen("game over", &viewport);
+    sdl_show();
 
+    double time = time_since_last_tick();
+    state->delay_time += time;
 
-   double time = time_since_last_tick();
-   state->delay_time += time;
+    if (state->delay_time >= 1.0) {
+      state->show_shop = true;
+      state->delay_time = 0;
+    }
+  } // game over screen
 
-
-   if (state->delay_time >= 1.0) {
-     state->show_shop = true;
-     state->delay_time = 0;
-   }
- } //game over screen
-
-
- if (state->show_shop) {
-   render_screen("shop", &viewport);
- }//shop screen
-
-  
+  if (state->show_shop) {
+    render_screen("shop", &viewport);
+  } // shop screen
 
   sdl_show();
   return false;

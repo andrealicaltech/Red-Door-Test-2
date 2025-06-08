@@ -35,7 +35,7 @@ struct state {
   bool is_game_over;
   bool started;
   bool show_shop;
-  double delay_time; //show game over screen for 3 sec before switching to shop
+  double delay_time; // show game over screen for 3 sec before switching to shop
 
   // background
   background_t bg;
