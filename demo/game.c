@@ -106,7 +106,6 @@ bool emscripten_main(state_t *state) {
 
     if (state->is_game_over) {
       state->started = false;
-
     }
   } // game screen
 

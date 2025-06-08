@@ -154,8 +154,8 @@ void reset_game(state_t *state) {
   // scene_remove_body(state->scene, 0);
   // body_free(state->player);
 
-  // body_t *new_player = make_player(PLAYER_DIMS.x, PLAYER_DIMS.y, PLAYER_CENTER_POS);
-  // state->player = new_player;
+  // body_t *new_player = make_player(PLAYER_DIMS.x, PLAYER_DIMS.y,
+  // PLAYER_CENTER_POS); state->player = new_player;
   // scene_add_body(state->scene, new_player);
 
   // asset_make_image_with_body(state->sprite_path, new_player);
