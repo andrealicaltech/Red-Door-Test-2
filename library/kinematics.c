@@ -24,33 +24,36 @@ vector_t get_curr_gravity(state_t *state) {
 
 void on_key(char key, key_event_type_t type, double held_time, state_t *state) {
   if (state->show_shop) {
-  }
-  if (state->show_shop) {
     switch (key) {
     case SPACE_BAR:
       reset_game(state);
       return;
     case LEFT_ARROW:
-      state->sprite_path = PLAYER_SPRITE_ANDREA_PATH;
+      if (state->n_coins_collected >= 10) {
+        state->sprite_path = PLAYER_SPRITE_ANDREA_PATH;
+        state->n_coins_collected = state->n_coins_collected - 10;
+      }
       return;
     case UP_ARROW:
       state->sprite_path = PLAYER_SPRITE_AMUDHAN_PATH;
       return;
     case RIGHT_ARROW:
-      state->sprite_path = PLAYER_SPRITE_ARJUN_PATH;
-      return;
+      if (state->n_coins_collected >= 10) {
+        state->sprite_path = PLAYER_SPRITE_ARJUN_PATH;
+        state->n_coins_collected = state->n_coins_collected - 10;
+      }
     }
   }
 
   if (type == KEY_PRESSED && state->player_motion == REGULAR) {
-    if (!state->started && key == SPACE_BAR) {
+    if (!state->show_shop && !state->started && key == SPACE_BAR) {
       state->started = true;
       state->current_game_screen = GAME;
       halt_music();
       return;
     }
 
-    if (state->started && state->player_motion == REGULAR) {
+    if (!state->show_shop && state->started && state->player_motion == REGULAR) {
       body_t *player_body = scene_get_body(state->scene, 0);
       assert(strcmp(body_get_info(player_body), PLAYER_INFO) == 0);
 
