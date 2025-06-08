@@ -150,5 +150,4 @@ void reset_game(state_t *state) {
   state->current_game_screen = GAME;
 
   background_init(state);
-
 }
