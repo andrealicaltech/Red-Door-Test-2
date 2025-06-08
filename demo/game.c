@@ -36,69 +36,24 @@ state_t *emscripten_init() {
   state_t *state = malloc(sizeof(state_t));
   state->scene = scene_init();
 
-  state->bg.building_pos.x = 0;
-  state->bg.tree_pos.x = 0;
-  state->bg.sky_pos.x = 0;
-
   state->started = false;
   state->is_game_over = false;
   state->font = TTF_OpenFont("assets/Roboto-Regular.ttf", 24);
   state->current_game_screen = HOME;
 
   srand(time(NULL));
-  state->player_motion = REGULAR;
 
-  SDL_Texture *start =
-      asset_cache_obj_get_or_create(ASSET_IMAGE, START_SCREEN_PATH);
-  asset_cache_store_temp("start", start);
-
-  SDL_Texture *game_over =
-      asset_cache_obj_get_or_create(ASSET_IMAGE, GAME_OVER_PATH);
-  asset_cache_store_temp("game over", game_over);
-
-  SDL_Texture *shop = asset_cache_obj_get_or_create(ASSET_IMAGE, SHOP_PATH);
-  asset_cache_store_temp("shop", shop);
-  state->show_shop = false;
+  init_screens(state);
 
   // Needs to be the first one
-  body_t *player = make_player(PLAYER_DIMS.x, PLAYER_DIMS.y, PLAYER_CENTER_POS);
-  body_set_centroid(player, PLAYER_CENTER_POS);
-  state->player = player;
-  scene_add_body(state->scene, player);
+  body_t *player = init_player(state);
 
-  SDL_Rect *rect = malloc(sizeof(SDL_Rect));
-  rect->x = MIN.x;
-  rect->y = MIN.y;
-  rect->w = MAX.x;
-  rect->h = MAX.y;
-
-  SDL_Texture *sky = asset_cache_obj_get_or_create(ASSET_IMAGE, SKY_PATH);
-  SDL_Texture *tree = asset_cache_obj_get_or_create(ASSET_IMAGE, TREE_PATH);
-  SDL_Texture *building =
-      asset_cache_obj_get_or_create(ASSET_IMAGE, BUILDING_PATH);
-
-  background_init(state);
-
-  asset_cache_store_temp("sky", sky);
-  asset_cache_store_temp("tree", tree);
-  asset_cache_store_temp("building", building);
+  make_layers(state);
 
   asset_make_image_with_body(PLAYER_SPRITE_AMUDHAN_PATH, player);
   sdl_on_key((key_handler_t)on_key);
 
-  state->jump_start_y = PLAYER_CENTER_POS.y;
-
-  // Obstacles
-  state->time_till_next_update = FIRST_OBSTACLE_WAIT_TIME;
-  state->n_queued_obstacles = 0;
-  state->curr_player_obstacle = NULL;
-
-  state->is_magnet_activated = false;
-  state->n_coins_collected = 0;
-
-  state->points = 0;
-  state->all_points = list_init(MAX_GAMES, NULL);
-  return state;
+  return init_parameters(state);
 }
 
 bool emscripten_main(state_t *state) {

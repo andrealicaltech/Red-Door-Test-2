@@ -6,6 +6,7 @@
 #include "game_state.h"
 #include "kinematics.h"
 #include "math_utils.h"
+#include "background.h"
 
 void revert_duck(state_t *state) {
   // body_t *player_body = scene_get_body(state->scene, 0);
@@ -32,8 +33,10 @@ vector_t get_curr_gravity(state_t *state) {
 }
 
 void on_key(char key, key_event_type_t type, double held_time, state_t *state) {
-  body_t *player_body = scene_get_body(state->scene, 0);
-  assert(strcmp(body_get_info(player_body), PLAYER_INFO) == 0);
+  if (state->show_shop && key == SPACE_BAR) {
+      reset_game(state);
+      return;
+    }
 
   if (type == KEY_PRESSED && state->player_motion == REGULAR) {
     if (!state->started && key == SPACE_BAR) {
@@ -43,6 +46,9 @@ void on_key(char key, key_event_type_t type, double held_time, state_t *state) {
     }
 
     if (state->started && state->player_motion == REGULAR) {
+      body_t *player_body = scene_get_body(state->scene, 0);
+      assert(strcmp(body_get_info(player_body), PLAYER_INFO) == 0);
+      
       switch (key) {
       case UP_ARROW:
         body_set_velocity(player_body, get_curr_jump_vel(state));

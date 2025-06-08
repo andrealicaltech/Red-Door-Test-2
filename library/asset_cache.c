@@ -38,6 +38,13 @@ void asset_cache_destroy() {
   list_free(TEMP_CACHE);
 }
 
+void asset_cache_reset_temp() {
+  if (TEMP_CACHE != NULL) {
+    list_free(TEMP_CACHE);
+  }
+  TEMP_CACHE = list_init(INITIAL_CAPACITY, (free_func_t)asset_cache_free_entry);
+}
+
 entry_t *helper_asset_cache(asset_type_t ty, const char *filepath) {
   for (size_t i = 0; i < list_size(ASSET_CACHE); i++) {
     entry_t *entry = (entry_t *)list_get(ASSET_CACHE, i);
