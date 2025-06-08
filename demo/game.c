@@ -179,25 +179,22 @@ bool emscripten_main(state_t *state) {
 
     if (state->is_game_over) {
       state->started = false;
-      sdl_clear();
-      render_screen("game over", &viewport);
-      sdl_show();
     }
   } // game screen
 
-  // if (!state->started && state->is_game_over) {
-  //   sdl_clear();
-  //   render_screen("game over", &viewport);
-  //   sdl_show();
+  if (!state->started && state->is_game_over) {
+    sdl_clear();
+    render_screen("game over", &viewport);
+    sdl_show();
 
-  //   double time = time_since_last_tick();
-  //   state->delay_time += time;
+    // double time = time_since_last_tick();
+    // state->delay_time += time;
 
-  //   if (state->delay_time >= 1.0) {
-  //     state->show_shop = true;
-  //     state->delay_time = 0;
-  //   }
-  // } // game over screen
+    // if (state->delay_time >= 1.0) {
+    //   state->show_shop = true;
+    //   state->delay_time = 0;
+    // }
+  } // game over screen
 
   // if (state->show_shop) {
   //   render_screen("shop", &viewport);
