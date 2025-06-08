@@ -38,7 +38,6 @@ struct state {
   bool show_shop;
   char *sprite_path;
 
-
   // background
   background_t bg;
   body_t *player;

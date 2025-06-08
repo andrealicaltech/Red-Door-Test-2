@@ -73,8 +73,8 @@ void asset_make_image(char *filepath, SDL_Rect bounding_box) {
   list_add(ASSET_LIST, asset);
 }
 
-void asset_make_text(char *filepath, SDL_Rect bounding_box,
-                     const char *text, color_t color) {
+void asset_make_text(char *filepath, SDL_Rect bounding_box, const char *text,
+                     color_t color) {
   TTF_Font *font = asset_cache_obj_get_or_create(ASSET_TEXT, filepath);
   asset_t *asset = asset_init(ASSET_TEXT, bounding_box);
 
