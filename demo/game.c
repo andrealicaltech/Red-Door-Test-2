@@ -179,6 +179,9 @@ bool emscripten_main(state_t *state) {
 
     if (state->is_game_over) {
       state->started = false;
+      sdl_clear();
+      render_screen("game over", &viewport);
+      sdl_show();
     }
   } // game screen
 
