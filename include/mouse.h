@@ -9,8 +9,10 @@ typedef enum {
 
 // x, y in window to handle mouse position
 typedef void (*mouse_handler_t)(double x, double y, mouse_event_type_t type,
-                                state_t state);
+                                state_t *state);
 
 void mouse_on_event(mouse_handler_t handler);
+
+void mouse_process(state_t *state, const SDL_Event *event);
 
 #endif

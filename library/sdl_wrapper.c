@@ -5,9 +5,9 @@
 #include <SDL2/SDL_ttf.h>
 #include <assert.h>
 #include <math.h>
-#include <mouse.h>
 #include <stdlib.h>
 #include <time.h>
+#include <mouse.h>
 
 const char WINDOW_TITLE[] = "CS 3";
 const size_t WINDOW_WIDTH = 1000;
@@ -15,10 +15,6 @@ const size_t WINDOW_HEIGHT = 500;
 const SDL_Color SDL_BLACK = {0, 0, 0};
 const int8_t FONT_HEIGHT_SCALE = 2;
 const double MS_PER_S = 1000.0;
-
-static SDL_Renderer *renderer;
-
-SDL_Renderer *sdl_get_renderer(void) { return renderer; }
 
 /**
  * The coordinate at the center of the screen.
@@ -36,6 +32,8 @@ SDL_Window *window;
  * The renderer used to draw the scene.
  */
 SDL_Renderer *renderer;
+
+SDL_Renderer *sdl_get_renderer(void) { return renderer; }
 /**
  * The keypress handler, or NULL if none has been configured.
  */
@@ -156,8 +154,6 @@ bool sdl_is_done(state_t *state) {
     // mouse handling
     case SDL_MOUSEBUTTONDOWN:
     case SDL_MOUSEMOTION:
-      mouse_process(state, event);
-      break;
     }
   }
   free(event);
