@@ -132,7 +132,8 @@ bool emscripten_main(state_t *state) {
   if (state->started) {
     render_layers(asset_cache_lookup("sky"), &state->bg.sky_pos.x, &viewport);
     render_layers(asset_cache_lookup("tree"), &state->bg.tree_pos.x, &viewport);
-    render_layers(asset_cache_lookup("building"), &state->bg.building_pos.x, &viewport);
+    render_layers(asset_cache_lookup("building"), &state->bg.building_pos.x,
+                  &viewport);
     list_t *body_assets = asset_get_asset_list();
 
     for (size_t i = 0; i < list_size(body_assets); i++) {
@@ -146,7 +147,7 @@ bool emscripten_main(state_t *state) {
     check_player_falling_off_edge(state);
     manipulate_player(state, dt);
   }
-  
+
   sdl_show();
   scene_tick(state->scene, dt);
   return false;
