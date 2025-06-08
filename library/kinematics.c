@@ -7,9 +7,7 @@
 #include "kinematics.h"
 #include "math_utils.h"
 
-void revert_duck(state_t *state) {
-
-}
+void revert_duck(state_t *state) {}
 
 vector_t get_curr_jump_vel(state_t *state) {
   // TODO

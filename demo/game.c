@@ -138,7 +138,7 @@ state_t *emscripten_init() {
 
   state->points = 0;
   state->all_points = list_init(MAX_GAMES, NULL);
-  double* funny = malloc(sizeof(double));
+  double *funny = malloc(sizeof(double));
   *funny = 2;
   list_add(state->all_points, funny);
   return state;
@@ -163,7 +163,7 @@ bool emscripten_main(state_t *state) {
     render_layers(asset_cache_lookup("building"), &state->bg.building_pos.x,
                   &viewport);
     list_t *body_assets = asset_get_asset_list();
-    
+
     for (size_t i = 0; i < list_size(body_assets); i++) {
       asset_render(list_get(body_assets, i));
     }

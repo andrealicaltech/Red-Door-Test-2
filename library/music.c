@@ -53,7 +53,7 @@ int play_music(char *music_path, bool side_by_side) {
   return 0;
 }
 
-void halt_music() { 
-  Mix_HaltMusic(); 
+void halt_music() {
+  Mix_HaltMusic();
   printf("I'm here here!\n");
 }
