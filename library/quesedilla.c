@@ -99,7 +99,6 @@ list_t *parabolic_path(state_t *state, vector_t min_start_pos,
   double x = 0;
   double y = 0;
 
-
   // These are values required for our approximation of dx which we reuse
   double t1 = pow(u_y / v_x, 2);
   double t2 = 2 * u_y * g / pow(v_x, 3);
@@ -111,7 +110,7 @@ list_t *parabolic_path(state_t *state, vector_t min_start_pos,
   Local approximation of ds approxeq s, dx approxeq x to give constant arc
   length
   */
- do {
+  do {
     vector_t *pos = malloc(sizeof(vector_t));
     // term should be always positive
     *pos = (vector_t){.x = x_offset + x, .y = min_start_pos.y + y};
@@ -119,7 +118,7 @@ list_t *parabolic_path(state_t *state, vector_t min_start_pos,
     double squared_deriv = t1 - (t2 * x) + (t3 * pow(x, 2));
     x += DS / sqrt(1 + squared_deriv);
     y = u_y * (x / v_x) - (0.5 * g) * pow((x / v_x), 2);
- } while (x_offset + x < max_end_pos.x && y >= 0);
+  } while (x_offset + x < max_end_pos.x && y >= 0);
 
   return coin_positions;
 }
