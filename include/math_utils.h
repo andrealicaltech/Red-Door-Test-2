@@ -2,11 +2,6 @@
 #define __MATH_H__
 
 /*
-Absolute value of double
-*/
-double abs_d(double a);
-
-/*
 Equivalent to a % b for double types. Cast (a/b) to an int and multiply that by
 b. Return difference from a
 */

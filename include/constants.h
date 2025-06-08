@@ -30,6 +30,10 @@ extern const double FIRST_OBSTACLE_WAIT_TIME;
 extern const size_t OBSTACLE_CAPACITY;
 extern const double MAX_TIME_UPDATE;
 extern const char *OBSTACLE_INFO;
+extern const char *MAGNET_INFO;
+extern const char *COIN_INFO;
+extern const double MAGNET_FREQUENCY;
+extern const double MAGNET_PERIOD_S;
 extern const char *LEADERBOARD_INFO;
 
 // pts of player depending on action
@@ -55,6 +59,7 @@ extern const color_t SPRITE_COLOR;
 extern const color_t OBS_COLOR;
 extern const color_t COIN_COLOR;
 extern const color_t LEADERBOARD_COLOR;
+extern const color_t MAGNET_COLOR;
 extern const color_t TEXT_COLOR;
 
 extern const size_t BODY_ASSETS;
@@ -68,7 +73,6 @@ extern const char *BUILDING_PATH;
 extern const char *SHOP_PATH;
 extern const char *TREE_PATH;
 extern const char *SKY_PATH;
-extern const char *OBSTACLE_SPRITE_PATH;
 extern const char *OBSTACLE_SPRITE_PATH;
 extern const char *QUESADILLA_PATH;
 extern const char *GAME_MUSIC_PATH;

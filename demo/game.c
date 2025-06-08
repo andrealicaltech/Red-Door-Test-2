@@ -15,6 +15,7 @@
 #include "game_state.h"
 #include "kinematics.h"
 #include "leaderboard.h"
+#include "magnet.h"
 #include "math_utils.h"
 #include "music.h"
 #include "obstacle.h"
@@ -93,16 +94,20 @@ bool emscripten_main(state_t *state) {
 
     if (state->time_till_next_update <= 0.0) {
       if (state->n_queued_obstacles < MAX_N_QUEUED_OBST) {
-        // Generate
         update_obstacles(state);
-        gen_coin_arc(state, false);
+        bool should_generate_magnet = (rand() % 100) > (MAGNET_FREQUENCY * 100);
+        gen_coin_arc(state, should_generate_magnet);
       }
       state->time_till_next_update = mod_d((double)rand(), MAX_TIME_UPDATE);
+    }
+    if (state->is_magnet_activated) {
+      state->time_elapsed_with_magnet -= dt;
     }
 
     clean_obstacles(state);
     clean_coins(state);
     check_player_falling_off_edge(state);
+    apply_magnet(state, dt);
 
     manipulate_player(state, dt);
     scene_tick(state->scene, dt);

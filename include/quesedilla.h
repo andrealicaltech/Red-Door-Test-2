@@ -16,10 +16,10 @@ double coin_spacing(state_t *state);
 
 /*
 
-Returns owned list of coins with regular spacing and random x-offset in the
+Add to scene a list of coins with regular spacing and random x-offset in the
 given interval Min length of list is 3
 */
-void gen_coin_arc(state_t *state, bool should_require_powerup);
+void gen_coin_arc(state_t *state, bool should_include_powerup);
 
 void clean_coins(state_t *state);
 #endif
