@@ -112,6 +112,7 @@ void init_parameters(state_t *state) {
   state->n_queued_obstacles = 0;
   state->curr_player_obstacle = NULL;
   state->is_magnet_activated = false;
+  state->n_coins_collected = 0;
   state->points = 0;
 }
 

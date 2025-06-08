@@ -56,6 +56,7 @@ state_t *emscripten_init() {
   create_scoreboard(state);
 
   init_parameters(state);
+  state->all_points = list_init(MAX_GAMES, NULL);
 
   return state;
 }
