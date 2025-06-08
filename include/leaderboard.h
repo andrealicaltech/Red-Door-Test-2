@@ -4,7 +4,8 @@
 #include "body.h"
 #include "game_state.h"
 
-void create_reg_text(TTF_Font *font, vector_t top_left, vector_t size, char* text, double count);
+void create_reg_text(TTF_Font *font, vector_t top_left, vector_t size,
+                     char *text, double count);
 
 /*
 Makes a scoreboard showing the player's score as they progress through a level.

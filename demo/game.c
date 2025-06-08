@@ -111,7 +111,7 @@ bool emscripten_main(state_t *state) {
     sdl_clear();
     render_screen("game over", &viewport);
     sdl_show();
-    
+
     double time = time_since_last_tick();
     delay_time += time;
     if (delay_time >= 2.0) {
