@@ -8,7 +8,7 @@
 #include "math_utils.h"
 
 void revert_duck(state_t *state) {
-  //body_t *player_body = scene_get_body(state->scene, 0);
+  // body_t *player_body = scene_get_body(state->scene, 0);
   // if (velocity.y >
   //     -DUCK_INITIAL_VELOCITY) { // TODO: Replace with if colliding with
   //     ground
