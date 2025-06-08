@@ -61,6 +61,7 @@ extern const char *GAME_OVER_PATH;
 
 extern const char *PLAYER_SPRITE_PATH;
 extern const char *BUILDING_PATH;
+extern const char *SHOP_PATH;
 extern const char *TREE_PATH;
 extern const char *SKY_PATH;
 extern const char *OBSTACLE_SPRITE_PATH;

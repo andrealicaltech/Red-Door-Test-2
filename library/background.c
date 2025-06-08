@@ -48,10 +48,11 @@ void update_bg_pos(state_t *state, double dt) {
   state->bg.building_pos.x -= state->bg.bg_3_building_vel.x * dt;
 }
 
-void render_start_screen(SDL_Rect *viewport) {
-  SDL_Texture *start = asset_cache_lookup("start");
-  sdl_render_image(start, viewport);
+void render_screen(const char *screen_key, SDL_Rect *viewport) {
+  SDL_Texture *screen = asset_cache_lookup(screen_key);
+  sdl_render_image(screen, viewport);
 }
+
 
 void render_layers(SDL_Texture *texture, double *x, SDL_Rect *viewport) {
   *x = fmod(*x, viewport->w);

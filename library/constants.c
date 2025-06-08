@@ -58,6 +58,7 @@ const size_t BODY_ASSETS = 1;
 
 const char *START_SCREEN_PATH = "assets/Start.png";
 const char *GAME_OVER_PATH = "assets/GameOver.png";
+const char *SHOP_PATH = "assets/Shop.png";
 const char *PLAYER_SPRITE_PATH = "assets/Amudhan.png";
 const char *PLAYER_SPRITE_ANDREA_PATH = "assets/Andrea.png";
 const char *PLAYER_SPRITE_ARJUN_PATH = "assets/Arjun.png";
