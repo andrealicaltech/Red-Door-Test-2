@@ -17,10 +17,10 @@ const double MIN_REACTION_TIME_S = 1.0;
 
 // obstacle = table (square 50 x 50) can spawn multiple obstacles in a row
 const size_t OBSTACLE_HW = 50;
-const size_t MAX_STACKED_OBSTACLES = 5;
+const size_t MAX_STACKED_OBSTACLES = 20;
 const size_t OBSTACLE_CAPACITY = 1024;
 const double FIRST_OBSTACLE_WAIT_TIME = 1.5;
-const double AVG_TIME_OBSTACLES = 3.0;
+const double MAX_TIME_UPDATE = 3.0;
 const char *OBSTACLE_INFO = "obstacle";
 
 // pts of player depending on action
@@ -50,7 +50,7 @@ const double GRAV_JUMP_VEL_RATIO = 6.0 / 5.0;
 
 const color_t SPRITE_COLOR = (color_t){0.0, 0.0, 0.0};
 const color_t OBS_COLOR = (color_t){0.2, 0.2, 0.3};       // going to be tables
-const color_t QUESADILLA_COLOR = (color_t){1, 1, 0};      // coin
+const color_t COIN_COLOR = (color_t){1, 1, 0};      // coin
 const color_t LEADERBOARD_COLOR = (color_t){0.6, 0.3, 0}; // leaderboard
 
 const size_t BODY_ASSETS = 1;

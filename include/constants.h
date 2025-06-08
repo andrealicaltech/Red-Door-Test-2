@@ -27,7 +27,7 @@ extern const size_t OBSTACLE_HW;
 extern const size_t MAX_STACKED_OBSTACLES;
 extern const double FIRST_OBSTACLE_WAIT_TIME;
 extern const size_t OBSTACLE_CAPACITY;
-extern const double AVG_TIME_OBSTACLES;
+extern const double MAX_TIME_UPDATE;
 extern const char *OBSTACLE_INFO;
 
 // pts of player depending on action
@@ -51,7 +51,7 @@ extern const double GRAV_JUMP_VEL_RATIO;
 
 extern const color_t SPRITE_COLOR;
 extern const color_t OBS_COLOR;
-extern const color_t QUESADILLA_COLOR;
+extern const color_t COIN_COLOR;
 extern const color_t LEADERBOARD_COLOR;
 
 extern const size_t BODY_ASSETS;
