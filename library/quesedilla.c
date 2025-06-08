@@ -11,6 +11,7 @@
 #include "kinematics.h"
 #include "list.h"
 #include "obstacle.h"
+#include "magnet.h"
 
 const double COIN_RAD = 10;
 const size_t COIN_NUM_POINTS = 20;
@@ -21,7 +22,6 @@ const size_t V_LARG_NUM_COINS = 100;
 const double Y_TOLERANCE = 10.0;
 const double PARABOLIC_PATH_PCT = 50.0;
 const double MAGNET_TRANSLATION = 15.0;
-const char *COIN_INFO = "coin";
 
 double coin_spacing(state_t *state) { return COIN_SPACING; }
 
@@ -149,7 +149,7 @@ void quesedilla_collision_handler(body_t *body1, body_t *body2, vector_t axis,
   body_remove(coin);
 }
 
-void gen_coin_arc(state_t *state, bool should_require_powerup) {
+void gen_coin_arc(state_t *state, bool_should_include_powerup, bool should_require_powerup) {
   double translation = should_require_powerup ? MAGNET_TRANSLATION : 0.0;
 
   // The first obstacle will never have coins on top of it
@@ -189,13 +189,21 @@ void gen_coin_arc(state_t *state, bool should_require_powerup) {
   }
   if (points) {
     body_t *player = scene_get_body(state->scene, 0);
+    size_t parabola_idx = -1;
+    if (bool_should_include_powerup){
+      powerup_idx = rand() % list_size(points);
+    }
     for (size_t i = 0; i < list_size(points); i++) {
       vector_t *center = list_get(points, i);
+      if (i == powerup_idx){
+        // do nothing
+      } else {
       body_t *coin = make_coin(COIN_RAD, *center);
       scene_add_body(state->scene, coin);
       create_collision(state->scene, player, coin, quesedilla_collision_handler,
                        state, 0, NULL);
       body_set_velocity(coin, vec_multiply(-1, state->bg.bg_3_building_vel));
+      }
     }
     list_free(points);
   }

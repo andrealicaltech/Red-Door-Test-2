@@ -108,6 +108,7 @@ state_t *emscripten_init() {
   state->curr_player_obstacle = NULL;
 
   state->is_magnet_activated = false;
+  state->time_elapsed_with_magnet = 0;
   state->n_coins_collected = 0;
 
   state->points = 0;
@@ -141,12 +142,13 @@ bool emscripten_main(state_t *state) {
 
     sdl_render_scene(state->scene);
     state->time_till_next_update -= dt;
+    state->time_till_next_magnet -= dt;
 
     if (state->time_till_next_update <= 0.0) {
       if (state->n_queued_obstacles < MAX_N_QUEUED_OBST) {
-        // Generate
         update_obstacles(state);
-        gen_coin_arc(state, false);
+        bool should_generate_magnet = (rand() % 100) > (MAGNET_FREQUENCY*100);
+        gen_coin_arc(state, should_generate_magnet);
       }
       state->time_till_next_update = mod_d((double)rand(), MAX_TIME_UPDATE);
     }
