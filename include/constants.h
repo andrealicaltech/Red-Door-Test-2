@@ -53,16 +53,25 @@ extern const color_t SPRITE_COLOR;
 extern const color_t OBS_COLOR;
 extern const color_t COIN_COLOR;
 extern const color_t LEADERBOARD_COLOR;
+extern const color_t TEXT_COLOR;
 
 extern const size_t BODY_ASSETS;
-extern const char *PLAYER_SPRITE_PATH;
+extern const char *START_SCREEN_PATH;
+extern const char *GAME_OVER_PATH;
+
+extern const char *PLAYER_SPRITE_AMUDHAN_PATH;
+extern const char *PLAYER_SPRITE_ANDREA_PATH;
+extern const char *PLAYER_SPRITE_ARJUN_PATH;
 extern const char *BUILDING_PATH;
+extern const char *SHOP_PATH;
 extern const char *TREE_PATH;
 extern const char *SKY_PATH;
 extern const char *OBSTACLE_SPRITE_PATH;
 extern const char *OBSTACLE_SPRITE_PATH;
 extern const char *QUESADILLA_PATH;
-extern const char *MUSIC_PATH;
+extern const char *GAME_MUSIC_PATH;
+extern const char *JUMP_MUSIC_PATH;
+extern const char *MENU_MUSIC_PATH;
 extern const double OBSTACLE_START_WAIT_TIME;
 extern const double GAME_OVER_WAIT_TIME;
 

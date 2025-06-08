@@ -5,6 +5,7 @@
 #include <SDL2/SDL_ttf.h>
 #include <assert.h>
 #include <math.h>
+#include <mouse.h>
 #include <stdlib.h>
 #include <time.h>
 
@@ -31,6 +32,8 @@ SDL_Window *window;
  * The renderer used to draw the scene.
  */
 SDL_Renderer *renderer;
+
+SDL_Renderer *sdl_get_renderer(void) { return renderer; }
 /**
  * The keypress handler, or NULL if none has been configured.
  */
@@ -148,6 +151,9 @@ bool sdl_is_done(state_t *state) {
       double held_time = (timestamp - key_start_timestamp) / MS_PER_S;
       key_handler(key, type, held_time, state);
       break;
+    // mouse handling
+    case SDL_MOUSEBUTTONDOWN:
+    case SDL_MOUSEMOTION:
     }
   }
   free(event);

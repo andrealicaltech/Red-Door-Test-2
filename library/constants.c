@@ -52,9 +52,14 @@ const color_t SPRITE_COLOR = (color_t){0.0, 0.0, 0.0};
 const color_t OBS_COLOR = (color_t){0.2, 0.2, 0.3};       // going to be tables
 const color_t COIN_COLOR = (color_t){1, 1, 0};            // coin
 const color_t LEADERBOARD_COLOR = (color_t){0.6, 0.3, 0}; // leaderboard
+const color_t TEXT_COLOR = (color_t){1, 1, 1};
 
 const size_t BODY_ASSETS = 1;
-const char *PLAYER_SPRITE_PATH = "assets/Amudhan.png";
+
+const char *START_SCREEN_PATH = "assets/Start.png";
+const char *GAME_OVER_PATH = "assets/Game_Over.png";
+const char *SHOP_PATH = "assets/Shop.png";
+const char *PLAYER_SPRITE_AMUDHAN_PATH = "assets/Amudhan.png";
 const char *PLAYER_SPRITE_ANDREA_PATH = "assets/Andrea.png";
 const char *PLAYER_SPRITE_ARJUN_PATH = "assets/Arjun.png";
 const char *SKY_PATH = "assets/Sky.png";
@@ -62,7 +67,9 @@ const char *BUILDING_PATH = "assets/Building.png";
 const char *TREE_PATH = "assets/Tree.png";
 const char *OBSTACLE_SPRITE_PATH = "assets/Obstacle.png";
 const char *QUESADILLA_PATH = "assets/Quesadilla.png";
-const char *MUSIC_PATH = "assets/memphis-trap-wav-349366.wav";
+const char *GAME_MUSIC_PATH = "assets/GameAudio.wav";
+const char *JUMP_MUSIC_PATH = "assets/Jump.wav";
+const char *MENU_MUSIC_PATH = "assets/MainMenuAudio.wav";
 
 const double OBSTACLE_START_WAIT_TIME = 3.0;
 const double GAME_OVER_WAIT_TIME = 3.0;

@@ -1,3 +1,4 @@
+#include <SDL2/SDL.h>
 #include <assert.h>
 #include <math.h>
 #include <stdio.h>
@@ -19,67 +20,6 @@
 #include "quesedilla.h"
 #include "sdl_wrapper.h"
 // moved background positions to background.c
-
-void render_layers(SDL_Texture *texture, double *x, SDL_Rect *viewport) {
-  *x = fmod(*x, viewport->w);
-  if (*x > 0) {
-    *x -= viewport->w;
-  }
-
-  SDL_Rect dest1 = *viewport;
-  dest1.x = (int)(*x);
-
-  SDL_Rect dest2 = *viewport;
-  dest2.x = (int)(*x) + viewport->w;
-
-  sdl_render_image(texture, &dest1);
-  sdl_render_image(texture, &dest2);
-}
-
-body_t *make_background(double w, double h, vector_t center) {
-  list_t *c = list_init(4, free);
-  vector_t *v1 = malloc(sizeof(vector_t));
-  *v1 = (vector_t){-w / 2, -h / 2};
-  list_add(c, v1);
-
-  vector_t *v2 = malloc(sizeof(vector_t));
-  *v2 = (vector_t){w / 2, -h / 2};
-  list_add(c, v2);
-
-  vector_t *v3 = malloc(sizeof(vector_t));
-  *v3 = (vector_t){w / 2, h / 2};
-  list_add(c, v3);
-
-  vector_t *v4 = malloc(sizeof(vector_t));
-  *v4 = (vector_t){-w / 2, h / 2};
-  list_add(c, v4);
-  body_t *obstacle = body_init(c, 1, OBS_COLOR);
-  body_set_centroid(obstacle, center);
-  return obstacle;
-}
-
-body_t *make_player(double w, double h, vector_t center) {
-  list_t *c = list_init(4, free);
-  vector_t *v1 = malloc(sizeof(vector_t));
-  *v1 = (vector_t){0, 0};
-  list_add(c, v1);
-
-  vector_t *v2 = malloc(sizeof(vector_t));
-  *v2 = (vector_t){w, 0};
-  list_add(c, v2);
-
-  vector_t *v3 = malloc(sizeof(vector_t));
-  *v3 = (vector_t){w, h};
-  list_add(c, v3);
-
-  vector_t *v4 = malloc(sizeof(vector_t));
-  *v4 = (vector_t){0, h};
-  list_add(c, v4);
-  body_t *player =
-      body_init_with_info(c, 1, SPRITE_COLOR, (void *)PLAYER_INFO, NULL);
-  body_set_centroid(player, center);
-  return player;
-}
 
 void start_game(state_t *state) {
   if (state->is_game_over) {
@@ -112,10 +52,10 @@ void clean_elapsed_coins(state_t *state) {
 MARK: Emscripten
 */
 state_t *emscripten_init() {
-  play_audio();
 
   asset_cache_init();
   sdl_init(MIN, MAX);
+  TTF_Init();
 
   state_t *state = malloc(sizeof(state_t));
   state->scene = scene_init();
@@ -124,11 +64,38 @@ state_t *emscripten_init() {
   state->bg.tree_pos.x = 0;
   state->bg.sky_pos.x = 0;
 
+  state->started = false;
+  state->font = TTF_OpenFont("assets/Roboto-Regular.ttf", 24);
   state->current_game_screen = HOME;
 
   srand(time(NULL));
-  // state->scene = scene_init();
   state->player_motion = REGULAR;
+
+  SDL_Texture *start =
+      asset_cache_obj_get_or_create(ASSET_IMAGE, START_SCREEN_PATH);
+  asset_cache_store_temp("start", start);
+
+  SDL_Texture *game_over =
+      asset_cache_obj_get_or_create(ASSET_IMAGE, GAME_OVER_PATH);
+  asset_cache_store_temp("game over", game_over);
+
+  SDL_Texture *shop = asset_cache_obj_get_or_create(ASSET_IMAGE, SHOP_PATH);
+  asset_cache_store_temp("shop", shop);
+  state->show_shop = false;
+
+  // state->andrea_rect = (SDL_Rect) {.x = 0, .y = 0, .w = 332, .h = 499};
+  // state->arjun_rect = (SDL_Rect) {.x = 333, .y = 0, .w = 332, .h = 499};
+  // state->amudhan_rect = (SDL_Rect) {.x = 666, .y = 0, .w = 332, .h = 499};
+
+  // SDL_Renderer *rend = sdl_get_renderer();
+  // state->rend = rend;
+  // SDL_RenderCopy(state->rend,
+  // sdl_get_image_texture(PLAYER_SPRITE_ANDREA_PATH), NULL,
+  // &state->andrea_rect); SDL_RenderCopy(state->rend,
+  // sdl_get_image_texture(PLAYER_SPRITE_ARJUN_PATH), NULL, &state->arjun_rect);
+  // SDL_RenderCopy(state->rend,
+  // sdl_get_image_texture(PLAYER_SPRITE_AMUDHAN_PATH), NULL,
+  // &state->amudhan_rect);
 
   // Needs to be the first one
   body_t *player = make_player(PLAYER_DIMS.x, PLAYER_DIMS.y, PLAYER_CENTER_POS);
@@ -153,7 +120,7 @@ state_t *emscripten_init() {
   asset_cache_store_temp("tree", tree);
   asset_cache_store_temp("building", building);
 
-  asset_make_image_with_body(PLAYER_SPRITE_PATH, player);
+  asset_make_image_with_body(PLAYER_SPRITE_AMUDHAN_PATH, player);
   sdl_on_key((key_handler_t)on_key);
 
   state->jump_start_y = PLAYER_CENTER_POS.y;
@@ -173,25 +140,30 @@ state_t *emscripten_init() {
 }
 
 bool emscripten_main(state_t *state) {
-  double dt = time_since_last_tick();
-
-  update_bg_velocity(state, dt);
-  update_bg_pos(state, dt);
-
   sdl_clear();
   SDL_Rect viewport = {.x = 0, .y = 0, .w = MAX.x, .h = MAX.y};
-  render_layers(asset_cache_lookup("sky"), &state->bg.sky_pos.x, &viewport);
-  render_layers(asset_cache_lookup("tree"), &state->bg.tree_pos.x, &viewport);
-  render_layers(asset_cache_lookup("building"), &state->bg.building_pos.x,
-                &viewport);
 
-  list_t *body_assets = asset_get_asset_list();
+  if (!state->started && !state->is_game_over) {
+    render_screen("start", &viewport);
+    play_music(MENU_MUSIC_PATH);
+  } // start screen
 
-  for (size_t i = 0; i < list_size(body_assets); i++) {
-    asset_render(list_get(body_assets, i));
-  }
-  sdl_render_scene(state->scene);
+  if (state->started) {
+    double dt = time_since_last_tick();
+    play_music(GAME_MUSIC_PATH);
+    update_bg_velocity(state, dt);
+    update_bg_pos(state, dt);
+    render_layers(asset_cache_lookup("sky"), &state->bg.sky_pos.x, &viewport);
+    render_layers(asset_cache_lookup("tree"), &state->bg.tree_pos.x, &viewport);
+    render_layers(asset_cache_lookup("building"), &state->bg.building_pos.x,
+                  &viewport);
+    list_t *body_assets = asset_get_asset_list();
 
+    for (size_t i = 0; i < list_size(body_assets); i++) {
+      asset_render(list_get(body_assets, i));
+    }
+
+    sdl_render_scene(state->scene);
   state->time_till_next_update -= dt;
   if (state->time_till_next_update <= 0.0) {
     update_obstacles(state);
@@ -203,9 +175,33 @@ bool emscripten_main(state_t *state) {
   clean_coins(state);
   check_player_falling_off_edge(state);
 
-  sdl_show();
-  scene_tick(state->scene, dt);
   manipulate_player(state, dt);
+  scene_tick(state->scene, dt);
+
+    if (state->is_game_over) {
+      state->started = false;
+    }
+  } // game screen
+
+  // if (!state->started && state->is_game_over) {
+  //   sdl_clear();
+  //   render_screen("game over", &viewport);
+  //   sdl_show();
+
+  //   double time = time_since_last_tick();
+  //   state->delay_time += time;
+
+  //   if (state->delay_time >= 1.0) {
+  //     state->show_shop = true;
+  //     state->delay_time = 0;
+  //   }
+  // } // game over screen
+
+  // if (state->show_shop) {
+  //   render_screen("shop", &viewport);
+  // } // shop screen
+
+  sdl_show();
   return false;
 }
 
