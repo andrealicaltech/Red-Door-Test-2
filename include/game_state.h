@@ -36,8 +36,8 @@ struct state {
   bool is_game_over;
   bool started;
   bool show_shop;
-  // char *sprite_path;
-  // vector_t sprite_selection;
+  char *sprite_path;
+  // size_t sprite_index;
 
   // background
   background_t bg;

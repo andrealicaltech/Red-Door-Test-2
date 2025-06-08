@@ -105,7 +105,7 @@ body_t *init_player(state_t *state) {
   return player;
 }
 
-state_t *init_parameters(state_t *state) {
+void init_parameters(state_t *state) {
   state->jump_start_y = PLAYER_CENTER_POS.y;
   state->player_motion = REGULAR;
   state->time_till_next_update = FIRST_OBSTACLE_WAIT_TIME;
@@ -114,8 +114,6 @@ state_t *init_parameters(state_t *state) {
   state->is_magnet_activated = false;
   state->n_coins_collected = 0;
   state->points = 0;
-  state->all_points = list_init(MAX_GAMES, NULL);
-  return state;
 }
 
 void init_screens(state_t *state) {
@@ -146,21 +144,21 @@ void make_layers(state_t *state) {
 }
 
 void reset_game(state_t *state) {
-  scene_free(state->scene);
-  state->scene = scene_init();
-
-  list_free(asset_get_asset_list());
-  asset_cache_reset_temp();
-
-  body_t *player = init_player(state);
-  make_layers(state);
-
-  asset_make_image_with_body(PLAYER_SPRITE_AMUDHAN_PATH, player);
-
-  init_parameters(state);
-
   state->started = true;
   state->show_shop = false;
   state->is_game_over = false;
   state->current_game_screen = GAME;
+
+  background_init(state);
+
+  // scene_remove_body(state->scene, 0);
+  // body_free(state->player);
+
+  // body_t *new_player = make_player(PLAYER_DIMS.x, PLAYER_DIMS.y,
+  // PLAYER_CENTER_POS); state->player = new_player;
+  // scene_add_body(state->scene, new_player);
+
+  // state->sprite_index = scene_bodies(state->scene);
+
+  // asset_make_image_with_body(state->sprite_path, new_player);
 }

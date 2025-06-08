@@ -35,7 +35,7 @@ void asset_cache_destroy();
  * @param filepath the filepath to the asset
  * @return the object that corresponds to the filepath, as a void*
  */
-void *asset_cache_obj_get_or_create(asset_type_t ty, const char *filepath);
+void *asset_cache_obj_get_or_create(asset_type_t ty, char *filepath);
 
 // ADDED
 void asset_cache_store_temp(const char *key, SDL_Texture *tex);

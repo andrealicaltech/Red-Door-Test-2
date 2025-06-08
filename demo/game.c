@@ -54,11 +54,14 @@ state_t *emscripten_init() {
   asset_make_image_with_body(PLAYER_SPRITE_AMUDHAN_PATH, player);
   sdl_on_key((key_handler_t)on_key);
 
-  return init_parameters(state);
+  init_parameters(state);
+  state->all_points = list_init(MAX_GAMES, NULL);
+
+  return state;
 }
 
 bool emscripten_main(state_t *state) {
-  sdl_clear();
+  // sdl_clear();
   SDL_Rect viewport = {.x = 0, .y = 0, .w = MAX.x, .h = MAX.y};
 
   if (!state->started && !state->is_game_over) {
@@ -80,9 +83,12 @@ bool emscripten_main(state_t *state) {
     for (size_t i = 0; i < list_size(body_assets); i++) {
       asset_render(list_get(body_assets, i));
     }
-    sdl_render_scene(state->scene);
+
+    // sdl_render_scene(state->scene);
     render_score_text(state);
     render_coin_text(state);
+    sdl_show();
+
     state->time_till_next_update -= dt;
 
     if (state->time_till_next_update <= 0.0) {

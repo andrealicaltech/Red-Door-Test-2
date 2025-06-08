@@ -74,8 +74,11 @@ void obstacle_collision_handler(body_t *body1, body_t *body2, vector_t axis,
 
   double y_gap = (player_centroid.y - 0.5 * PLAYER_DIMS.y) -
                  (obstacle_centroid.y + 0.5 * obstacle_dims.y);
+  printf("player_centroid.y=%f\n, obstacle_centroid.y=%f, obstacle_dims.y=%f\n",
+         player_centroid.y, obstacle_centroid.y, obstacle_dims.y);
   printf("y_gap collision=%f\n", y_gap);
-  if (fabs(y_gap) <= (get_curr_gravity(state).y * AVG_DT_S)) {
+  if (player_right_edge >= obstacle_left_edge &&
+      fabs(y_gap) <= (get_curr_gravity(state).y * AVG_DT_S)) {
     body_set_velocity(player, VEC_ZERO);
     state->player_motion = REGULAR;
     state->curr_player_obstacle = obstacle;
@@ -87,6 +90,8 @@ void obstacle_collision_handler(body_t *body1, body_t *body2, vector_t axis,
              obstacle_left_edge - player_right_edge < EDGE_TOLERANCE) {
     printf("head-on collision-you lose!\n");
     state->is_game_over = true;
+    body_remove(obstacle);
+    state->n_queued_obstacles -= 1;
   } else {
     printf("Can't handle collision\n");
   }

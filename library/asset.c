@@ -50,7 +50,7 @@ static asset_t *asset_init(asset_type_t ty, SDL_Rect bounding_box) {
   return new;
 }
 
-void asset_make_image_with_body(const char *filepath, body_t *body) {
+void asset_make_image_with_body(char *filepath, body_t *body) {
   SDL_Texture *text = asset_cache_obj_get_or_create(ASSET_IMAGE, filepath);
   SDL_Rect bounding_box = sdl_get_body_bounding_box(body);
   asset_t *asset = asset_init(ASSET_IMAGE, bounding_box);
@@ -62,7 +62,7 @@ void asset_make_image_with_body(const char *filepath, body_t *body) {
   list_add(ASSET_LIST, asset);
 }
 
-void asset_make_image(const char *filepath, SDL_Rect bounding_box) {
+void asset_make_image(char *filepath, SDL_Rect bounding_box) {
   SDL_Texture *text = asset_cache_obj_get_or_create(ASSET_IMAGE, filepath);
   asset_t *asset = asset_init(ASSET_IMAGE, bounding_box);
 
@@ -73,8 +73,8 @@ void asset_make_image(const char *filepath, SDL_Rect bounding_box) {
   list_add(ASSET_LIST, asset);
 }
 
-void asset_make_text(const char *filepath, SDL_Rect bounding_box,
-                     const char *text, color_t color) {
+void asset_make_text(char *filepath, SDL_Rect bounding_box, const char *text,
+                     color_t color) {
   TTF_Font *font = asset_cache_obj_get_or_create(ASSET_TEXT, filepath);
   asset_t *asset = asset_init(ASSET_TEXT, bounding_box);
 
