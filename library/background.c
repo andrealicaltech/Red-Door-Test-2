@@ -144,21 +144,11 @@ void make_layers(state_t *state) {
 }
 
 void reset_game(state_t *state) {
-  scene_free(state->scene);
-  state->scene = scene_init();
-
-  list_free(asset_get_asset_list());
-  asset_cache_reset_temp();
-
-  body_t *player = init_player(state);
-  make_layers(state);
-
-  asset_make_image_with_body(PLAYER_SPRITE_AMUDHAN_PATH, player);
-
-  init_parameters(state);
-
   state->started = true;
   state->show_shop = false;
   state->is_game_over = false;
   state->current_game_screen = GAME;
+
+  background_init(state);
+
 }
