@@ -14,7 +14,6 @@
 // TODOs: remove
 #include <emscripten.h>
 
-
 const double EDGE_TOLERANCE = 3.0;
 const size_t MAX_N_QUEUED_OBST = 15;
 
@@ -163,16 +162,14 @@ double next_obst_x(state_t *state, body_t *last_obstacle) {
                                  MIN_REACTION_TIME_S * curr_obst_speed.x);
 }
 
-
-
-body_t *get_nth_obstacle(state_t *state, size_t n){
+body_t *get_nth_obstacle(state_t *state, size_t n) {
   size_t count = -1;
-  for (size_t i = 0; i < scene_bodies(state->scene); i++){
+  for (size_t i = 0; i < scene_bodies(state->scene); i++) {
     body_t *body = scene_get_body(state->scene, i);
-    if (strcmp(body_get_info(body), OBSTACLE_INFO) == 0){
+    if (strcmp(body_get_info(body), OBSTACLE_INFO) == 0) {
       count++;
     }
-    if (count == n){
+    if (count == n) {
       return body;
     }
   }
@@ -194,12 +191,14 @@ void update_obstacles(state_t *state) {
 
   // Default value is edge of the screen
   double x = MAX.x + (OBSTACLE_HW * MAX_STACKED_OBSTACLES);
-  double y = (PLAYER_CENTER_POS.y - PLAYER_DIMS.y / 2) + (OBSTACLE_HW/2); // TODO
+  double y =
+      (PLAYER_CENTER_POS.y - PLAYER_DIMS.y / 2) + (OBSTACLE_HW / 2); // TODO
 
   if (state->n_queued_obstacles > 0) {
     // Use 1 + n_q - 1 for clarity: first body is player. Subtract 1 for
     // zero-indexing
-    body_t *last_obstacle = get_nth_obstacle(state, state->n_queued_obstacles - 1);
+    body_t *last_obstacle =
+        get_nth_obstacle(state, state->n_queued_obstacles - 1);
     x = next_obst_x(state, last_obstacle);
   }
 

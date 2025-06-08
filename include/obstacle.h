@@ -47,7 +47,6 @@ currently be the last scheduled obstacle to appear
 
 double next_obst_x(state_t *state, body_t *last_obstacle);
 
-
 /*
 Gets the n-th obstacle in the scene. Uses zero indexing
 */

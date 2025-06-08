@@ -50,7 +50,7 @@ const double GRAV_JUMP_VEL_RATIO = 6.0 / 5.0;
 
 const color_t SPRITE_COLOR = (color_t){0.0, 0.0, 0.0};
 const color_t OBS_COLOR = (color_t){0.2, 0.2, 0.3};       // going to be tables
-const color_t COIN_COLOR = (color_t){1, 1, 0};      // coin
+const color_t COIN_COLOR = (color_t){1, 1, 0};            // coin
 const color_t LEADERBOARD_COLOR = (color_t){0.6, 0.3, 0}; // leaderboard
 
 const size_t BODY_ASSETS = 1;
