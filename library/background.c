@@ -105,16 +105,14 @@ body_t *init_player(state_t *state) {
   return player;
 }
 
-state_t *init_parameters(state_t *state) {
+void init_parameters(state_t *state) {
   state->jump_start_y = PLAYER_CENTER_POS.y;
   state->player_motion = REGULAR;
   state->time_till_next_update = FIRST_OBSTACLE_WAIT_TIME;
   state->n_queued_obstacles = 0;
   state->curr_player_obstacle = NULL;
   state->is_magnet_activated = false;
-  state->n_coins_collected = 0;
   state->points = 0;
-  state->all_points = list_init(MAX_GAMES, NULL);
   return state;
 }
 
