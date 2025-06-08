@@ -98,7 +98,9 @@ list_t *parabolic_path(state_t *state, vector_t min_start_pos,
 
   double DS = PARABOLIC_COIN_SPACING;
   double x = 0;
-  double y = min_start_pos.y;
+  double y = 0;
+
+  printf("initial y=%f, min_start_pos.y=%f\n", y);
   printf("u_y=%f, v_x=%f, g=%f, DS=%f, x=%f\n", u_y, v_x, g, DS, x);
 
   // These are values required for our approximation of dx which we reuse
@@ -112,16 +114,15 @@ list_t *parabolic_path(state_t *state, vector_t min_start_pos,
   Local approximation of ds approxeq s, dx approxeq x to give constant arc
   length
   */
-  while (x_offset + x < max_end_pos.x &&
-         (y > min_start_pos.y || min_start_pos.y - y < Y_TOLERANCE)) {
+  while (x_offset + x < max_end_pos.x && y >= 0) {
     vector_t *pos = malloc(sizeof(vector_t));
     // term should be always positive
+    *pos = (vector_t){.x = x_offset + x, .y = min_start_pos.y + y};
+    list_add(coin_positions, pos);
     double squared_deriv = t1 - (t2 * x) + (t3 * pow(x, 2));
     x += DS / sqrt(1 + squared_deriv);
     y = u_y * (x / v_x) - (0.5 * g) * pow((x / v_x), 2);
     printf("DS=%f, x=%f, y=%f\n", DS, x, y);
-    *pos = (vector_t){.x = x_offset + x, .y = min_start_pos.y + y};
-    list_add(coin_positions, pos);
   }
 
   return coin_positions;
@@ -155,10 +156,18 @@ double min_gap_after_obstacle(state_t *state, double obstacle_height) {
          (MIN_REACTION_TIME_S * state->bg.bg_3_building_vel.x);
 }
 
-/*
-Generates an arc between the two last queued obstacles and on top of the last
-queued obstacle
-*/
+
+void quesedilla_collision_handler(body_t *body1, body_t *body2, vector_t axis,
+                                  void *aux, double force_const) {
+  bool b1_is_player = strcmp(body_get_info(body1), PLAYER_INFO) == 0;
+  body_t *player = b1_is_player ? body1 : body2;
+  body_t *coin = b1_is_player ? body2 : body1;
+  state_t *state = (state_t *)aux;
+  state->n_coins_collected += 1;
+  body_remove(coin);
+  printf("Successful collision!\n");
+}
+
 
 void gen_coin_arc(state_t *state, bool should_require_powerup) {
   double translation = should_require_powerup ? MAGNET_TRANSLATION : 0.0;
@@ -208,28 +217,20 @@ void gen_coin_arc(state_t *state, bool should_require_powerup) {
     points = flat_path(state, slast_obstacle_end, last_obstacle_begin);
   }
   if (points) {
+    body_t *player = scene_get_body(state->scene, 0);
     for (size_t i = 0; i < list_size(points); i++) {
       vector_t *center = list_get(points, i);
       printf("Made coin i=%zu, center.x=%f, center.y=%f\n", i, center->x,
              center->y);
       body_t *coin = make_coin(COIN_RAD, *center);
       scene_add_body(state->scene, coin);
+      create_collision(state->scene, player, coin, quesedilla_collision_handler, state, 0, NULL);
       body_set_velocity(coin, vec_multiply(-1, state->bg.bg_3_building_vel));
     }
+    list_free(points);
   }
-  list_free(points);
 }
 
-void quesedilla_collision_handler(body_t *body1, body_t *body2, vector_t axis,
-                                  void *aux, double force_const) {
-  bool b1_is_player = strcmp(body_get_info(body1), PLAYER_INFO) == 0;
-  body_t *player = b1_is_player ? body1 : body2;
-  body_t *coin = b1_is_player ? body2 : body1;
-
-  state_t *state = (state_t *)aux;
-  state->n_coins_collected += 1;
-  body_remove(coin);
-}
 
 void clean_coins(state_t *state) {
   if (scene_bodies(state->scene) == 1) {
