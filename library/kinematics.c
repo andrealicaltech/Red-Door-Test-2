@@ -1,6 +1,6 @@
 #include "body.h"
-#include "state.h"
 #include "music.h"
+#include "state.h"
 
 #include "constants.h"
 #include "game_state.h"

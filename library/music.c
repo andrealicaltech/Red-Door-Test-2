@@ -8,7 +8,7 @@
 // Our music file
 Mix_Music *music = NULL;
 
-int play_music(char* music_path) {
+int play_music(char *music_path) {
 
   // Initialize SDL.
   if (SDL_Init(SDL_INIT_AUDIO) < 0) {
@@ -36,10 +36,10 @@ int play_music(char* music_path) {
   // if ( Mix_PlayChannel(-1, wave, 0) == -1 )
   // return -1;
 
-  if (Mix_PlayingMusic()){
+  if (Mix_PlayingMusic()) {
     return -1;
   }
-  if (Mix_PlayMusic(music, 1) == -1){
+  if (Mix_PlayMusic(music, 1) == -1) {
     return -1;
   }
 
@@ -52,9 +52,7 @@ int play_music(char* music_path) {
   // quit SDL_mixer
   // Mix_CloseAudio();
 
- return 0;
+  return 0;
 }
 
-int halt_music(){
-  Mix_HaltMusic();
-}
+int halt_music() { Mix_HaltMusic(); }
