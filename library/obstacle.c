@@ -18,7 +18,7 @@ const double EDGE_TOLERANCE = 3.0;
 
 // Need this to estimate tolerance for landing on top of an obstacle
 // - tolerance for when the function was last called
-const double AVG_DT_S = 0.01;
+const double AVG_DT_S = 0.05;
 
 body_t *make_obstacle(size_t w, size_t h, vector_t center) {
   list_t *c = list_init(4, free);
@@ -40,7 +40,7 @@ body_t *make_obstacle(size_t w, size_t h, vector_t center) {
   body_t *obstacle =
       body_init_with_info(c, 1, OBS_COLOR, (void *)OBSTACLE_INFO, NULL);
   body_set_centroid(obstacle, center);
-  printf("Made obstacle w=%zu, h=%zu, center.x=%f\n", w, h, center.x);
+  // printf("Made obstacle w=%zu, h=%zu, center.x=%f\n", w, h, center.x);
   return obstacle;
 }
 
@@ -69,20 +69,19 @@ void obstacle_collision_handler(body_t *body1, body_t *body2, vector_t axis,
 
   double player_right_edge = player_centroid.x + 0.5 * PLAYER_DIMS.x;
   double obstacle_left_edge = obstacle_centroid.x - (0.5 * obstacle_dims.x);
-  printf("player_right_edge=%f, obstacle_left_edge=%f\n", player_right_edge,
-         obstacle_left_edge);
+  // printf("player_right_edge=%f, obstacle_left_edge=%f\n", player_right_edge,
+        //  obstacle_left_edge);
 
   double y_gap = (player_centroid.y - 0.5 * PLAYER_DIMS.y) -
                  (obstacle_centroid.y + 0.5 * obstacle_dims.y);
   printf("y_gap collision=%f\n", y_gap);
-  if (player_centroid.y > obstacle_centroid.y &&
-      fabs(y_gap) <= (get_curr_gravity(state).y * AVG_DT_S)) {
+  if (fabs(y_gap) <= (get_curr_gravity(state).y * AVG_DT_S)) {
     body_set_velocity(player, VEC_ZERO);
     state->player_motion = REGULAR;
     state->curr_player_obstacle = obstacle;
     state->jump_start_y = PLAYER_CENTER_POS.y;
-    printf("Stuck to the top of obstacle_centroid.x=%f, obstacle_dims.x=%f\n",
-           obstacle_centroid.x, obstacle_dims.x);
+    // printf("Stuck to the top of obstacle_centroid.x=%f, obstacle_dims.x=%f\n",
+          //  obstacle_centroid.x, obstacle_dims.x);
   } else if (player_right_edge > obstacle_left_edge ||
              obstacle_left_edge - player_right_edge < EDGE_TOLERANCE) {
     printf("head-on collision-you lose!\n");
@@ -119,10 +118,10 @@ void check_player_falling_off_edge(state_t *state) {
 double next_obst_x(state_t *state, body_t *last_obstacle) {
   vector_t last_obstacle_dims = get_obstacle_dims(last_obstacle);
   vector_t last_obstacle_centroid = body_get_centroid(last_obstacle);
-  printf("lo_centre.x=%f, lo_centre.y=%f\n", last_obstacle_centroid.x,
-         last_obstacle_centroid.y);
-  printf("lo_dims.x=%f, lo_dims.y=%f\n", last_obstacle_dims.x,
-         last_obstacle_dims.y);
+  // printf("lo_centre.x=%f, lo_centre.y=%f\n", last_obstacle_centroid.x,
+  //        last_obstacle_centroid.y);
+  // printf("lo_dims.x=%f, lo_dims.y=%f\n", last_obstacle_dims.x,
+  //        last_obstacle_dims.y);
 
   vector_t curr_obst_speed = state->bg.bg_3_building_vel;
 
@@ -131,9 +130,9 @@ double next_obst_x(state_t *state, body_t *last_obstacle) {
   double expected_x_dist_with_jump =
       (2 * get_curr_jump_vel(state).y / get_curr_gravity(state).y) *
       curr_obst_speed.x;
-  printf("smallest_clearing_dist_before_obst=%f\n",
-         smallest_clearing_dist_before_obst);
-  printf("expected_x_dist_with_jump=%f\n", expected_x_dist_with_jump);
+  // printf("smallest_clearing_dist_before_obst=%f\n",
+  //        smallest_clearing_dist_before_obst);
+  // printf("expected_x_dist_with_jump=%f\n", expected_x_dist_with_jump);
   /*
   Suppose we jump at the minimum distance before the obstacle.
   2 possibilities depending on the width of the obstacle:
@@ -151,18 +150,18 @@ double next_obst_x(state_t *state, body_t *last_obstacle) {
     final_x = (last_obstacle_centroid.x - (0.5 * last_obstacle_dims.x) -
                smallest_clearing_dist_before_obst) +
               expected_x_dist_with_jump;
-    printf("Will clear obstacle, final_x=%f\n", final_x);
+    // printf("Will clear obstacle, final_x=%f\n", final_x);
   } else {
     double fall_time =
         sqrt(2 * last_obstacle_dims.y / get_curr_gravity(state).y);
     final_x = last_obstacle_centroid.x + (0.5 * last_obstacle_dims.x) +
               (fall_time * curr_obst_speed.x);
-    printf("Will not clear obstacle, fall_time=%f, final_x=%f\n", fall_time,
-           final_x);
+    // printf("Will not clear obstacle, fall_time=%f, final_x=%f\n", fall_time,
+          //  final_x);
   }
 
   // Additional random spacing between obstacles
-  double running_space = rand() % ((int)(MAX.x / 2));
+  double running_space = rand() % ((int)(MAX.x));
   // if running space is low, need to guarantee that we give the player enough
   // distance to jump such that they clear the height of the obstacle
   double clearing_space =
