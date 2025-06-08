@@ -26,7 +26,7 @@ body_t *make_player(double w, double h, vector_t center);
 
 body_t *init_player(state_t *state);
 
-state_t *init_parameters(state_t *state);
+void init_parameters(state_t *state);
 
 void reset_game(state_t *state);
 

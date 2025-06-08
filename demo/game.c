@@ -55,7 +55,9 @@ state_t *emscripten_init() {
   sdl_on_key((key_handler_t)on_key);
   create_scoreboard(state);
 
-  return init_parameters(state);
+  init_parameters(state);
+
+  return state;
 }
 
 bool emscripten_main(state_t *state) {
