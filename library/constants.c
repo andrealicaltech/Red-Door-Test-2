@@ -55,8 +55,8 @@ const color_t LEADERBOARD_COLOR = (color_t){0.6, 0.3, 0}; // leaderboard
 const color_t TEXT_COLOR = (color_t){1, 1, 1};
 
 const size_t BODY_ASSETS = 1;
-const char *START_SCREEN_PATH = "assets/Start.png";
-const char *GAME_OVER_PATH = "assets/GameOver.png";
+// const char *START_SCREEN_PATH = "assets/Start.png";
+// const char *GAME_OVER_PATH = "assets/GameOver.png";
 const char *PLAYER_SPRITE_PATH = "assets/Amudhan.png";
 const char *PLAYER_SPRITE_ANDREA_PATH = "assets/Andrea.png";
 const char *PLAYER_SPRITE_ARJUN_PATH = "assets/Arjun.png";

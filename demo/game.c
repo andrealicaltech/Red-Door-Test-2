@@ -71,9 +71,9 @@ state_t *emscripten_init() {
   // state->scene = scene_init();
   state->player_motion = REGULAR;
 
-  SDL_Texture *start =
-      asset_cache_obj_get_or_create(ASSET_IMAGE, START_SCREEN_PATH);
-  asset_cache_store_temp("start", start);
+  // SDL_Texture *start =
+  //     asset_cache_obj_get_or_create(ASSET_IMAGE, START_SCREEN_PATH);
+  // asset_cache_store_temp("start", start);
 
   // Needs to be the first one
   body_t *player = make_player(PLAYER_DIMS.x, PLAYER_DIMS.y, PLAYER_CENTER_POS);

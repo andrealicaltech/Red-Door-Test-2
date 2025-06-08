@@ -6,6 +6,9 @@
 #include "state.h"
 #include "vector.h"
 
+extern const char *START_SCREEN_PATH;
+extern const char *GAME_OVER_PATH;
+
 /*
 Makes a rectangular-shaped obstacle of the specified height and width
 */
