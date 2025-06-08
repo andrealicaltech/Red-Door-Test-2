@@ -302,7 +302,6 @@ SDL_Rect sdl_get_body_bounding_box(body_t *body) {
     if (vertex->y > max_y) {
       max_y = vertex->y;
     }
-
   }
 
   vector_t topleft = {min_x, max_y};
@@ -311,12 +310,10 @@ SDL_Rect sdl_get_body_bounding_box(body_t *body) {
   vector_t cor_tl = get_window_position(topleft, get_window_center());
   vector_t cor_br = get_window_position(botright, get_window_center());
 
-  SDL_Rect rect = {
-      .x = cor_tl.x,
-      .y = cor_tl.y,
-      .w = cor_br.x - cor_tl.x,
-      .h = cor_br.y - cor_tl.y
-    };
+  SDL_Rect rect = {.x = cor_tl.x,
+                   .y = cor_tl.y,
+                   .w = cor_br.x - cor_tl.x,
+                   .h = cor_br.y - cor_tl.y};
 
-    return rect;
+  return rect;
 }
