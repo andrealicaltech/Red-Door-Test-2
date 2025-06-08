@@ -287,8 +287,6 @@ SDL_Rect sdl_get_body_bounding_box(body_t *body) {
   double max_x = -__DBL_MAX__;
   double max_y = -__DBL_MAX__;
 
-  SDL_Rect *rect = malloc(sizeof(SDL_Rect));
-
   for (size_t i = 0; i < list_size(vertexes); i++) {
     vector_t *vertex = list_get(vertexes, i);
 
@@ -305,13 +303,6 @@ SDL_Rect sdl_get_body_bounding_box(body_t *body) {
       max_y = vertex->y;
     }
 
-    // vector_t x = {max_x, min_x};
-    // vector_t y = {max_y, min_y};
-
-    // min_x = xpixel.x;
-    // min_y = ypixel.x;
-    // max_x = xpixel.y;
-    // max_y = ypixel.y;
   }
 
   vector_t topleft = {min_x, max_y};
@@ -320,10 +311,12 @@ SDL_Rect sdl_get_body_bounding_box(body_t *body) {
   vector_t cor_tl = get_window_position(topleft, get_window_center());
   vector_t cor_br = get_window_position(botright, get_window_center());
 
-  rect->x = cor_tl.x;
-  rect->y = cor_tl.y;
-  rect->w = cor_br.x - cor_tl.x;
-  rect->h = cor_br.y - cor_tl.y;
+  SDL_Rect rect = {
+      .x = cor_tl.x,
+      .y = cor_tl.y,
+      .w = cor_br.x - cor_tl.x,
+      .h = cor_br.y - cor_tl.y
+    };
 
-  return *rect;
+    return rect;
 }
