@@ -13,7 +13,6 @@
 #include "magnet.h"
 #include "obstacle.h"
 
-const double COIN_RAD = 10;
 const size_t COIN_NUM_POINTS = 20;
 const double COIN_SPACING = 12.5;
 const double PARABOLIC_COIN_SPACING = 50;
@@ -73,7 +72,8 @@ list_t *parabolic_path(state_t *state, vector_t min_start_pos,
       state->bg.bg_3_building_vel.x;
 
   double delta = max_end_pos.x - min_start_pos.x;
-  if (delta < 0 || delta < expected_x_dist_with_jump) {
+  // Need tolerance between expected x_dist and delta
+  if (delta < 0 || expected_x_dist_with_jump - delta < 1.0) {
     return NULL;
   }
 
@@ -193,13 +193,15 @@ void gen_coin_arc(state_t *state, bool should_include_powerup) {
     }
     for (size_t i = 0; i < list_size(points); i++) {
       vector_t *center = list_get(points, i);
-      body_t *new_body = (i == powerup_idx) ? make_magnet(*center)
+      body_t *new_body = (i == powerup_idx) ? make_magnet(MAGNET_RAD, *center)
                                             : make_coin(COIN_RAD, *center);
       scene_add_body(state->scene, new_body);
-      asset_make_image_with_body(QUESADILLA_PATH, new_body);
-      collision_handler_t handler = (i == powerup_idx)
+      char *path = (i == powerup_idx) ? CARD_PATH : QUESADILLA_PATH;
+       collision_handler_t handler = (i == powerup_idx)
                                         ? magnet_body_collision_handler
                                         : quesedilla_collision_handler;
+      asset_make_image_with_body(path, new_body);
+     
       create_collision(state->scene, player, new_body, handler, state, 0, NULL);
       body_set_velocity(new_body,
                         vec_multiply(-1, state->bg.bg_3_building_vel));
