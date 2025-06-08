@@ -24,16 +24,7 @@ obstacle. Must be called at every time step.
 */
 void check_player_falling_off_edge(state_t *state);
 
-/*
-Calculation of the smallest distance before an obstacle
-  at which the player can currently jump without colliding with the obstacle's
-  vertical edge
 
-`h_player`: distance between ground and player centroid
-`h_obstacle`: distance between ground and top of obstacle
-*/
-double get_smallest_obst_clearing_dist(state_t *state, double h_player,
-                                       double h_obstacle);
 
 /*
 Guarrantee that if the player jumps from the latest possible point to clear

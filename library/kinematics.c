@@ -101,3 +101,22 @@ void manipulate_player(state_t *state, double dt) {
     exit(2);
   }
 }
+
+
+double get_smallest_obst_clearing_dist(state_t *state, double h_player,
+                                       double h_obstacle) {
+  double u = get_curr_jump_vel(state).y;
+  double min_del_h = h_obstacle - h_player;
+  /*
+
+  Find the time which results in the bottom of the player exactly hitting the
+  top edge of the obstacle Solve for t in the y-axis h_o - h_p = ut - 0.5gt^2
+  which gives (u + sqrt(u^2 - 2g(h_o-h_p)))/g
+  */
+  double time = (u + sqrt(u * u - 2 * get_curr_gravity(state).y * min_del_h)) /
+                get_curr_gravity(state).y;
+  double vx = state->bg.bg_3_building_vel.x;
+
+  // Return the x-distance that will be covered in that time
+  return vx * time;
+}

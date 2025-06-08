@@ -15,7 +15,7 @@
 #include <emscripten.h>
 
 const double EDGE_TOLERANCE = 3.0;
-const size_t MAX_N_QUEUED_OBST = 15;
+const double AVG_DT = 0.8;
 
 body_t *make_obstacle(size_t w, size_t h, vector_t center) {
   list_t *c = list_init(4, free);
@@ -37,7 +37,7 @@ body_t *make_obstacle(size_t w, size_t h, vector_t center) {
   body_t *obstacle =
       body_init_with_info(c, 1, OBS_COLOR, (void *)OBSTACLE_INFO, NULL);
   body_set_centroid(obstacle, center);
-  printf("Made obstacle w=%f, h=%f, center.x=%f\n", w, h, center.x);
+  printf("Made obstacle w=%zu, h=%zu, center.x=%f\n", w, h, center.x);
   return obstacle;
 }
 
@@ -66,10 +66,14 @@ void obstacle_collision_handler(body_t *body1, body_t *body2, vector_t axis,
 
   double player_right_edge = player_centroid.x + 0.5 * PLAYER_DIMS.x;
   double obstacle_left_edge = obstacle_centroid.x - (0.5 * obstacle_dims.x);
+  printf("player_right_edge=%f, obstacle_left_edge=%f\n", player_right_edge,
+         obstacle_left_edge);
 
-  double delta = (player_centroid.y - 0.5 * PLAYER_DIMS.y) -
+  double y_gap = (player_centroid.y - 0.5 * PLAYER_DIMS.y) -
                  (obstacle_centroid.y + 0.5 * obstacle_dims.y);
-  if (fabs(delta) <= EDGE_TOLERANCE) {
+  printf("y_gap collision=%f\n", y_gap);
+  if (player_centroid.y > obstacle_centroid.y &&
+      fabs(y_gap) <= (get_curr_gravity(state).y * AVG_DT)) {
     body_set_velocity(player, VEC_ZERO);
     state->player_motion = REGULAR;
     state->curr_player_obstacle = obstacle;
@@ -107,24 +111,6 @@ void check_player_falling_off_edge(state_t *state) {
     state->player_motion = FALLING;
     state->jump_start_y = PLAYER_CENTER_POS.y;
   }
-}
-
-double get_smallest_obst_clearing_dist(state_t *state, double h_player,
-                                       double h_obstacle) {
-  double u = get_curr_jump_vel(state).y;
-  double min_del_h = h_obstacle - h_player;
-  /*
-
-  Find the time which results in the bottom of the player exactly hitting the
-  top edge of the obstacle Solve for t in the y-axis h_o - h_p = ut - 0.5gt^2
-  which gives (u + sqrt(u^2 - 2g(h_o-h_p)))/g
-  */
-  double time = (u + sqrt(u * u - 2 * get_curr_gravity(state).y * min_del_h)) /
-                get_curr_gravity(state).y;
-  double vx = state->bg.bg_3_building_vel.x;
-
-  // Return the x-distance that will be covered in that time
-  return vx * time;
 }
 
 double next_obst_x(state_t *state, body_t *last_obstacle) {
@@ -177,13 +163,6 @@ body_t *get_nth_obstacle(state_t *state, size_t n) {
 }
 
 void update_obstacles(state_t *state) {
-
-  // Force avoid a double overflow
-  if (state->n_queued_obstacles == MAX_N_QUEUED_OBST) {
-    // printf("Would return here\n");
-    return;
-  }
-
   size_t width =
       (size_t)((1 + (rand() % (MAX_STACKED_OBSTACLES - 1))) * OBSTACLE_HW);
   size_t height = OBSTACLE_HW;

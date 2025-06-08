@@ -18,4 +18,14 @@ void on_key(char key, key_event_type_t type, double held_time, state_t *state);
 
 void manipulate_player(state_t *state, double dt);
 
+/*
+Calculation of the smallest distance before an obstacle
+  at which the player can currently jump without colliding with the obstacle's
+  vertical edge
+
+`h_player`: distance between ground and player centroid
+`h_obstacle`: distance between ground and top of obstacle
+*/
+double get_smallest_obst_clearing_dist(state_t *state, double h_player, double h_obstacle);
+
 #endif
