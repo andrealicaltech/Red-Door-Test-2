@@ -69,7 +69,6 @@ extern const char *SHOP_PATH;
 extern const char *TREE_PATH;
 extern const char *SKY_PATH;
 extern const char *OBSTACLE_SPRITE_PATH;
-extern const char *OBSTACLE_SPRITE_PATH;
 extern const char *QUESADILLA_PATH;
 extern const char *GAME_MUSIC_PATH;
 extern const char *JUMP_MUSIC_PATH;

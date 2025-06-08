@@ -192,6 +192,7 @@ void gen_coin_arc(state_t *state, bool should_require_powerup) {
       vector_t *center = list_get(points, i);
       body_t *coin = make_coin(COIN_RAD, *center);
       scene_add_body(state->scene, coin);
+      asset_make_image_with_body(QUESADILLA_PATH, coin);
       create_collision(state->scene, player, coin, quesedilla_collision_handler,
                        state, 0, NULL);
       body_set_velocity(coin, vec_multiply(-1, state->bg.bg_3_building_vel));
