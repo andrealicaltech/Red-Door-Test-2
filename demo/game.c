@@ -86,20 +86,6 @@ state_t *emscripten_init() {
   asset_cache_store_temp("shop", shop);
   state->show_shop = false;
 
-  // state->andrea_rect = (SDL_Rect) {.x = 0, .y = 0, .w = 332, .h = 499};
-  // state->arjun_rect = (SDL_Rect) {.x = 333, .y = 0, .w = 332, .h = 499};
-  // state->amudhan_rect = (SDL_Rect) {.x = 666, .y = 0, .w = 332, .h = 499};
-
-  // SDL_Renderer *rend = sdl_get_renderer();
-  // state->rend = rend;
-  // SDL_RenderCopy(state->rend,
-  // sdl_get_image_texture(PLAYER_SPRITE_ANDREA_PATH), NULL,
-  // &state->andrea_rect); SDL_RenderCopy(state->rend,
-  // sdl_get_image_texture(PLAYER_SPRITE_ARJUN_PATH), NULL, &state->arjun_rect);
-  // SDL_RenderCopy(state->rend,
-  // sdl_get_image_texture(PLAYER_SPRITE_AMUDHAN_PATH), NULL,
-  // &state->amudhan_rect);
-
   // Needs to be the first one
   body_t *player = make_player(PLAYER_DIMS.x, PLAYER_DIMS.y, PLAYER_CENTER_POS);
   body_set_centroid(player, PLAYER_CENTER_POS);

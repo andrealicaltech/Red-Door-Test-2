@@ -36,6 +36,8 @@ struct state {
   bool is_game_over;
   bool started;
   bool show_shop;
+  // char *sprite_path;
+  // vector_t sprite_selection;
 
   // background
   background_t bg;
@@ -56,11 +58,6 @@ struct state {
   size_t points;
   list_t *all_points;
   const TTF_Font *font;
-
-  // sprites
-  SDL_Rect andrea_rect;
-  SDL_Rect arjun_rect;
-  SDL_Rect amudhan_rect;
 };
 
 #endif
