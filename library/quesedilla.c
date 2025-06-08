@@ -77,10 +77,10 @@ list_t *parabolic_path(state_t *state, vector_t min_start_pos,
   double expected_x_dist_with_jump =
       (2 * get_curr_jump_vel(state).y / get_curr_gravity(state).y) *
       state->bg.bg_3_building_vel.x;
-  printf("expected_x_dist=%f\n", expected_x_dist_with_jump);
+  // printf("expected_x_dist=%f\n", expected_x_dist_with_jump);
 
   double delta = max_end_pos.x - min_start_pos.x;
-  printf("delta=%f\n", delta);
+  // printf("delta=%f\n", delta);
   if (delta < 0 || delta < expected_x_dist_with_jump) {
     return NULL;
   }
@@ -104,7 +104,7 @@ list_t *parabolic_path(state_t *state, vector_t min_start_pos,
   double t2 = 2 * u_y * g / pow(v_x, 3);
   double t3 = pow(g / (v_x * v_x), 2);
 
-  printf("t1=%f, t2=%f, t3=%f\n", t1, t2, t3);
+  // printf("t1=%f, t2=%f, t3=%f\n", t1, t2, t3);
 
   /*
   Local approximation of ds approxeq s, dx approxeq x to give constant arc
@@ -146,16 +146,13 @@ cover while falling Then leave enough time for reaction
 */
 double min_gap_after_obstacle(state_t *state, double obstacle_height) {
   double time = sqrt(2 * obstacle_height / get_curr_gravity(state).y);
-  double x_disp = state->bg.bg_3_building_vel.x;
-  return (time * x_disp) +
+  return (time * state->bg.bg_3_building_vel.x) +
          (MIN_REACTION_TIME_S * state->bg.bg_3_building_vel.x);
 }
 
 void quesedilla_collision_handler(body_t *body1, body_t *body2, vector_t axis,
                                   void *aux, double force_const) {
-  bool b1_is_player = strcmp(body_get_info(body1), PLAYER_INFO) == 0;
-  body_t *player = b1_is_player ? body1 : body2;
-  body_t *coin = b1_is_player ? body2 : body1;
+  body_t *coin = strcmp(body_get_info(body2), COIN_INFO) == 0 ? body2 : body1;
   state_t *state = (state_t *)aux;
   state->n_coins_collected += 1;
   body_remove(coin);
@@ -181,8 +178,8 @@ void gen_coin_arc(state_t *state, bool should_require_powerup) {
               (vector_t){.x = get_obstacle_dims(slast_obstacle).x * 0.5 +
                               min_gap_after_obstacle(state, slast_obst_dim.y),
                          .y = 0});
-  printf("slast_obstacle_end.x=%f, slast_obstacle_end.y=%f\n",
-         slast_obstacle_end.x, slast_obstacle_end.y);
+  // printf("slast_obstacle_end.x=%f, slast_obstacle_end.y=%f\n",
+        //  slast_obstacle_end.x, slast_obstacle_end.y);
 
   body_t *last_obstacle =
       get_nth_obstacle(state, state->n_queued_obstacles - 1);
@@ -193,28 +190,28 @@ void gen_coin_arc(state_t *state, bool should_require_powerup) {
                                    get_smallest_obst_clearing_dist(
                                        state, PLAYER_DIMS.y, last_obst_dim.y),
                               .y = 0});
-  printf("last_obstacle_begin.x=%f, last_obstacle_begin.y=%f\n",
-         last_obstacle_begin.x, last_obstacle_begin.y);
+  // printf("last_obstacle_begin.x=%f, last_obstacle_begin.y=%f\n",
+        //  last_obstacle_begin.x, last_obstacle_begin.y);
 
   list_t *points = NULL;
 
   uint8_t roll = rand() % 100;
   // TODO: Remove
   roll = 0;
-  printf("roll=%d\n", roll);
+  // printf("roll=%d\n", roll);
   if (roll < PARABOLIC_PATH_PCT) {
-    printf("Generating parabolic path\n");
+    // printf("Generating parabolic path\n");
     points = parabolic_path(state, slast_obstacle_end, last_obstacle_begin);
   } else {
-    printf("Generating linear path\n");
+    // printf("Generating linear path\n");
     points = flat_path(state, slast_obstacle_end, last_obstacle_begin);
   }
   if (points) {
     body_t *player = scene_get_body(state->scene, 0);
     for (size_t i = 0; i < list_size(points); i++) {
       vector_t *center = list_get(points, i);
-      printf("Made coin i=%zu, center.x=%f, center.y=%f\n", i, center->x,
-             center->y);
+      // printf("Made coin i=%zu, center.x=%f, center.y=%f\n", i, center->x,
+            //  center->y);
       body_t *coin = make_coin(COIN_RAD, *center);
       scene_add_body(state->scene, coin);
       create_collision(state->scene, player, coin, quesedilla_collision_handler,
