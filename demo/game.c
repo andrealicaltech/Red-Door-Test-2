@@ -51,9 +51,7 @@ state_t *emscripten_init() {
 
   make_layers(state);
 
-  state->sprite_path = PLAYER_SPRITE_AMUDHAN_PATH;
-
-  asset_make_image_with_body(state->sprite_path, player);
+  asset_make_image_with_body(PLAYER_SPRITE_AMUDHAN_PATH, player);
   sdl_on_key((key_handler_t)on_key);
   create_scoreboard(state);
 
@@ -108,6 +106,7 @@ bool emscripten_main(state_t *state) {
 
     if (state->is_game_over) {
       state->started = false;
+
     }
   } // game screen
 
