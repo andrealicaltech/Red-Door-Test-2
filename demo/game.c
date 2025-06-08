@@ -117,11 +117,6 @@ state_t *emscripten_init() {
 }
 
 bool emscripten_main(state_t *state) {
-  double dt = time_since_last_tick();
-
-  update_bg_velocity(state, dt);
-  update_bg_pos(state, dt);
-
   sdl_clear();
   SDL_Rect viewport = {.x = 0, .y = 0, .w = MAX.x, .h = MAX.y};
 
@@ -130,6 +125,10 @@ bool emscripten_main(state_t *state) {
   }
 
   if (state->started) {
+    double dt = time_since_last_tick();
+
+    update_bg_velocity(state, dt);
+    update_bg_pos(state, dt);
     render_layers(asset_cache_lookup("sky"), &state->bg.sky_pos.x, &viewport);
     render_layers(asset_cache_lookup("tree"), &state->bg.tree_pos.x, &viewport);
     render_layers(asset_cache_lookup("building"), &state->bg.building_pos.x,
@@ -146,10 +145,10 @@ bool emscripten_main(state_t *state) {
     clean_obstacles(state);
     check_player_falling_off_edge(state);
     manipulate_player(state, dt);
+    scene_tick(state->scene, dt);
   }
 
   sdl_show();
-  scene_tick(state->scene, dt);
   return false;
 }
 
