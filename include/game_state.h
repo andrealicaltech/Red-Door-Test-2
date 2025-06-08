@@ -36,7 +36,6 @@ struct state {
   bool is_game_over;
   bool started;
   bool show_shop;
-  double delay_time; // show game over screen for 3 sec before switching to shop
 
   // background
   background_t bg;
@@ -52,7 +51,6 @@ struct state {
   body_t *curr_player_obstacle;
 
   // Powerups
-  bool is_revival_activated;
   bool is_magnet_activated;
 
   size_t points;

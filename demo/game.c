@@ -65,6 +65,7 @@ state_t *emscripten_init() {
   state->bg.sky_pos.x = 0;
 
   state->started = false;
+  state->is_game_over = false;
   state->font = TTF_OpenFont("assets/Roboto-Regular.ttf", 24);
   state->current_game_screen = HOME;
 
@@ -130,8 +131,7 @@ state_t *emscripten_init() {
   state->n_queued_obstacles = 0;
   state->curr_player_obstacle = NULL;
 
-  // TODO: Activate
-  state->is_revival_activated = false;
+
   state->is_magnet_activated = false;
 
   state->points = 0;
