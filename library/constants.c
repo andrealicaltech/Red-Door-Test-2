@@ -83,6 +83,9 @@ const char *CARD_PATH = "assets/Card.png";
 const char *PLAYER_SPRITE_AMUDHAN_PATH = "assets/Amudhan.png";
 const char *PLAYER_SPRITE_ANDREA_PATH = "assets/Andrea.png";
 const char *PLAYER_SPRITE_ARJUN_PATH = "assets/Arjun.png";
+const char *PLAYER_SPRITE_DUCK_PATH_SUFFIX = " Squat";
+const char *PLAYER_SPRITE_EXT = ".png";
+
 const char *SKY_PATH = "assets/Sky.png";
 const char *BUILDING_PATH = "assets/Building.png";
 const char *TREE_PATH = "assets/Tree.png";

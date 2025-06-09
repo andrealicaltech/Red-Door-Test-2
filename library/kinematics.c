@@ -7,6 +7,7 @@
 #include "game_state.h"
 #include "kinematics.h"
 #include "utils.h"
+#include "asset.h"
 
 void revert_duck(state_t *state) {}
 
@@ -64,11 +65,24 @@ void on_key(char key, key_event_type_t type, double held_time, state_t *state) {
         state->curr_player_obstacle = NULL;
         break;
       case DOWN_ARROW:
-        body_set_velocity(state->player, DUCK_INITIAL_VELOCITY);
+        char *new_path = get_player_sprite_duck_path(state);
+        free(state->sprite_path);
+        state->sprite_path = new_path;
+        asset_remove_body(state->player);
+        asset_make_image_with_body(state->sprite_path, state->player);
         state->player_motion = DUCK;
         break;
       }
     }
+  }
+
+  if (type == KEY_RELEASED && state->player_motion == DUCK && key == DOWN_ARROW){
+      char *new_path = get_player_sprite_normal_path(state);
+      free(state->sprite_path);
+      state->sprite_path = new_path;
+      asset_remove_body(state->player);
+      asset_make_image_with_body(state->sprite_path, state->player);
+      state->player_motion = REGULAR;
   }
 }
 
@@ -101,7 +115,6 @@ void manipulate_player(state_t *state, double dt) {
     }
     break;
   case DUCK:
-    revert_duck(state);
     break;
   case REGULAR:
     sdl_on_key((key_handler_t)on_key);

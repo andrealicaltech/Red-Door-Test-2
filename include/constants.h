@@ -81,6 +81,9 @@ extern const char *CARD_PATH;
 extern const char *PLAYER_SPRITE_AMUDHAN_PATH;
 extern const char *PLAYER_SPRITE_ANDREA_PATH;
 extern const char *PLAYER_SPRITE_ARJUN_PATH;
+extern const char *PLAYER_SPRITE_DUCK_PATH_SUFFIX;
+extern const char *PLAYER_SPRITE_EXT;
+
 extern const char *BUILDING_PATH;
 extern const char *SHOP_PATH;
 extern const char *TREE_PATH;
