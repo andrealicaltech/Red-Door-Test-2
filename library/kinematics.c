@@ -57,7 +57,7 @@ void on_key(char key, key_event_type_t type, double held_time, state_t *state) {
 
       switch (key) {
       case UP_ARROW: {
- body_set_velocity(state->player, get_curr_jump_vel(state));
+        body_set_velocity(state->player, get_curr_jump_vel(state));
         state->player_motion = JUMP;
         state->jump_start_y = body_get_centroid(state->player).y;
         state->curr_player_obstacle = NULL;
