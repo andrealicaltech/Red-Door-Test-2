@@ -37,7 +37,6 @@ int play_music(char *music_path, bool side_by_side) {
   if (!side_by_side && Mix_PlayingMusic()) {
     return -1;
   }
-  printf("Reset!\n");
   if (Mix_PlayMusic(music, 1) == -1) {
     return -1;
   }

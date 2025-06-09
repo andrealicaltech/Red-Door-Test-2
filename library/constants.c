@@ -25,9 +25,12 @@ const double MAX_TIME_UPDATE = 3.0;
 const char *OBSTACLE_INFO = "obstacle";
 const char *MAGNET_INFO = "magnet";
 const char *COIN_INFO = "coin";
-const double MAGNET_FREQUENCY = 0.0;
+const double MAGNET_FREQUENCY = 0.25;
 const double MAGNET_PERIOD_S = 20.0;
 const char *LEADERBOARD_INFO = "leaderboard";
+
+const double MAGNET_RAD = 12.5;
+const double COIN_RAD = 10;
 
 // pts of player depending on action
 const size_t PLAYER_STANDING_PTS = 16;
@@ -73,11 +76,12 @@ const char *PLAYER_SPRITE_ARJUN_PATH = "assets/Arjun.png";
 const char *SKY_PATH = "assets/Sky.png";
 const char *BUILDING_PATH = "assets/Building.png";
 const char *TREE_PATH = "assets/Tree.png";
-const char *OBSTACLE_SPRITE_PATH = "assets/Obstacle.png";
 const char *QUESADILLA_PATH = "assets/Quesadilla.png";
 const char *GAME_MUSIC_PATH = "assets/GameAudio.wav";
 const char *JUMP_MUSIC_PATH = "assets/Jump.wav";
 const char *MENU_MUSIC_PATH = "assets/MainMenuAudio.wav";
+const char *OBSTACLE_GEN_PATH_TEMPLATE = "assets/obstacles/obstacle-";
+const char *OBSTACLE_IMG_EXT = ".png";
 
 const double OBSTACLE_START_WAIT_TIME = 3.0;
 const double GAME_OVER_WAIT_TIME = 3.0;

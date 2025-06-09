@@ -95,7 +95,8 @@ bool emscripten_main(state_t *state) {
     if (state->time_till_next_update <= 0.0) {
       if (state->n_queued_obstacles < MAX_N_QUEUED_OBST) {
         update_obstacles(state);
-        bool should_generate_magnet = (rand() % 100) > (MAGNET_FREQUENCY * 100);
+        bool should_generate_magnet =
+            (rand() % 100) <= (MAGNET_FREQUENCY * 100);
         gen_coin_arc(state, should_generate_magnet);
       }
       state->time_till_next_update = mod_d((double)rand(), MAX_TIME_UPDATE);
@@ -106,6 +107,7 @@ bool emscripten_main(state_t *state) {
 
     clean_obstacles(state);
     clean_coins(state);
+    clean_magnet(state);
     check_player_falling_off_edge(state);
     apply_magnet(state, dt);
 
