@@ -56,13 +56,14 @@ void on_key(char key, key_event_type_t type, double held_time, state_t *state) {
         state->player_motion == REGULAR) {
 
       switch (key) {
-      case UP_ARROW:
-        body_set_velocity(state->player, get_curr_jump_vel(state));
+      case UP_ARROW: {
+ body_set_velocity(state->player, get_curr_jump_vel(state));
         state->player_motion = JUMP;
         state->jump_start_y = body_get_centroid(state->player).y;
         state->curr_player_obstacle = NULL;
         break;
-      case DOWN_ARROW:
+      }
+      case DOWN_ARROW: {
         char *new_path = get_player_sprite_duck_path(state);
         free(state->sprite_path);
         state->sprite_path = new_path;
@@ -70,6 +71,7 @@ void on_key(char key, key_event_type_t type, double held_time, state_t *state) {
         asset_make_image_with_body(state->sprite_path, state->player);
         state->player_motion = DUCK;
         break;
+      }
       }
     }
   }
