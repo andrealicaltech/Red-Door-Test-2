@@ -1,6 +1,8 @@
 #ifndef __MATH_H__
 #define __MATH_H__
 
+#include "game_state.h"
+#include "body.h"
 /*
 Equivalent to a % b for double types. Cast (a/b) to an int and multiply that by
 b. Return difference from a
@@ -16,5 +18,10 @@ double min_d(double a, double b);
 Returns maximum value of two doubles and b
 */
 double max_d(double a, double b);
+
+/*
+Looks for player in scene
+*/
+body_t *get_player(state_t *state);
 
 #endif

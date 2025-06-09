@@ -37,11 +37,12 @@ struct state {
   bool started;
   bool show_shop;
   char *sprite_path;
-  // size_t sprite_index;
 
   // background
   background_t bg;
   body_t *player;
+  size_t current_player_idx;
+  
   SDL_Renderer *rend;
 
   PLAYER_MOTION player_motion;

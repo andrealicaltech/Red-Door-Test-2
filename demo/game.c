@@ -16,7 +16,7 @@
 #include "kinematics.h"
 #include "leaderboard.h"
 #include "magnet.h"
-#include "math_utils.h"
+#include "utils.h"
 #include "music.h"
 #include "obstacle.h"
 #include "quesedilla.h"

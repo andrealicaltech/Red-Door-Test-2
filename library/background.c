@@ -11,7 +11,7 @@
 #include "forces.h"
 #include "game_state.h"
 #include "kinematics.h"
-#include "math_utils.h"
+#include "utils.h"
 #include "obstacle.h"
 #include "sdl_wrapper.h"
 
@@ -115,6 +115,7 @@ void init_parameters(state_t *state) {
   state->time_elapsed_with_magnet = 0;
   state->n_coins_collected = 0;
   state->points = 0;
+  state->current_player_idx = 0;
 }
 
 void init_screens(state_t *state) {

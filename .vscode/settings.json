@@ -2,7 +2,7 @@
     "files.associations": {
         "asset_cache.h": "c",
         "asset.h": "c",
-        "math_utils.h": "c",
+        "utils.h": "c",
         "forces.h": "c",
         "obstacle.h": "c",
         "kinematics.h": "c",

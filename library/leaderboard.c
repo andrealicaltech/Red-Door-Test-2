@@ -10,7 +10,7 @@
 #include "forces.h"
 #include "game_state.h"
 #include "kinematics.h"
-#include "math_utils.h"
+#include "utils.h"
 #include "obstacle.h"
 
 body_t *make_scoreboard(double width, double height, vector_t center,

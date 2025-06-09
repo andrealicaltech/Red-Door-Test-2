@@ -2,7 +2,7 @@
 #define __OBSTACLE_H__
 
 #include "body.h"
-#include "math_utils.h"
+#include "utils.h"
 #include "state.h"
 #include "vector.h"
 

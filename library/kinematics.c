@@ -6,7 +6,7 @@
 #include "constants.h"
 #include "game_state.h"
 #include "kinematics.h"
-#include "math_utils.h"
+#include "utils.h"
 
 void revert_duck(state_t *state) {}
 
@@ -53,8 +53,7 @@ void on_key(char key, key_event_type_t type, double held_time, state_t *state) {
 
     if (!state->show_shop && state->started &&
         state->player_motion == REGULAR) {
-      body_t *player_body = scene_get_body(state->scene, 0);
-      assert(strcmp(body_get_info(player_body), PLAYER_INFO) == 0);
+      body_t *player_body = get_player(state);
 
       switch (key) {
       case UP_ARROW:
@@ -75,8 +74,7 @@ void on_key(char key, key_event_type_t type, double held_time, state_t *state) {
 }
 
 void manipulate_player(state_t *state, double dt) {
-  body_t *player_body = scene_get_body(state->scene, 0);
-  assert(strcmp(body_get_info(player_body), PLAYER_INFO) == 0);
+  body_t *player_body = get_player(state);
 
   vector_t player_centroid = body_get_centroid(player_body);
   vector_t player_velocity = body_get_velocity(player_body);

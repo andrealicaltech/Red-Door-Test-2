@@ -5,6 +5,7 @@
 #include "constants.h"
 #include "forces.h"
 #include "game_state.h"
+#include "utils.h"
 #include "list.h"
 
 const double MAGNET_ACCELERATION_S = 1250.0;
@@ -42,9 +43,8 @@ void magnet_body_collision_handler(body_t *body1, body_t *body2, vector_t axis,
 
 void apply_magnet(state_t *state, double dt) {
   if (state->is_magnet_activated) {
-    body_t *player = scene_get_body(state->scene, 0);
-    assert(strcmp(body_get_info(player), PLAYER_INFO) == 0);
-    vector_t player_centroid = body_get_centroid(player);
+    body_t *player_body = get_player(state);
+    vector_t player_centroid = body_get_centroid(player_body);
 
     for (size_t i = 0; i < scene_bodies(state->scene); i++) {
       body_t *body = scene_get_body(state->scene, i);
