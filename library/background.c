@@ -127,14 +127,17 @@ void init_screens(state_t *state) {
       asset_cache_obj_get_or_create(ASSET_IMAGE, (char *)GAME_OVER_PATH);
   asset_cache_store_temp("game over", game_over);
 
-  SDL_Texture *shop = asset_cache_obj_get_or_create(ASSET_IMAGE, (char *)SHOP_PATH);
+  SDL_Texture *shop =
+      asset_cache_obj_get_or_create(ASSET_IMAGE, (char *)SHOP_PATH);
   asset_cache_store_temp("shop", shop);
   state->show_shop = false;
 }
 
 void make_layers(state_t *state) {
-  SDL_Texture *sky = asset_cache_obj_get_or_create(ASSET_IMAGE, (char *)SKY_PATH);
-  SDL_Texture *tree = asset_cache_obj_get_or_create(ASSET_IMAGE, (char *)TREE_PATH);
+  SDL_Texture *sky =
+      asset_cache_obj_get_or_create(ASSET_IMAGE, (char *)SKY_PATH);
+  SDL_Texture *tree =
+      asset_cache_obj_get_or_create(ASSET_IMAGE, (char *)TREE_PATH);
   SDL_Texture *building =
       asset_cache_obj_get_or_create(ASSET_IMAGE, (char *)BUILDING_PATH);
 
