@@ -6,7 +6,8 @@
 // Our wave file
 // Mix_Chunk *wave = NULL;
 // Our music file
-int play_music(char *music_path, bool side_by_side, Mix_Music *music, int value) {
+int play_music(char *music_path, bool side_by_side, Mix_Music *music,
+               int value) {
 
   // Initialize SDL.
   if (SDL_Init(SDL_INIT_AUDIO) < 0) {
@@ -50,6 +51,4 @@ int play_music(char *music_path, bool side_by_side, Mix_Music *music, int value)
   return 0;
 }
 
-void halt_music() {
-  Mix_HaltMusic();
-}
+void halt_music() { Mix_HaltMusic(); }

@@ -68,7 +68,7 @@ bool emscripten_main(state_t *state) {
 
   if (state->started) {
     double dt = time_since_last_tick();
-    if (state->play_music){
+    if (state->play_music) {
       play_music((char *)GAME_MUSIC_PATH, false, state->music, 2);
       state->play_music = false;
     }
