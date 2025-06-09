@@ -28,6 +28,7 @@ const char *COIN_INFO = "coin";
 const double MAGNET_FREQUENCY = 0.25;
 const double MAGNET_PERIOD_S = 20.0;
 const char *LEADERBOARD_INFO = "leaderboard";
+const double MAX_DELAY_TIME = 2.0;
 
 const double MAGNET_RAD = 12.5;
 const double COIN_RAD = 10;
