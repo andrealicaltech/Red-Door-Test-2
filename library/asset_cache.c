@@ -48,7 +48,7 @@ void asset_cache_reset_temp() {
 entry_t *helper_asset_cache(asset_type_t ty, char *filepath) {
   for (size_t i = 0; i < list_size(ASSET_CACHE); i++) {
     entry_t *entry = (entry_t *)list_get(ASSET_CACHE, i);
-    
+
     if (entry && entry->type == ty &&
         (strcmp(entry->filepath, filepath) == 0)) {
       return entry;
