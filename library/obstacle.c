@@ -57,6 +57,7 @@ void obstacle_collision_handler(body_t *body1, body_t *body2, vector_t axis,
   } else if (player_right_edge > obstacle_left_edge ||
              obstacle_left_edge - player_right_edge < EDGE_TOLERANCE) {
     state->is_game_over = true;
+    state->is_magnet_activated = false;
     body_remove(obstacle);
     state->n_queued_obstacles -= 1;
   }
