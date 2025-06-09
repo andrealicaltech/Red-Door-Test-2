@@ -29,6 +29,7 @@ void loop() {
 #endif
     return;
   } else if (game_over) {
+    emscripten_free(state);
     SDL_Quit();
   }
 }

@@ -8,7 +8,7 @@
 #include "list.h"
 #include "utils.h"
 
-const double MAGNET_ACCELERATION_S = 1250.0;
+const double MAGNET_ACCELERATION_S = 2500.0;
 const size_t MAGNET_NUM_POINTS = 25;
 const double MAGNET_IMPACT_RAD = 250.0;
 
