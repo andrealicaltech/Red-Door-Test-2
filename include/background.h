@@ -22,7 +22,7 @@ void render_screen(const char *screen_key, SDL_Rect *viewport);
 
 void render_layers(SDL_Texture *texture, double *x, SDL_Rect *viewport);
 
-body_t *make_player(double w, double h, vector_t center);
+body_t *make_object(double w, double h, vector_t center, void *info);
 
 body_t *init_player(state_t *state);
 

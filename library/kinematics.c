@@ -27,18 +27,18 @@ void on_key(char key, key_event_type_t type, double held_time, state_t *state) {
       reset_game(state);
       return;
     case LEFT_ARROW:
-      if (state->n_coins_collected >= 10) {
+      if (state->n_coins_collected >= PRICE) {
         state->sprite_path = (char *)PLAYER_SPRITE_ANDREA_PATH;
-        state->n_coins_collected = state->n_coins_collected - 10;
+        state->n_coins_collected = state->n_coins_collected - PRICE;
       }
       return;
     case UP_ARROW:
       state->sprite_path = (char *)PLAYER_SPRITE_AMUDHAN_PATH;
       return;
     case RIGHT_ARROW:
-      if (state->n_coins_collected >= 10) {
+      if (state->n_coins_collected >= PRICE) {
         state->sprite_path = (char *)PLAYER_SPRITE_ARJUN_PATH;
-        state->n_coins_collected = state->n_coins_collected - 10;
+        state->n_coins_collected = state->n_coins_collected - PRICE;
       }
     }
   }

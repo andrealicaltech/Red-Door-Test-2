@@ -3,6 +3,10 @@
 
 #include "constants.h"
 
+const size_t AUDIO_PARAM_1 = 22050;
+const size_t AUDIO_PARAM_2 = 2;
+const size_t AUDIO_PARAM_3 = 4096;
+
 // Our wave file
 // Mix_Chunk *wave = NULL;
 // Our music file
@@ -15,7 +19,7 @@ int play_music(char *music_path, bool side_by_side) {
     return -1;
   }
   // Initialize SDL_mixer
-  if (Mix_OpenAudio(22050, MIX_DEFAULT_FORMAT, 2, 4096) == -1) {
+  if (Mix_OpenAudio(AUDIO_PARAM_1, MIX_DEFAULT_FORMAT, AUDIO_PARAM_2, AUDIO_PARAM_3) == -1) {
     return -1;
   }
 
@@ -54,5 +58,4 @@ int play_music(char *music_path, bool side_by_side) {
 
 void halt_music() {
   Mix_HaltMusic();
-  printf("I'm here here!\n");
 }

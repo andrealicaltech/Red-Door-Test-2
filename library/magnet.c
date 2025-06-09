@@ -29,7 +29,6 @@ body_t *make_magnet(double radius, vector_t center) {
 
 void magnet_body_collision_handler(body_t *body1, body_t *body2, vector_t axis,
                                    void *aux, double force_const) {
-  printf("Collided with magnet!\n");
 
   state_t *state = (state_t *)aux;
   state->is_magnet_activated = true;

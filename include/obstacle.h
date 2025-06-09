@@ -6,6 +6,9 @@
 #include "utils.h"
 #include "vector.h"
 
+//also used in quesadilla.c
+extern const double FACTOR;
+
 /*
 Makes a rectangular-shaped obstacle of the specified height and width
 */

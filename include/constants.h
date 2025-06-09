@@ -42,6 +42,15 @@ extern const double COIN_RAD;
 extern const size_t PLAYER_STANDING_PTS;
 extern const size_t PLAYER_RUNNING;
 extern const size_t QUESADILLA_PTS;
+extern const size_t PRICE;
+
+// text rendering dimensions
+extern const vector_t SCORE_TL;
+extern const vector_t SCORE_SIZE;
+extern const vector_t HIGH_SCORE_TL;
+extern const vector_t HIGH_SCORE_SIZE;
+extern const vector_t COIN_TL;
+extern const vector_t COIN_SIZE;
 
 // player movements
 extern const vector_t DUCK_INITIAL_VELOCITY;
