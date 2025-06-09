@@ -3,7 +3,9 @@
 /**
  *Plays the music that is sent in to the file
  */
-int play_music(char *music_path, bool side_by_side);
+#include <SDL2/SDL_mixer.h>
+
+int play_music(char *music_path);
 
 void halt_music();
 

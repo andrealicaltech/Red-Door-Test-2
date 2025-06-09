@@ -228,7 +228,6 @@ void gen_coin_arc(state_t *state, bool should_include_powerup) {
     }
   }
   if (on_top_points) {
-
     for (size_t i = 0; i < list_size(on_top_points); i++) {
       list_add(points, list_get(on_top_points, i));
     }
@@ -238,7 +237,6 @@ void gen_coin_arc(state_t *state, bool should_include_powerup) {
       should_include_powerup ? powerup_idx = rand() % list_size(points) : -1;
   for (size_t i = 0; i < list_size(points); i++) {
     vector_t *center = list_get(points, i);
-
     body_t *new_body = (i == powerup_idx) ? make_magnet(MAGNET_RAD, *center)
                                           : make_coin(COIN_RAD, *center);
     scene_add_body(state->scene, new_body);

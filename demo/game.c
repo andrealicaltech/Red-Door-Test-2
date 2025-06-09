@@ -1,4 +1,5 @@
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_mixer.h>
 #include <assert.h>
 #include <math.h>
 #include <stdio.h>
@@ -22,9 +23,7 @@
 #include "sdl_wrapper.h"
 #include "utils.h"
 // moved background positions to background.c
-
 state_t *emscripten_init() {
-
   asset_cache_init();
   sdl_init(MIN, MAX);
   TTF_Init();
@@ -52,7 +51,10 @@ state_t *emscripten_init() {
 
   init_parameters(state);
   state->all_points = list_init(MAX_GAMES, NULL);
-
+  state->play_music = true;
+  state->music = NULL;
+  state->sound_effects = NULL;
+  play_music((char *)MENU_MUSIC_PATH);
   return state;
 }
 
@@ -62,12 +64,16 @@ bool emscripten_main(state_t *state) {
 
   if (!state->started && !state->is_game_over) {
     render_screen("start", &viewport);
-    play_music((char *)MENU_MUSIC_PATH, false);
   } // start screen
 
   if (state->started) {
     double dt = time_since_last_tick();
-    play_music((char *)GAME_MUSIC_PATH, false);
+    if (state->play_music) {
+      play_music((char *)GAME_MUSIC_PATH);
+      state->play_music = false;
+    }
+    state->time_elapsed += dt;
+    state->points = (size_t)(state->time_elapsed);
     update_bg_velocity(state, dt);
     update_bg_pos(state, dt);
     render_layers(asset_cache_lookup("sky"), &state->bg.sky_pos.x, &viewport);
@@ -111,7 +117,13 @@ bool emscripten_main(state_t *state) {
 
     if (state->is_game_over) {
       state->started = false;
+      state->time_elapsed = 0;
+      halt_music();
+      state->play_music = true;
+      play_music((char *)LOSE_MUSIC_PATH);
       update_score(state);
+      state->points = 0;
+      state->delay_time_remaining = MAX_DELAY_TIME;
     }
   } // game screen
 
@@ -124,6 +136,11 @@ bool emscripten_main(state_t *state) {
     state->delay_time_remaining -= time;
     if (state->delay_time_remaining <= 0.0) {
       state->show_shop = true;
+      if (state->play_music) {
+        halt_music();
+        play_music((char *)MENU_MUSIC_PATH);
+        state->play_music = false;
+      }
       state->delay_time_remaining = MAX_DELAY_TIME;
     }
   } // game over screen

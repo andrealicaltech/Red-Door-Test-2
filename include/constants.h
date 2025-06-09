@@ -92,6 +92,7 @@ extern const char *QUESADILLA_PATH;
 extern const char *GAME_MUSIC_PATH;
 extern const char *JUMP_MUSIC_PATH;
 extern const char *MENU_MUSIC_PATH;
+extern const char *LOSE_MUSIC_PATH;
 extern const char *OBSTACLE_GEN_PATH_TEMPLATE;
 extern const char *OBSTACLE_IMG_EXT;
 extern const double OBSTACLE_START_WAIT_TIME;
