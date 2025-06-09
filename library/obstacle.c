@@ -184,6 +184,7 @@ void update_obstacles(state_t *state) {
                    obstacle_collision_handler, state, 0, NULL);
 
   state->n_queued_obstacles += 1;
+  //free(path);
 }
 
 void clean_obstacles(state_t *state) {
