@@ -16,11 +16,11 @@
 #include "kinematics.h"
 #include "leaderboard.h"
 #include "magnet.h"
-#include "utils.h"
 #include "music.h"
 #include "obstacle.h"
 #include "quesedilla.h"
 #include "sdl_wrapper.h"
+#include "utils.h"
 // moved background positions to background.c
 
 /*

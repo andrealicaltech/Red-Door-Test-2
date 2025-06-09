@@ -10,8 +10,8 @@
 #include "forces.h"
 #include "game_state.h"
 #include "kinematics.h"
-#include "utils.h"
 #include "obstacle.h"
+#include "utils.h"
 
 body_t *make_scoreboard(double width, double height, vector_t center,
                         color_t color) {

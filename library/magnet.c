@@ -5,8 +5,8 @@
 #include "constants.h"
 #include "forces.h"
 #include "game_state.h"
-#include "utils.h"
 #include "list.h"
+#include "utils.h"
 
 const double MAGNET_ACCELERATION_S = 1250.0;
 const size_t MAGNET_NUM_POINTS = 25;

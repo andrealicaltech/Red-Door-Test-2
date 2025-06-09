@@ -2,8 +2,8 @@
 #define __OBSTACLE_H__
 
 #include "body.h"
-#include "utils.h"
 #include "state.h"
+#include "utils.h"
 #include "vector.h"
 
 /*

@@ -11,9 +11,9 @@
 #include "forces.h"
 #include "game_state.h"
 #include "kinematics.h"
-#include "utils.h"
 #include "obstacle.h"
 #include "sdl_wrapper.h"
+#include "utils.h"
 
 const vector_t SKY_BACKGROUND = (vector_t){.x = 1000, .y = 500};
 const vector_t SKY_CENTER = (vector_t){.x = 500, .y = 250};
