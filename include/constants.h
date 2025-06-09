@@ -65,7 +65,6 @@ extern const color_t MAGNET_COLOR;
 extern const color_t TEXT_COLOR;
 extern const double MAX_DELAY_TIME;
 
-
 extern const size_t BODY_ASSETS;
 extern const char *START_SCREEN_PATH;
 extern const char *GAME_OVER_PATH;

@@ -23,7 +23,6 @@
 #include "utils.h"
 // moved background positions to background.c
 
-
 state_t *emscripten_init() {
 
   asset_cache_init();
@@ -123,7 +122,7 @@ bool emscripten_main(state_t *state) {
 
     double time = time_since_last_tick();
     state->delay_time_remaining -= time;
-    if (state -> delay_time_remaining <= 0.0){
+    if (state->delay_time_remaining <= 0.0) {
       state->show_shop = true;
       state->delay_time_remaining = MAX_DELAY_TIME;
     }
