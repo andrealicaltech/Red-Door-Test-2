@@ -18,7 +18,6 @@ Returns maximum value of two doubles and b
 */
 double max_d(double a, double b);
 
-
 char *get_player_sprite_duck_path(state_t *state);
 
 char *get_player_sprite_normal_path(state_t *state);
