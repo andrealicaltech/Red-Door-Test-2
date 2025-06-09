@@ -198,12 +198,6 @@ void clean_obstacles(state_t *state) {
       if (obst_pos.x + (obst_dims.x / 2) < MIN.x) {
         state->n_queued_obstacles -= 1;
         body_remove(body);
-
-        // This should never happen if obstacle generation and edge detection is
-        // correct
-        if (state->curr_player_obstacle == body) {
-          state->curr_player_obstacle = NULL;
-        }
       } else {
         body_set_velocity(body, vec_multiply(-1, state->bg.bg_3_building_vel));
       }

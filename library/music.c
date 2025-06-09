@@ -18,8 +18,8 @@ int play_music(char *music_path, bool side_by_side, Mix_Music *music,
     return -1;
   }
   // Initialize SDL_mixer
-  if (Mix_OpenAudio(AUDIO_PARAM_1, MIX_DEFAULT_FORMAT, value,
-                    AUDIO_PARAM_3) == -1) {
+  if (Mix_OpenAudio(AUDIO_PARAM_1, MIX_DEFAULT_FORMAT, value, AUDIO_PARAM_3) ==
+      -1) {
     return -1;
   }
 

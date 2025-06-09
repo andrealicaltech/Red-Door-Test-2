@@ -64,7 +64,7 @@ void render_score_text(state_t *state) {
       malloc(sizeof(char) *
              (log10(1 + state->points) + strlen("High score: ") + PRICE));
   if (list_size(state->all_points) == 0) {
-    sprintf(high_score_text, "High Score: %f", state->points);
+    sprintf(high_score_text, "High Score: %zu", (size_t)(state->points));
   } else {
     sprintf(high_score_text, "High Score: %zu",
             (size_t)(max_d(*((double *)(list_get(state->all_points, 0))),

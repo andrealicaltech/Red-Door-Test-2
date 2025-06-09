@@ -72,6 +72,8 @@ bool emscripten_main(state_t *state) {
       play_music((char *)GAME_MUSIC_PATH, false, state->music, 2);
       state->play_music = false;
     }
+    state->time_elapsed += dt;
+    state->points = (size_t)(state->time_elapsed);
     update_bg_velocity(state, dt);
     update_bg_pos(state, dt);
     render_layers(asset_cache_lookup("sky"), &state->bg.sky_pos.x, &viewport);
@@ -115,6 +117,8 @@ bool emscripten_main(state_t *state) {
 
     if (state->is_game_over) {
       state->started = false;
+      state->points = 0;
+      state->time_elapsed = 0;
       halt_music();
       play_music(MENU_MUSIC_PATH, false, state->music, 2);
       state->play_music = true;

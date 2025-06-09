@@ -63,6 +63,7 @@ struct state {
   size_t n_coins_collected;
   list_t *all_points;
   const TTF_Font *font;
+  double time_elapsed;
 
   Mix_Music *music;
   Mix_Music *sound_effects;
