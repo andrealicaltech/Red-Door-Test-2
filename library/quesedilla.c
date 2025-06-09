@@ -22,7 +22,7 @@ const double Y_TOLERANCE = 10.0;
 const double PARABOLIC_PATH_PCT = 50.0;
 const double MAGNET_TRANSLATION = 15.0;
 const double SPACING_LIMIT = 1.0;
-const vector_t OBS_SURFACE = (vector_t) {.x = 0.4, .y = 1.0};
+const vector_t OBS_SURFACE = (vector_t){.x = 0.4, .y = 1.0};
 
 double coin_spacing(state_t *state) { return COIN_SPACING; }
 
@@ -79,7 +79,7 @@ list_t *parabolic_path(state_t *state, vector_t min_start_pos,
       state->bg.bg_3_building_vel.x;
 
   double delta = max_end_pos.x - min_start_pos.x;
-  
+
   // Need tolerance between expected x_dist and delta
   if (delta < 0 || delta - expected_x_dist_with_jump < SPACING_LIMIT) {
     return NULL;
@@ -200,12 +200,12 @@ void gen_coin_arc(state_t *state, bool should_include_powerup) {
   // Generate coins above the surface of the obstacles, with height equal to 50%
   // of obstacle height to get the same visual effect Add 10% padding on both
   // sides
-  vector_t last_obst_begin =
-      vec_subtract(last_obst_centroid, (vector_t){.x = OBS_SURFACE.x * last_obst_dim.x,
-                                                  .y = -OBS_SURFACE.y * last_obst_dim.y});
-  vector_t last_obst_end =
-      vec_add(last_obst_centroid, (vector_t){.x = OBS_SURFACE.x * last_obst_dim.x,
-                                             .y = OBS_SURFACE.y * last_obst_dim.y});
+  vector_t last_obst_begin = vec_subtract(
+      last_obst_centroid, (vector_t){.x = OBS_SURFACE.x * last_obst_dim.x,
+                                     .y = -OBS_SURFACE.y * last_obst_dim.y});
+  vector_t last_obst_end = vec_add(
+      last_obst_centroid, (vector_t){.x = OBS_SURFACE.x * last_obst_dim.x,
+                                     .y = OBS_SURFACE.y * last_obst_dim.y});
   list_t *on_top_points = NULL;
   if (ontop_roll < PARABOLIC_PATH_PCT) {
     on_top_points = parabolic_path(state, last_obst_begin, last_obst_end);
@@ -222,25 +222,24 @@ void gen_coin_arc(state_t *state, bool should_include_powerup) {
   // Concatenate the two lists of points to one array. Handle possibility that
   // 0, 1, or both may be null
   if (ground_points) {
-    
+
     for (size_t i = 0; i < list_size(ground_points); i++) {
       list_add(points, list_get(ground_points, i));
     }
   }
   if (on_top_points) {
-    
+
     for (size_t i = 0; i < list_size(on_top_points); i++) {
       list_add(points, list_get(on_top_points, i));
     }
   }
-  
 
   body_t *player_body = get_player(state);
   size_t powerup_idx =
       should_include_powerup ? powerup_idx = rand() % list_size(points) : -1;
   for (size_t i = 0; i < list_size(points); i++) {
     vector_t *center = list_get(points, i);
-    
+
     body_t *new_body = (i == powerup_idx) ? make_magnet(MAGNET_RAD, *center)
                                           : make_coin(COIN_RAD, *center);
     scene_add_body(state->scene, new_body);

@@ -49,17 +49,20 @@ void create_reg_text(TTF_Font *font, vector_t top_left, vector_t size,
 }
 
 void render_score_text(state_t *state) {
-  vector_t score_rectangle_tl =
-      (vector_t){MAX.x - LEADERBOARD_SIZE.x * SCORE_TL.x, LEADERBOARD_SIZE.y * SCORE_TL.y};
-  vector_t score_size =
-      (vector_t){LEADERBOARD_SIZE.x * SCORE_SIZE.x, LEADERBOARD_SIZE.y * SCORE_SIZE.y};
+  vector_t score_rectangle_tl = (vector_t){
+      MAX.x - LEADERBOARD_SIZE.x * SCORE_TL.x, LEADERBOARD_SIZE.y * SCORE_TL.y};
+  vector_t score_size = (vector_t){LEADERBOARD_SIZE.x * SCORE_SIZE.x,
+                                   LEADERBOARD_SIZE.y * SCORE_SIZE.y};
   create_reg_text((TTF_Font *)state->font, score_rectangle_tl, score_size,
                   "Score: ", state->points);
   SDL_Rect *high_score_rectangle =
-      sdl_get_rect(MAX.x - LEADERBOARD_SIZE.x * HIGH_SCORE_TL.x, LEADERBOARD_SIZE.y * HIGH_SCORE_TL.y,
-                   LEADERBOARD_SIZE.x * HIGH_SCORE_SIZE.x, LEADERBOARD_SIZE.y * HIGH_SCORE_SIZE.y);
-  char *high_score_text = malloc(
-      sizeof(char) * (log10(1 + state->points) + strlen("High score: ") + PRICE));
+      sdl_get_rect(MAX.x - LEADERBOARD_SIZE.x * HIGH_SCORE_TL.x,
+                   LEADERBOARD_SIZE.y * HIGH_SCORE_TL.y,
+                   LEADERBOARD_SIZE.x * HIGH_SCORE_SIZE.x,
+                   LEADERBOARD_SIZE.y * HIGH_SCORE_SIZE.y);
+  char *high_score_text =
+      malloc(sizeof(char) *
+             (log10(1 + state->points) + strlen("High score: ") + PRICE));
   if (list_size(state->all_points) == 0) {
     sprintf(high_score_text, "High Score: %f", state->points);
   } else {
@@ -73,10 +76,10 @@ void render_score_text(state_t *state) {
 }
 
 void render_coin_text(state_t *state) {
-  vector_t coin_rectangle_tl =
-      (vector_t){LEADERBOARD_SIZE.x * COIN_TL.x, LEADERBOARD_SIZE.y * COIN_TL.y};
-  vector_t coin_size =
-      (vector_t){LEADERBOARD_SIZE.x * COIN_SIZE.x, LEADERBOARD_SIZE.y * COIN_SIZE.y};
+  vector_t coin_rectangle_tl = (vector_t){LEADERBOARD_SIZE.x * COIN_TL.x,
+                                          LEADERBOARD_SIZE.y * COIN_TL.y};
+  vector_t coin_size = (vector_t){LEADERBOARD_SIZE.x * COIN_SIZE.x,
+                                  LEADERBOARD_SIZE.y * COIN_SIZE.y};
   create_reg_text((TTF_Font *)state->font, coin_rectangle_tl, coin_size,
                   "Coins: ", state->n_coins_collected);
 }

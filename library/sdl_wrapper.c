@@ -1,4 +1,5 @@
 #include "sdl_wrapper.h"
+#include "obstacle.h"
 #include <SDL2/SDL.h>
 #include <SDL2/SDL2_gfxPrimitives.h>
 #include <SDL2/SDL_image.h>
@@ -7,7 +8,6 @@
 #include <math.h>
 #include <stdlib.h>
 #include <time.h>
-#include "obstacle.h"
 
 const char WINDOW_TITLE[] = "CS 3";
 const size_t WINDOW_WIDTH = 1000;

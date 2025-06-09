@@ -59,7 +59,7 @@ void render_screen(const char *screen_key, SDL_Rect *viewport) {
   sdl_render_image(screen, viewport);
 }
 
-//render all background layers
+// render all background layers
 void render_layers(SDL_Texture *texture, double *x, SDL_Rect *viewport) {
   *x = fmod(*x, viewport->w);
   if (*x > 0) {
@@ -76,7 +76,7 @@ void render_layers(SDL_Texture *texture, double *x, SDL_Rect *viewport) {
   sdl_render_image(texture, &dest2);
 }
 
-//initialize box
+// initialize box
 body_t *make_object(double w, double h, vector_t center, void *info) {
   list_t *c = list_init(4, free);
   vector_t *v1 = malloc(sizeof(vector_t));
@@ -94,14 +94,14 @@ body_t *make_object(double w, double h, vector_t center, void *info) {
   vector_t *v4 = malloc(sizeof(vector_t));
   *v4 = (vector_t){0, h};
   list_add(c, v4);
-  body_t *object =
-      body_init_with_info(c, 1, SPRITE_COLOR, info, NULL);
+  body_t *object = body_init_with_info(c, 1, SPRITE_COLOR, info, NULL);
   body_set_centroid(object, center);
   return object;
 }
 
 body_t *init_player(state_t *state) {
-  body_t *player = make_object(PLAYER_DIMS.x, PLAYER_DIMS.y, PLAYER_CENTER_POS, (void *)PLAYER_INFO);
+  body_t *player = make_object(PLAYER_DIMS.x, PLAYER_DIMS.y, PLAYER_CENTER_POS,
+                               (void *)PLAYER_INFO);
   body_set_centroid(player, PLAYER_CENTER_POS);
   state->player = player;
   scene_add_body(state->scene, player);

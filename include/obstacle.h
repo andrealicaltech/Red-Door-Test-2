@@ -6,7 +6,7 @@
 #include "utils.h"
 #include "vector.h"
 
-//also used in quesadilla.c
+// also used in quesadilla.c
 extern const double FACTOR;
 
 /*

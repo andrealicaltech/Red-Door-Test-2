@@ -4,13 +4,13 @@
 
 #include "asset.h"
 #include "asset_cache.h"
+#include "background.h"
 #include "collision.h"
 #include "constants.h"
 #include "forces.h"
 #include "game_state.h"
 #include "kinematics.h"
 #include "obstacle.h"
-#include "background.h"
 
 const double EDGE_TOLERANCE = 3.0;
 const double FACTOR = 0.5;
@@ -47,8 +47,7 @@ void obstacle_collision_handler(body_t *body1, body_t *body2, vector_t axis,
   double player_right_edge = player_centroid.x + dim.x;
   double obstacle_left_edge = obstacle_centroid.x - ob_dim.x;
 
-  double y_gap = (player_centroid.y - dim.y) -
-                 (obstacle_centroid.y + ob_dim.y);
+  double y_gap = (player_centroid.y - dim.y) - (obstacle_centroid.y + ob_dim.y);
   if (player_right_edge >= obstacle_left_edge &&
       fabs(y_gap) <= (get_curr_gravity(state).y * AVG_DT_S)) {
     body_set_velocity(player, VEC_ZERO);
@@ -114,13 +113,12 @@ double next_obst_x(state_t *state, body_t *last_obstacle) {
     final_x = (last_obstacle_centroid.x - last_dim.x -
                smallest_clearing_dist_before_obst) +
               expected_x_dist_with_jump;
-  
+
   } else {
     double fall_time =
         sqrt(2 * last_obstacle_dims.y / get_curr_gravity(state).y);
-    final_x = last_obstacle_centroid.x + last_dim.x +
-              (fall_time * curr_obst_speed.x);
-  
+    final_x =
+        last_obstacle_centroid.x + last_dim.x + (fall_time * curr_obst_speed.x);
   }
 
   // Additional random spacing between obstacles
@@ -147,7 +145,7 @@ body_t *get_nth_obstacle(state_t *state, size_t n) {
       return body;
     }
   }
-  
+
   return NULL;
 }
 
@@ -155,7 +153,7 @@ void update_obstacles(state_t *state) {
   size_t n_stacked = (size_t)(1 + (rand() % (MAX_STACKED_OBSTACLES - 1)));
   size_t width = n_stacked * OBSTACLE_HW;
   size_t height = OBSTACLE_HW;
-  
+
   // Default value is edge of the screen
   double x = MAX.x;
   double y =
@@ -170,7 +168,8 @@ void update_obstacles(state_t *state) {
   }
 
   vector_t new_centroid = (vector_t){.x = (FACTOR * width) + x, .y = y};
-  body_t *new_obstacle = make_object(width, height, new_centroid, (void *)OBSTACLE_INFO);
+  body_t *new_obstacle =
+      make_object(width, height, new_centroid, (void *)OBSTACLE_INFO);
 
   scene_add_body(state->scene, new_obstacle);
   char *path = malloc(sizeof(char) * strlen(OBSTACLE_GEN_PATH_TEMPLATE) +
