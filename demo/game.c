@@ -107,6 +107,7 @@ bool emscripten_main(state_t *state) {
 
     clean_obstacles(state);
     clean_coins(state);
+    clean_magnet(state);
     check_player_falling_off_edge(state);
     apply_magnet(state, dt);
 

@@ -197,7 +197,7 @@ body_t *get_nth_obstacle(state_t *state, size_t n) {
 }
 
 void update_obstacles(state_t *state) {
-  size_t n_stacked = (size_t) (1 + (rand() % (MAX_STACKED_OBSTACLES - 1)));
+  size_t n_stacked = (size_t)(1 + (rand() % (MAX_STACKED_OBSTACLES - 1)));
   size_t width = n_stacked * OBSTACLE_HW;
   size_t height = OBSTACLE_HW;
 
@@ -218,12 +218,11 @@ void update_obstacles(state_t *state) {
   body_t *new_obstacle = make_obstacle(width, height, new_centroid);
 
   scene_add_body(state->scene, new_obstacle);
-  printf("Added obstacle to scene\n");
-  char *path = malloc(sizeof(char) * strlen(OBSTACLE_GEN_PATH_TEMPLATE) + (log10(n_stacked) + 1) strlen(OBSTACLE_IMG_EXT) + 1);
-  sprintf(path, "%s%zu%s", OBSTACLE_GEN_PATH_TEMPLATE, n_stacked, OBSTACLE_IMG_EXT);
-  printf("New path=%s\n", path);
+  char *path = malloc(sizeof(char) * strlen(OBSTACLE_GEN_PATH_TEMPLATE) +
+                      (log10(n_stacked) + 1) + strlen(OBSTACLE_IMG_EXT) + 1);
+  sprintf(path, "%s%zu%s", OBSTACLE_GEN_PATH_TEMPLATE, n_stacked,
+          OBSTACLE_IMG_EXT);
   asset_make_image_with_body(path, new_obstacle);
-  printf("made image with body\n");
   body_set_velocity(new_obstacle,
                     vec_multiply(-1, state->bg.bg_3_building_vel));
 

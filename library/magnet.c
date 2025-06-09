@@ -7,9 +7,9 @@
 #include "game_state.h"
 #include "list.h"
 
-const double MAGNET_ACCELERATION_S = 250.0;
+const double MAGNET_ACCELERATION_S = 1250.0;
 const size_t MAGNET_NUM_POINTS = 25;
-const double MAGNET_IMPACT_RAD = 100.0;
+const double MAGNET_IMPACT_RAD = 250.0;
 
 body_t *make_magnet(double radius, vector_t center) {
   center.y += radius;
@@ -36,7 +36,6 @@ void magnet_body_collision_handler(body_t *body1, body_t *body2, vector_t axis,
 
   bool b1_is_magnet = strcmp(body_get_info(body1), MAGNET_INFO) == 0;
   body_t *magnet = b1_is_magnet ? body1 : body2;
-
   // The player 'eats' the magnet
   body_remove(magnet);
 }
@@ -51,15 +50,37 @@ void apply_magnet(state_t *state, double dt) {
       body_t *body = scene_get_body(state->scene, i);
       char *info = body_get_info(body);
       if (info && strcmp(info, COIN_INFO) == 0) {
-        printf("Found coin in activated state\n");
         vector_t coin_centroid = body_get_centroid(body);
-        vector_t displacement = vec_subtract(player_centroid, coin_centroid);
-        double dist = vec_get_length(displacement);
-        if (dist < MAGNET_IMPACT_RAD) {
-          vector_t translation =
-              vec_multiply(MAGNET_ACCELERATION_S * dt / dist, displacement);
-          body_set_centroid(player, translation);
+        if (coin_centroid.x < MAX.x){
+            vector_t displacement = vec_subtract(player_centroid, coin_centroid);
+            double dist = vec_get_length(displacement);
+            printf("Coin dist=%f\n", dist);
+            if (dist < MAGNET_IMPACT_RAD) {
+              vector_t acceleration =
+                  vec_multiply(MAGNET_ACCELERATION_S * dt / dist, displacement);
+              printf("acceleration.x=%f, acceleration.y=%f\n", acceleration.x, acceleration.y);
+              body_set_velocity(body, vec_add(
+                body_get_velocity(body), acceleration
+              ));
+            }
         }
+      }
+    }
+  }
+}
+
+void clean_magnet(state_t *state) {
+  if (scene_bodies(state->scene) == 1) {
+    return;
+  }
+  for (size_t i = 0; i < scene_bodies(state->scene); i++) {
+    body_t *body = scene_get_body(state->scene, i);
+    if (strcmp(body_get_info(body), MAGNET_INFO) == 0) {
+      vector_t magnet_pos = body_get_centroid(body);
+      if (magnet_pos.x + MAGNET_RAD < MIN.x) {
+        body_remove(body);
+      } else {
+        body_set_velocity(body, vec_multiply(-1, state->bg.bg_3_building_vel));
       }
     }
   }

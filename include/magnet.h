@@ -11,4 +11,5 @@ void apply_magnet(state_t *state, double dt);
 void magnet_body_collision_handler(body_t *body1, body_t *body2, vector_t axis,
                                    void *aux, double force_const);
 
+void clean_magnet(state_t *state);
 #endif

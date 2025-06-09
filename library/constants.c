@@ -25,7 +25,7 @@ const double MAX_TIME_UPDATE = 3.0;
 const char *OBSTACLE_INFO = "obstacle";
 const char *MAGNET_INFO = "magnet";
 const char *COIN_INFO = "coin";
-const double MAGNET_FREQUENCY = 0.99;
+const double MAGNET_FREQUENCY = 0.25;
 const double MAGNET_PERIOD_S = 20.0;
 const char *LEADERBOARD_INFO = "leaderboard";
 

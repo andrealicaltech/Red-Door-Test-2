@@ -196,7 +196,9 @@ void gen_coin_arc(state_t *state, bool should_include_powerup) {
       body_t *new_body = (i == powerup_idx) ? make_magnet(MAGNET_RAD, *center)
                                             : make_coin(COIN_RAD, *center);
       scene_add_body(state->scene, new_body);
-      char *path = (i == powerup_idx) ? CARD_PATH : QUESADILLA_PATH;
+
+      // Cast to char * to get rid of warnings
+      char *path = (i == powerup_idx) ? (char *) CARD_PATH : (char *) QUESADILLA_PATH;
       collision_handler_t handler = (i == powerup_idx)
                                         ? magnet_body_collision_handler
                                         : quesedilla_collision_handler;
