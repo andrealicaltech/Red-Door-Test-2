@@ -180,7 +180,6 @@ void update_obstacles(state_t *state) {
   body_set_velocity(new_obstacle,
                     vec_multiply(-1, state->bg.bg_3_building_vel));
 
-  
   create_collision(state->scene, state->player, new_obstacle,
                    obstacle_collision_handler, state, 0, NULL);
 

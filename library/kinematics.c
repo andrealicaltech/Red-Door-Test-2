@@ -53,7 +53,6 @@ void on_key(char key, key_event_type_t type, double held_time, state_t *state) {
 
     if (!state->show_shop && state->started &&
         state->player_motion == REGULAR) {
-      
 
       switch (key) {
       case UP_ARROW:
@@ -86,7 +85,7 @@ void manipulate_player(state_t *state, double dt) {
           (get_curr_gravity(state).y * dt)))) {
       body_set_velocity(state->player, VEC_ZERO);
       body_set_centroid(state->player, (vector_t){.x = PLAYER_CENTER_POS.x,
-                                                .y = state->jump_start_y});
+                                                  .y = state->jump_start_y});
       if (player_centroid.y == PLAYER_CENTER_POS.y) {
         // Edge case where jump off obstacle before falling off
         state->curr_player_obstacle = NULL;
@@ -97,7 +96,8 @@ void manipulate_player(state_t *state, double dt) {
       if (player_velocity.y <= 0) {
         new_y_vel = max_d(new_y_vel, -1.0 * JUMP_INITIAL_VELOCITY.y);
       }
-      body_set_velocity(state->player, (vector_t){.x = 0, .y = 1.0 * new_y_vel});
+      body_set_velocity(state->player,
+                        (vector_t){.x = 0, .y = 1.0 * new_y_vel});
     }
     break;
   case DUCK:

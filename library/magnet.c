@@ -47,7 +47,7 @@ void apply_magnet(state_t *state, double dt) {
       state->is_magnet_activated = false;
       return;
     }
-    
+
     vector_t player_centroid = body_get_centroid(state->player);
 
     for (size_t i = 0; i < scene_bodies(state->scene); i++) {
