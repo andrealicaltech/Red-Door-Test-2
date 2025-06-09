@@ -27,19 +27,19 @@ void on_key(char key, key_event_type_t type, double held_time, state_t *state) {
       reset_game(state);
       return;
     case LEFT_ARROW:
-      // if (state->n_coins_collected >= 10) {
-      state->sprite_path = PLAYER_SPRITE_ANDREA_PATH;
-      //   state->n_coins_collected = state->n_coins_collected - 10;
-      // }
+      if (state->n_coins_collected >= 10) {
+        state->sprite_path = (char *)PLAYER_SPRITE_ANDREA_PATH;
+        state->n_coins_collected = state->n_coins_collected - 10;
+      }
       return;
     case UP_ARROW:
-      state->sprite_path = PLAYER_SPRITE_AMUDHAN_PATH;
+      state->sprite_path = (char *)PLAYER_SPRITE_AMUDHAN_PATH;
       return;
     case RIGHT_ARROW:
-      // if (state->n_coins_collected >= 10) {
-      state->sprite_path = PLAYER_SPRITE_ARJUN_PATH;
-      // state->n_coins_collected = state->n_coins_collected - 10;
-      //}
+      if (state->n_coins_collected >= 10) {
+        state->sprite_path = (char *)PLAYER_SPRITE_ARJUN_PATH;
+        state->n_coins_collected = state->n_coins_collected - 10;
+      }
     }
   }
 
@@ -60,7 +60,7 @@ void on_key(char key, key_event_type_t type, double held_time, state_t *state) {
         body_set_velocity(player_body, get_curr_jump_vel(state));
         state->player_motion = JUMP;
         state->points += 1;
-        play_music(JUMP_MUSIC_PATH, true);
+        play_music((char *)JUMP_MUSIC_PATH, true);
         state->jump_start_y = body_get_centroid(player_body).y;
         state->curr_player_obstacle = NULL;
         break;

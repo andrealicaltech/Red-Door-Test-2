@@ -120,23 +120,23 @@ void init_parameters(state_t *state) {
 
 void init_screens(state_t *state) {
   SDL_Texture *start =
-      asset_cache_obj_get_or_create(ASSET_IMAGE, START_SCREEN_PATH);
+      asset_cache_obj_get_or_create(ASSET_IMAGE, (char *)START_SCREEN_PATH);
   asset_cache_store_temp("start", start);
 
   SDL_Texture *game_over =
-      asset_cache_obj_get_or_create(ASSET_IMAGE, GAME_OVER_PATH);
+      asset_cache_obj_get_or_create(ASSET_IMAGE, (char *)GAME_OVER_PATH);
   asset_cache_store_temp("game over", game_over);
 
-  SDL_Texture *shop = asset_cache_obj_get_or_create(ASSET_IMAGE, SHOP_PATH);
+  SDL_Texture *shop = asset_cache_obj_get_or_create(ASSET_IMAGE, (char *)SHOP_PATH);
   asset_cache_store_temp("shop", shop);
   state->show_shop = false;
 }
 
 void make_layers(state_t *state) {
-  SDL_Texture *sky = asset_cache_obj_get_or_create(ASSET_IMAGE, SKY_PATH);
-  SDL_Texture *tree = asset_cache_obj_get_or_create(ASSET_IMAGE, TREE_PATH);
+  SDL_Texture *sky = asset_cache_obj_get_or_create(ASSET_IMAGE, (char *)SKY_PATH);
+  SDL_Texture *tree = asset_cache_obj_get_or_create(ASSET_IMAGE, (char *)TREE_PATH);
   SDL_Texture *building =
-      asset_cache_obj_get_or_create(ASSET_IMAGE, BUILDING_PATH);
+      asset_cache_obj_get_or_create(ASSET_IMAGE, (char *)BUILDING_PATH);
 
   background_init(state);
 
@@ -153,14 +153,7 @@ void reset_game(state_t *state) {
 
   background_init(state);
 
-  // scene_remove_body(state->scene, 0);
-  // body_free(state->player);
+  asset_remove_body(state->player);
 
-  // body_t *new_player = make_player(PLAYER_DIMS.x, PLAYER_DIMS.y,
-  // PLAYER_CENTER_POS); state->player = new_player;
-  // scene_add_body(state->scene, new_player);
-
-  // state->sprite_index = scene_bodies(state->scene);
-
-  // asset_make_image_with_body(state->sprite_path, new_player);
+  asset_make_image_with_body(state->sprite_path, state->player);
 }
