@@ -136,7 +136,7 @@ bool emscripten_main(state_t *state) {
     state->delay_time_remaining -= time;
     if (state->delay_time_remaining <= 0.0) {
       state->show_shop = true;
-      if (state->play_music){
+      if (state->play_music) {
         halt_music();
         play_music((char *)MENU_MUSIC_PATH);
         state->play_music = false;

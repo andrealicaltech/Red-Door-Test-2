@@ -16,8 +16,8 @@ int play_music(char *music_path) {
     return -1;
   }
   // Initialize SDL_mixer
-  if (Mix_OpenAudio(AUDIO_PARAM_1, MIX_DEFAULT_FORMAT, AUDIO_PARAM_2, AUDIO_PARAM_3) ==
-      -1) {
+  if (Mix_OpenAudio(AUDIO_PARAM_1, MIX_DEFAULT_FORMAT, AUDIO_PARAM_2,
+                    AUDIO_PARAM_3) == -1) {
     return -1;
   }
 
@@ -30,7 +30,7 @@ int play_music(char *music_path) {
   */
 
   // Load our music
-  Mix_Music* music = Mix_LoadMUS(music_path);
+  Mix_Music *music = Mix_LoadMUS(music_path);
   if (music == NULL)
     return -1;
   // if ( Mix_PlayChannel(-1, wave, 0) == -1 )
