@@ -44,7 +44,7 @@ void magnet_body_collision_handler(body_t *body1, body_t *body2, vector_t axis,
 void apply_magnet(state_t *state, double dt) {
 
   if (state->is_magnet_activated) {
-    if (state -> time_elapsed_with_magnet <= 0){
+    if (state->time_elapsed_with_magnet <= 0) {
       state->is_magnet_activated = false;
       return;
     }
