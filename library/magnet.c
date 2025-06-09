@@ -51,18 +51,18 @@ void apply_magnet(state_t *state, double dt) {
       char *info = body_get_info(body);
       if (info && strcmp(info, COIN_INFO) == 0) {
         vector_t coin_centroid = body_get_centroid(body);
-        if (coin_centroid.x < MAX.x){
-            vector_t displacement = vec_subtract(player_centroid, coin_centroid);
-            double dist = vec_get_length(displacement);
-            printf("Coin dist=%f\n", dist);
-            if (dist < MAGNET_IMPACT_RAD) {
-              vector_t acceleration =
-                  vec_multiply(MAGNET_ACCELERATION_S * dt / dist, displacement);
-              printf("acceleration.x=%f, acceleration.y=%f\n", acceleration.x, acceleration.y);
-              body_set_velocity(body, vec_add(
-                body_get_velocity(body), acceleration
-              ));
-            }
+        if (coin_centroid.x < MAX.x) {
+          vector_t displacement = vec_subtract(player_centroid, coin_centroid);
+          double dist = vec_get_length(displacement);
+          printf("Coin dist=%f\n", dist);
+          if (dist < MAGNET_IMPACT_RAD) {
+            vector_t acceleration =
+                vec_multiply(MAGNET_ACCELERATION_S * dt / dist, displacement);
+            printf("acceleration.x=%f, acceleration.y=%f\n", acceleration.x,
+                   acceleration.y);
+            body_set_velocity(body,
+                              vec_add(body_get_velocity(body), acceleration));
+          }
         }
       }
     }
