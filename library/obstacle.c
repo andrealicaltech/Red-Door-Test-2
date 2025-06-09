@@ -200,6 +200,7 @@ void update_obstacles(state_t *state) {
   size_t n_stacked = (size_t)(1 + (rand() % (MAX_STACKED_OBSTACLES - 1)));
   size_t width = n_stacked * OBSTACLE_HW;
   size_t height = OBSTACLE_HW;
+  printf("Making obstacle n_stacked=%zu, w=%zu, h=%zu\n", n_stacked, width, height);
 
   // Default value is edge of the screen
   double x = MAX.x;

@@ -30,6 +30,8 @@ list_t *flat_path(state_t *state, vector_t min_start_pos,
     return NULL;
   }
   double delta = (max_end_pos.x - min_start_pos.x);
+    printf("Linear path, got delta = %f\n", delta);
+  
   if (delta < 0) {
     return NULL;
   }
@@ -49,8 +51,12 @@ list_t *flat_path(state_t *state, vector_t min_start_pos,
           ? max_packed_coins
           : (rand() % (max_packed_coins - MIN_COINS_PER_PATH)) +
                 MIN_COINS_PER_PATH;
-  double empty_space = (max_end_pos.x - min_start_pos.x) -
+  double empty_space = (delta) -
                        ((coin_spacing(state) + (COIN_RAD * 2)) * packed_coins);
+  
+  if (empty_space <= 1.0){
+    return NULL;
+  }
   double x_offset = min_start_pos.x + (rand() % (int)empty_space);
 
   list_t *coin_positions = list_init(packed_coins, free);
@@ -72,8 +78,9 @@ list_t *parabolic_path(state_t *state, vector_t min_start_pos,
       state->bg.bg_3_building_vel.x;
 
   double delta = max_end_pos.x - min_start_pos.x;
+  printf("Parabola, expected_x_dist=%f, delta=%f\n", expected_x_dist_with_jump, delta);
   // Need tolerance between expected x_dist and delta
-  if (delta < 0 || expected_x_dist_with_jump - delta < 1.0) {
+  if (delta < 0 || delta - expected_x_dist_with_jump < 1.0) {
     return NULL;
   }
 
@@ -155,61 +162,96 @@ void gen_coin_arc(state_t *state, bool should_include_powerup) {
     return;
   }
 
-  // TODO: CQ - Clean this mess up
-
   body_t *slast_obstacle =
       get_nth_obstacle(state, state->n_queued_obstacles - 2);
   vector_t slast_obst_dim = get_obstacle_dims(slast_obstacle);
 
-  vector_t slast_obstacle_end =
-      vec_add(body_get_centroid(slast_obstacle),
-              (vector_t){.x = get_obstacle_dims(slast_obstacle).x * 0.5 +
-                              min_gap_after_obstacle(state, slast_obst_dim.y),
-                         .y = 0});
+  vector_t slast_obst_centroid = body_get_centroid(slast_obstacle);
 
   body_t *last_obstacle =
       get_nth_obstacle(state, state->n_queued_obstacles - 1);
   vector_t last_obst_dim = get_obstacle_dims(last_obstacle);
-  vector_t last_obstacle_begin =
-      vec_subtract(body_get_centroid(last_obstacle),
+  vector_t last_obst_centroid = body_get_centroid(last_obstacle);
+
+  uint8_t ground_roll = rand() % 100;
+  list_t *ground_points = NULL;
+
+  vector_t slast_obstacle_boundary =
+    vec_add(slast_obst_centroid,
+            (vector_t){.x = get_obstacle_dims(slast_obstacle).x * 0.5 +
+                            min_gap_after_obstacle(state, slast_obst_dim.y),
+                        .y = 0});
+  vector_t last_obstacle_boundary =
+      vec_subtract(last_obst_centroid,
                    (vector_t){.x = last_obst_dim.x * 0.5 +
                                    get_smallest_obst_clearing_dist(
                                        state, PLAYER_DIMS.y, last_obst_dim.y),
                               .y = 0});
-
-  list_t *points = NULL;
-
-  uint8_t roll = rand() % 100;
-  if (roll < PARABOLIC_PATH_PCT) {
-    points = parabolic_path(state, slast_obstacle_end, last_obstacle_begin);
+  if (ground_roll < PARABOLIC_PATH_PCT) {
+    ground_points = parabolic_path(state, slast_obstacle_boundary, last_obstacle_boundary);
   } else {
-    points = flat_path(state, slast_obstacle_end, last_obstacle_begin);
+    ground_points = flat_path(state, slast_obstacle_boundary, last_obstacle_boundary);
   }
-  if (points) {
-    body_t *player_body = get_player(state);
-    size_t powerup_idx =
-        should_include_powerup ? powerup_idx = rand() % list_size(points) : -1;
-    for (size_t i = 0; i < list_size(points); i++) {
-      vector_t *center = list_get(points, i);
-      body_t *new_body = (i == powerup_idx) ? make_magnet(MAGNET_RAD, *center)
-                                            : make_coin(COIN_RAD, *center);
-      scene_add_body(state->scene, new_body);
+  
+  uint8_t ontop_roll = rand() % 100;
+  // Generate coins above the surface of the obstacles, with height equal to 50% of obstacle height to get the same visual effect
+  // Add 10% padding on both sides
+  vector_t last_obst_begin = vec_subtract(last_obst_centroid, (vector_t) {.x=0.4*last_obst_dim.x, .y=-1.0 * last_obst_dim.y});
+  vector_t last_obst_end = vec_add(last_obst_centroid, (vector_t) {.x=0.4*last_obst_dim.x, .y=1.0*last_obst_dim.y});
+  list_t *on_top_points = NULL;
+  if (ontop_roll < PARABOLIC_PATH_PCT){
+    on_top_points = parabolic_path(state, last_obst_begin, last_obst_end);
+  } else {
+    on_top_points = flat_path(state, last_obst_begin, last_obst_end);
+  }
 
-      // Cast to char * to get rid of warnings
-      char *path =
-          (i == powerup_idx) ? (char *)CARD_PATH : (char *)QUESADILLA_PATH;
-      collision_handler_t handler = (i == powerup_idx)
-                                        ? magnet_body_collision_handler
-                                        : quesedilla_collision_handler;
-      asset_make_image_with_body(path, new_body);
-
-      create_collision(state->scene, player_body, new_body, handler, state, 0,
-                       NULL);
-      body_set_velocity(new_body,
-                        vec_multiply(-1, state->bg.bg_3_building_vel));
+  size_t final_points_size = ground_points ? list_size(ground_points) : 0;
+  final_points_size += on_top_points ? list_size(on_top_points) : 0;
+  if (final_points_size == 0){
+    return;
+  }
+  list_t *points = list_init(final_points_size + 1, free);
+  // Concatenate the two lists of points to one array. Handle possibility that 0, 1, or both may be null
+  if (ground_points){
+    printf("Adding ground points len=%zu\n", list_size(ground_points));
+    for (size_t i = 0; i < list_size(ground_points); i++){
+      list_add(points, list_get(ground_points, i));
     }
-    list_free(points);
   }
+  if (on_top_points){
+    printf("Adding on top points len=%zu\n", list_size(on_top_points));
+    for (size_t i = 0; i < list_size(on_top_points); i++){
+      list_add(points, list_get(on_top_points, i));
+    }
+  }
+  printf("Outside loops, now have list of size %zu\n", list_size(points));
+
+
+  body_t *player_body = get_player(state);
+  size_t powerup_idx =
+      should_include_powerup ? powerup_idx = rand() % list_size(points) : -1;
+  for (size_t i = 0; i < list_size(points); i++) {
+    vector_t *center = list_get(points, i);
+    printf("Making body at x=%f, y=%f\n", center->x, center->y);
+    body_t *new_body = (i == powerup_idx) ? make_magnet(MAGNET_RAD, *center)
+                                          : make_coin(COIN_RAD, *center);
+    scene_add_body(state->scene, new_body);
+
+    // Cast to char * to get rid of warnings
+    char *path =
+        (i == powerup_idx) ? (char *)CARD_PATH : (char *)QUESADILLA_PATH;
+    collision_handler_t handler = (i == powerup_idx)
+                                      ? magnet_body_collision_handler
+                                      : quesedilla_collision_handler;
+    asset_make_image_with_body(path, new_body);
+
+    create_collision(state->scene, player_body, new_body, handler, state, 0,
+                      NULL);
+    body_set_velocity(new_body,
+                      vec_multiply(-1, state->bg.bg_3_building_vel));
+  }
+  list_free(points);
+
 }
 
 void clean_coins(state_t *state) {

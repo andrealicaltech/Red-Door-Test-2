@@ -42,7 +42,12 @@ void magnet_body_collision_handler(body_t *body1, body_t *body2, vector_t axis,
 }
 
 void apply_magnet(state_t *state, double dt) {
+
   if (state->is_magnet_activated) {
+    if (state -> time_elapsed_with_magnet <= 0){
+      state->is_magnet_activated = false;
+      return;
+    }
     body_t *player_body = get_player(state);
     vector_t player_centroid = body_get_centroid(player_body);
 
@@ -54,12 +59,9 @@ void apply_magnet(state_t *state, double dt) {
         if (coin_centroid.x < MAX.x) {
           vector_t displacement = vec_subtract(player_centroid, coin_centroid);
           double dist = vec_get_length(displacement);
-          printf("Coin dist=%f\n", dist);
           if (dist < MAGNET_IMPACT_RAD) {
             vector_t acceleration =
                 vec_multiply(MAGNET_ACCELERATION_S * dt / dist, displacement);
-            printf("acceleration.x=%f, acceleration.y=%f\n", acceleration.x,
-                   acceleration.y);
             body_set_velocity(body,
                               vec_add(body_get_velocity(body), acceleration));
           }

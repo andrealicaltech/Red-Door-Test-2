@@ -62,7 +62,6 @@ void render_score_text(state_t *state) {
   if (list_size(state->all_points) == 0) {
     sprintf(high_score_text, "High Score: %d", state->points);
   } else {
-    printf("%d\n", *((double *)(list_get(state->all_points, 0))));
     sprintf(high_score_text, "High Score: %d",
             (size_t)(max_d(*((double *)(list_get(state->all_points, 0))),
                            state->points)));
