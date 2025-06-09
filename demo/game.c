@@ -23,11 +23,6 @@
 #include "utils.h"
 // moved background positions to background.c
 
-/*
-MARK: Emscripten
-*/
-
-double delay_time = 0.0;
 
 state_t *emscripten_init() {
 
@@ -127,10 +122,10 @@ bool emscripten_main(state_t *state) {
     sdl_show();
 
     double time = time_since_last_tick();
-    delay_time += time;
-    if (delay_time >= 2.0) {
+    state->delay_time_remaining -= time;
+    if (state -> delay_time_remaining <= 0.0){
       state->show_shop = true;
-      delay_time = 0;
+      state->delay_time_remaining = MAX_DELAY_TIME;
     }
   } // game over screen
 

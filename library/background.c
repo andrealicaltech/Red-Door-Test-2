@@ -116,6 +116,7 @@ void init_parameters(state_t *state) {
   state->n_coins_collected = 0;
   state->points = 0;
   state->current_player_idx = 0;
+  state->delay_time_remaining = MAX_DELAY_TIME;
 }
 
 void init_screens(state_t *state) {
