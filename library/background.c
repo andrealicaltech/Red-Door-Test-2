@@ -159,6 +159,7 @@ void reset_game(state_t *state) {
   state->show_shop = false;
   state->is_game_over = false;
   state->current_game_screen = GAME;
+  state->play_music = true;
   halt_music();
 
   background_init(state);

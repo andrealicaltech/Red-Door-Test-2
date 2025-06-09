@@ -54,7 +54,7 @@ state_t *emscripten_init() {
   state->play_music = true;
   state->music = NULL;
   state->sound_effects = NULL;
-  play_music((char *)MENU_MUSIC_PATH, false, state->music, 2);
+  play_music((char *)MENU_MUSIC_PATH);
   return state;
 }
 
@@ -69,7 +69,7 @@ bool emscripten_main(state_t *state) {
   if (state->started) {
     double dt = time_since_last_tick();
     if (state->play_music) {
-      play_music((char *)GAME_MUSIC_PATH, false, state->music, 2);
+      play_music((char *)GAME_MUSIC_PATH);
       state->play_music = false;
     }
     state->time_elapsed += dt;
@@ -117,12 +117,13 @@ bool emscripten_main(state_t *state) {
 
     if (state->is_game_over) {
       state->started = false;
-      state->points = 0;
       state->time_elapsed = 0;
       halt_music();
-      play_music(MENU_MUSIC_PATH, false, state->music, 2);
       state->play_music = true;
+      play_music((char *)LOSE_MUSIC_PATH);
       update_score(state);
+      state->points = 0;
+      state->delay_time_remaining = MAX_DELAY_TIME;
     }
   } // game screen
 
@@ -135,6 +136,11 @@ bool emscripten_main(state_t *state) {
     state->delay_time_remaining -= time;
     if (state->delay_time_remaining <= 0.0) {
       state->show_shop = true;
+      if (state->play_music){
+        halt_music();
+        play_music((char *)MENU_MUSIC_PATH);
+        state->play_music = false;
+      }
       state->delay_time_remaining = MAX_DELAY_TIME;
     }
   } // game over screen

@@ -28,7 +28,7 @@ const char *COIN_INFO = "coin";
 const double MAGNET_FREQUENCY = 0.25;
 const double MAGNET_PERIOD_S = 20.0;
 const char *LEADERBOARD_INFO = "leaderboard";
-const double MAX_DELAY_TIME = 2.0;
+const double MAX_DELAY_TIME = 5.0;
 
 const double MAGNET_RAD = 12.5;
 const double COIN_RAD = 10;
@@ -90,6 +90,7 @@ const char *QUESADILLA_PATH = "assets/Quesadilla.png";
 const char *GAME_MUSIC_PATH = "assets/GameAudio.wav";
 const char *JUMP_MUSIC_PATH = "assets/Jump.wav";
 const char *MENU_MUSIC_PATH = "assets/MainMenuAudio.wav";
+const char *LOSE_MUSIC_PATH = "assets/LosingAudio.wav";
 const char *OBSTACLE_GEN_PATH_TEMPLATE = "assets/obstacles/obstacle-";
 const char *OBSTACLE_IMG_EXT = ".png";
 

@@ -5,8 +5,7 @@
  */
 #include <SDL2/SDL_mixer.h>
 
-int play_music(char *music_path, bool side_by_side, Mix_Music *music,
-               int value);
+int play_music(char *music_path);
 
 void halt_music();
 
