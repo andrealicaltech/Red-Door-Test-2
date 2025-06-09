@@ -234,7 +234,6 @@ void gen_coin_arc(state_t *state, bool should_include_powerup) {
     }
   }
 
-  body_t *player_body = get_player(state);
   size_t powerup_idx =
       should_include_powerup ? powerup_idx = rand() % list_size(points) : -1;
   for (size_t i = 0; i < list_size(points); i++) {
@@ -252,7 +251,7 @@ void gen_coin_arc(state_t *state, bool should_include_powerup) {
                                       : quesedilla_collision_handler;
     asset_make_image_with_body(path, new_body);
 
-    create_collision(state->scene, player_body, new_body, handler, state, 0,
+    create_collision(state->scene, state->player, new_body, handler, state, 0,
                      NULL);
     body_set_velocity(new_body, vec_multiply(-1, state->bg.bg_3_building_vel));
   }
