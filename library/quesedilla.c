@@ -14,8 +14,8 @@
 #include "obstacle.h"
 
 const size_t COIN_NUM_POINTS = 20;
-const double COIN_SPACING = 12.5;
-const double PARABOLIC_COIN_SPACING = 50;
+const double COIN_SPACING = 19;
+const double PARABOLIC_COIN_SPACING = 75;
 const size_t MIN_COINS_PER_PATH = 3;
 const size_t V_LARG_NUM_COINS = 100;
 const double Y_TOLERANCE = 10.0;
