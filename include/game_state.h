@@ -2,6 +2,7 @@
 #define __GAME_STATE_H__
 
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_mixer.h>
 #include <stdlib.h>
 
 #include "constants.h"
@@ -53,7 +54,7 @@ struct state {
   double time_till_next_update;
   size_t n_queued_obstacles;
   body_t *curr_player_obstacle;
-
+  bool play_music;
   // Powerups
   bool is_magnet_activated;
   double time_elapsed_with_magnet;
@@ -62,6 +63,9 @@ struct state {
   size_t n_coins_collected;
   list_t *all_points;
   const TTF_Font *font;
+
+  Mix_Music *music;
+  Mix_Music *sound_effects;
 };
 
 #endif

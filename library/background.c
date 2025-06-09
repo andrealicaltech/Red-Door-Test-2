@@ -11,6 +11,7 @@
 #include "forces.h"
 #include "game_state.h"
 #include "kinematics.h"
+#include "music.h"
 #include "obstacle.h"
 #include "sdl_wrapper.h"
 #include "utils.h"
@@ -154,6 +155,7 @@ void reset_game(state_t *state) {
   state->show_shop = false;
   state->is_game_over = false;
   state->current_game_screen = GAME;
+  halt_music();
 
   background_init(state);
 

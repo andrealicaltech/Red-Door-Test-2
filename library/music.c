@@ -6,16 +6,14 @@
 // Our wave file
 // Mix_Chunk *wave = NULL;
 // Our music file
-Mix_Music *music = NULL;
-
-int play_music(char *music_path, bool side_by_side) {
+int play_music(char *music_path, bool side_by_side, Mix_Music *music, int value) {
 
   // Initialize SDL.
   if (SDL_Init(SDL_INIT_AUDIO) < 0) {
     return -1;
   }
   // Initialize SDL_mixer
-  if (Mix_OpenAudio(22050, MIX_DEFAULT_FORMAT, 2, 4096) == -1) {
+  if (Mix_OpenAudio(22050, MIX_DEFAULT_FORMAT, value, 4096) == -1) {
     return -1;
   }
 
@@ -54,5 +52,4 @@ int play_music(char *music_path, bool side_by_side) {
 
 void halt_music() {
   Mix_HaltMusic();
-  printf("I'm here here!\n");
 }

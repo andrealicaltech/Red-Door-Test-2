@@ -1,4 +1,5 @@
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_mixer.h>
 #include <assert.h>
 #include <math.h>
 #include <stdio.h>
@@ -22,9 +23,7 @@
 #include "sdl_wrapper.h"
 #include "utils.h"
 // moved background positions to background.c
-
 state_t *emscripten_init() {
-
   asset_cache_init();
   sdl_init(MIN, MAX);
   TTF_Init();
@@ -52,7 +51,10 @@ state_t *emscripten_init() {
 
   init_parameters(state);
   state->all_points = list_init(MAX_GAMES, NULL);
-
+  state->play_music = true;
+  state->music = NULL;
+  state->sound_effects = NULL;
+  play_music((char *)MENU_MUSIC_PATH, false, state->music, 2);
   return state;
 }
 
@@ -62,12 +64,14 @@ bool emscripten_main(state_t *state) {
 
   if (!state->started && !state->is_game_over) {
     render_screen("start", &viewport);
-    play_music((char *)MENU_MUSIC_PATH, false);
   } // start screen
 
   if (state->started) {
     double dt = time_since_last_tick();
-    play_music((char *)GAME_MUSIC_PATH, false);
+    if (state->play_music){
+      play_music((char *)GAME_MUSIC_PATH, false, state->music, 2);
+      state->play_music = false;
+    }
     update_bg_velocity(state, dt);
     update_bg_pos(state, dt);
     render_layers(asset_cache_lookup("sky"), &state->bg.sky_pos.x, &viewport);
@@ -111,6 +115,9 @@ bool emscripten_main(state_t *state) {
 
     if (state->is_game_over) {
       state->started = false;
+      halt_music();
+      play_music(MENU_MUSIC_PATH, false, state->music, 2);
+      state->play_music = true;
       update_score(state);
     }
   } // game screen
