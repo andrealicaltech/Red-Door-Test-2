@@ -37,6 +37,15 @@ const double COIN_RAD = 10;
 const size_t PLAYER_STANDING_PTS = 16;
 const size_t PLAYER_RUNNING = 31;
 const size_t QUESADILLA_PTS = 20;
+const size_t PRICE = 10;
+
+// text rendering dimensions
+const vector_t SCORE_TL = (vector_t){.x = 0.75, .y = 0.1};
+const vector_t SCORE_SIZE = (vector_t){.x = 0.5, .y = 0.3};
+const vector_t HIGH_SCORE_TL = (vector_t){.x = 0.9, .y = 0.6};
+const vector_t HIGH_SCORE_SIZE = (vector_t){.x = 0.8, .y = 0.3};
+const vector_t COIN_TL = (vector_t){.x = 0.25, .y = 0.35};
+const vector_t COIN_SIZE = (vector_t){.x = 0.5, .y = 0.3};
 
 // player movements
 const vector_t DUCK_INITIAL_VELOCITY = (vector_t){.x = 0, .y = 0};

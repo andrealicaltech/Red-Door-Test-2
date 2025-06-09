@@ -1,4 +1,5 @@
 #include "sdl_wrapper.h"
+#include "obstacle.h"
 #include <SDL2/SDL.h>
 #include <SDL2/SDL2_gfxPrimitives.h>
 #include <SDL2/SDL_image.h>
@@ -114,7 +115,7 @@ void sdl_init(vector_t min, vector_t max) {
   assert(min.x < max.x);
   assert(min.y < max.y);
 
-  center = vec_multiply(0.5, vec_add(min, max));
+  center = vec_multiply(FACTOR, vec_add(min, max));
   max_diff = vec_subtract(max, center);
   SDL_Init(SDL_INIT_EVERYTHING);
   window = SDL_CreateWindow(WINDOW_TITLE, SDL_WINDOWPOS_CENTERED,

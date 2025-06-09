@@ -21,6 +21,8 @@ const size_t V_LARG_NUM_COINS = 100;
 const double Y_TOLERANCE = 10.0;
 const double PARABOLIC_PATH_PCT = 50.0;
 const double MAGNET_TRANSLATION = 15.0;
+const double SPACING_LIMIT = 1.0;
+const vector_t OBS_SURFACE = (vector_t){.x = 0.4, .y = 1.0};
 
 double coin_spacing(state_t *state) { return COIN_SPACING; }
 
@@ -30,7 +32,6 @@ list_t *flat_path(state_t *state, vector_t min_start_pos,
     return NULL;
   }
   double delta = (max_end_pos.x - min_start_pos.x);
-  printf("Linear path, got delta = %f\n", delta);
 
   if (delta < 0) {
     return NULL;
@@ -54,7 +55,7 @@ list_t *flat_path(state_t *state, vector_t min_start_pos,
   double empty_space =
       (delta) - ((coin_spacing(state) + (COIN_RAD * 2)) * packed_coins);
 
-  if (empty_space <= 1.0) {
+  if (empty_space <= SPACING_LIMIT) {
     return NULL;
   }
   double x_offset = min_start_pos.x + (rand() % (int)empty_space);
@@ -78,10 +79,9 @@ list_t *parabolic_path(state_t *state, vector_t min_start_pos,
       state->bg.bg_3_building_vel.x;
 
   double delta = max_end_pos.x - min_start_pos.x;
-  printf("Parabola, expected_x_dist=%f, delta=%f\n", expected_x_dist_with_jump,
-         delta);
+
   // Need tolerance between expected x_dist and delta
-  if (delta < 0 || delta - expected_x_dist_with_jump < 1.0) {
+  if (delta < 0 || delta - expected_x_dist_with_jump < SPACING_LIMIT) {
     return NULL;
   }
 
@@ -115,7 +115,7 @@ list_t *parabolic_path(state_t *state, vector_t min_start_pos,
     list_add(coin_positions, pos);
     double squared_deriv = t1 - (t2 * x) + (t3 * pow(x, 2));
     x += DS / sqrt(1 + squared_deriv);
-    y = u_y * (x / v_x) - (0.5 * g) * pow((x / v_x), 2);
+    y = u_y * (x / v_x) - (FACTOR * g) * pow((x / v_x), 2);
   } while (x_offset + x < max_end_pos.x && y >= 0);
 
   return coin_positions;
@@ -179,12 +179,12 @@ void gen_coin_arc(state_t *state, bool should_include_powerup) {
 
   vector_t slast_obstacle_boundary =
       vec_add(slast_obst_centroid,
-              (vector_t){.x = get_obstacle_dims(slast_obstacle).x * 0.5 +
+              (vector_t){.x = get_obstacle_dims(slast_obstacle).x * FACTOR +
                               min_gap_after_obstacle(state, slast_obst_dim.y),
                          .y = 0});
   vector_t last_obstacle_boundary =
       vec_subtract(last_obst_centroid,
-                   (vector_t){.x = last_obst_dim.x * 0.5 +
+                   (vector_t){.x = last_obst_dim.x * FACTOR +
                                    get_smallest_obst_clearing_dist(
                                        state, PLAYER_DIMS.y, last_obst_dim.y),
                               .y = 0});
@@ -200,12 +200,12 @@ void gen_coin_arc(state_t *state, bool should_include_powerup) {
   // Generate coins above the surface of the obstacles, with height equal to 50%
   // of obstacle height to get the same visual effect Add 10% padding on both
   // sides
-  vector_t last_obst_begin =
-      vec_subtract(last_obst_centroid, (vector_t){.x = 0.4 * last_obst_dim.x,
-                                                  .y = -1.0 * last_obst_dim.y});
-  vector_t last_obst_end =
-      vec_add(last_obst_centroid, (vector_t){.x = 0.4 * last_obst_dim.x,
-                                             .y = 1.0 * last_obst_dim.y});
+  vector_t last_obst_begin = vec_subtract(
+      last_obst_centroid, (vector_t){.x = OBS_SURFACE.x * last_obst_dim.x,
+                                     .y = -OBS_SURFACE.y * last_obst_dim.y});
+  vector_t last_obst_end = vec_add(
+      last_obst_centroid, (vector_t){.x = OBS_SURFACE.x * last_obst_dim.x,
+                                     .y = OBS_SURFACE.y * last_obst_dim.y});
   list_t *on_top_points = NULL;
   if (ontop_roll < PARABOLIC_PATH_PCT) {
     on_top_points = parabolic_path(state, last_obst_begin, last_obst_end);
@@ -222,7 +222,7 @@ void gen_coin_arc(state_t *state, bool should_include_powerup) {
   // Concatenate the two lists of points to one array. Handle possibility that
   // 0, 1, or both may be null
   if (ground_points) {
-    printf("Adding ground points len=%zu\n", list_size(ground_points));
+
     for (size_t i = 0; i < list_size(ground_points); i++) {
       list_add(points, list_get(ground_points, i));
     }
@@ -233,7 +233,6 @@ void gen_coin_arc(state_t *state, bool should_include_powerup) {
     }
   }
 
-  body_t *player_body = get_player(state);
   size_t powerup_idx =
       should_include_powerup ? powerup_idx = rand() % list_size(points) : -1;
   for (size_t i = 0; i < list_size(points); i++) {
@@ -250,7 +249,7 @@ void gen_coin_arc(state_t *state, bool should_include_powerup) {
                                       : quesedilla_collision_handler;
     asset_make_image_with_body(path, new_body);
 
-    create_collision(state->scene, player_body, new_body, handler, state, 0,
+    create_collision(state->scene, state->player, new_body, handler, state, 0,
                      NULL);
     body_set_velocity(new_body, vec_multiply(-1, state->bg.bg_3_building_vel));
   }

@@ -29,7 +29,6 @@ body_t *make_magnet(double radius, vector_t center) {
 
 void magnet_body_collision_handler(body_t *body1, body_t *body2, vector_t axis,
                                    void *aux, double force_const) {
-  printf("Collided with magnet!\n");
 
   state_t *state = (state_t *)aux;
   state->is_magnet_activated = true;
@@ -48,8 +47,8 @@ void apply_magnet(state_t *state, double dt) {
       state->is_magnet_activated = false;
       return;
     }
-    body_t *player_body = get_player(state);
-    vector_t player_centroid = body_get_centroid(player_body);
+
+    vector_t player_centroid = body_get_centroid(state->player);
 
     for (size_t i = 0; i < scene_bodies(state->scene); i++) {
       body_t *body = scene_get_body(state->scene, i);

@@ -27,18 +27,18 @@ void on_key(char key, key_event_type_t type, double held_time, state_t *state) {
       reset_game(state);
       return;
     case LEFT_ARROW:
-      if (state->n_coins_collected >= 10) {
+      if (state->n_coins_collected >= PRICE) {
         state->sprite_path = (char *)PLAYER_SPRITE_ANDREA_PATH;
-        state->n_coins_collected = state->n_coins_collected - 10;
+        state->n_coins_collected = state->n_coins_collected - PRICE;
       }
       return;
     case UP_ARROW:
       state->sprite_path = (char *)PLAYER_SPRITE_AMUDHAN_PATH;
       return;
     case RIGHT_ARROW:
-      if (state->n_coins_collected >= 10) {
+      if (state->n_coins_collected >= PRICE) {
         state->sprite_path = (char *)PLAYER_SPRITE_ARJUN_PATH;
-        state->n_coins_collected = state->n_coins_collected - 10;
+        state->n_coins_collected = state->n_coins_collected - PRICE;
       }
     }
   }
@@ -53,19 +53,18 @@ void on_key(char key, key_event_type_t type, double held_time, state_t *state) {
 
     if (!state->show_shop && state->started &&
         state->player_motion == REGULAR) {
-      body_t *player_body = get_player(state);
 
       switch (key) {
       case UP_ARROW:
-        body_set_velocity(player_body, get_curr_jump_vel(state));
+        body_set_velocity(state->player, get_curr_jump_vel(state));
         state->player_motion = JUMP;
         state->points += 1;
         // play_music((char *)JUMP_MUSIC_PATH, true, state->sound_effects, 1);
-        state->jump_start_y = body_get_centroid(player_body).y;
+        state->jump_start_y = body_get_centroid(state->player).y;
         state->curr_player_obstacle = NULL;
         break;
       case DOWN_ARROW:
-        body_set_velocity(player_body, DUCK_INITIAL_VELOCITY);
+        body_set_velocity(state->player, DUCK_INITIAL_VELOCITY);
         state->player_motion = DUCK;
         break;
       }
@@ -74,10 +73,8 @@ void on_key(char key, key_event_type_t type, double held_time, state_t *state) {
 }
 
 void manipulate_player(state_t *state, double dt) {
-  body_t *player_body = get_player(state);
-
-  vector_t player_centroid = body_get_centroid(player_body);
-  vector_t player_velocity = body_get_velocity(player_body);
+  vector_t player_centroid = body_get_centroid(state->player);
+  vector_t player_velocity = body_get_velocity(state->player);
 
   switch (state->player_motion) {
   case JUMP:
@@ -86,9 +83,9 @@ void manipulate_player(state_t *state, double dt) {
         (player_velocity.y <= 0.0 && player_centroid.y > state->jump_start_y &&
          (player_centroid.y - state->jump_start_y <
           (get_curr_gravity(state).y * dt)))) {
-      body_set_velocity(player_body, VEC_ZERO);
-      body_set_centroid(player_body, (vector_t){.x = PLAYER_CENTER_POS.x,
-                                                .y = state->jump_start_y});
+      body_set_velocity(state->player, VEC_ZERO);
+      body_set_centroid(state->player, (vector_t){.x = PLAYER_CENTER_POS.x,
+                                                  .y = state->jump_start_y});
       if (player_centroid.y == PLAYER_CENTER_POS.y) {
         // Edge case where jump off obstacle before falling off
         state->curr_player_obstacle = NULL;
@@ -99,7 +96,8 @@ void manipulate_player(state_t *state, double dt) {
       if (player_velocity.y <= 0) {
         new_y_vel = max_d(new_y_vel, -1.0 * JUMP_INITIAL_VELOCITY.y);
       }
-      body_set_velocity(player_body, (vector_t){.x = 0, .y = 1.0 * new_y_vel});
+      body_set_velocity(state->player,
+                        (vector_t){.x = 0, .y = 1.0 * new_y_vel});
     }
     break;
   case DUCK:

@@ -47,17 +47,20 @@ void update_bg_velocity(state_t *state, double dt) {
   state->bg.bg_3_building_vel = vec_add(add, state->bg.bg_3_building_vel);
 }
 
+// update the position of background for wrapping
 void update_bg_pos(state_t *state, double dt) {
   state->bg.sky_pos.x -= state->bg.bg_1_sky_vel.x * dt;
   state->bg.tree_pos.x -= state->bg.bg_2_tree_vel.x * dt;
   state->bg.building_pos.x -= state->bg.bg_3_building_vel.x * dt;
 }
 
+// render screens
 void render_screen(const char *screen_key, SDL_Rect *viewport) {
   SDL_Texture *screen = asset_cache_lookup(screen_key);
   sdl_render_image(screen, viewport);
 }
 
+// render all background layers
 void render_layers(SDL_Texture *texture, double *x, SDL_Rect *viewport) {
   *x = fmod(*x, viewport->w);
   if (*x > 0) {
@@ -74,7 +77,8 @@ void render_layers(SDL_Texture *texture, double *x, SDL_Rect *viewport) {
   sdl_render_image(texture, &dest2);
 }
 
-body_t *make_player(double w, double h, vector_t center) {
+// initialize box
+body_t *make_object(double w, double h, vector_t center, void *info) {
   list_t *c = list_init(4, free);
   vector_t *v1 = malloc(sizeof(vector_t));
   *v1 = (vector_t){0, 0};
@@ -91,14 +95,14 @@ body_t *make_player(double w, double h, vector_t center) {
   vector_t *v4 = malloc(sizeof(vector_t));
   *v4 = (vector_t){0, h};
   list_add(c, v4);
-  body_t *player =
-      body_init_with_info(c, 1, SPRITE_COLOR, (void *)PLAYER_INFO, NULL);
-  body_set_centroid(player, center);
-  return player;
+  body_t *object = body_init_with_info(c, 1, SPRITE_COLOR, info, NULL);
+  body_set_centroid(object, center);
+  return object;
 }
 
 body_t *init_player(state_t *state) {
-  body_t *player = make_player(PLAYER_DIMS.x, PLAYER_DIMS.y, PLAYER_CENTER_POS);
+  body_t *player = make_object(PLAYER_DIMS.x, PLAYER_DIMS.y, PLAYER_CENTER_POS,
+                               (void *)PLAYER_INFO);
   body_set_centroid(player, PLAYER_CENTER_POS);
   state->player = player;
   scene_add_body(state->scene, player);
