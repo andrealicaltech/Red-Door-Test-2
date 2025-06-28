@@ -1,7 +1,6 @@
 # Red Door Run
 
 ## Section 1: Summary
-Game title: _Red Door Run_
 Team members: Andrea Li, Arjun Sharma, Amudhan Gurumoorthy
 
 Concept statement: Experience what it’s like to make a desperate dash for quesadillas in the infinite single-player experience of _Red Door Run_. Try to keep your sprite alive as long as possible, and collect as many quesadillas as you can, while jumping to avoid the tables that spawn in your way.
